@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { DesktopOutlined, PieChartOutlined } from "@ant-design/icons";
+import {
+  AuditOutlined,
+  BookOutlined,
+  TranslationOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { Link, Outlet } from "react-router-dom";
@@ -23,8 +27,9 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Lanaguages", "language", <PieChartOutlined />),
-  getItem("Option 2", "2", <DesktopOutlined />),
+  getItem("Lanaguages", "language", <TranslationOutlined />),
+  getItem("Quote Price", "quoteprice", <BookOutlined />),
+  getItem("Notarization", "notarization", <AuditOutlined />),
 ];
 
 const DashboardManager: React.FC = () => {

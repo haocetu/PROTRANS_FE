@@ -5,6 +5,8 @@ import Login from "./pages/login";
 import Register from "./pages/register";
 import DashboardManager from "./pages/dashboard-manager";
 import Language from "./pages/language-management";
+import QuotePrice from "./pages/QuotePrice-manager";
+import Notarization from "./pages/notarization";
 
 function App() {
   const router = createBrowserRouter([
@@ -33,6 +35,14 @@ function App() {
         {
           path: "language",
           element: <Language />,
+        },
+        {
+          path: "quoteprice",
+          element: <QuotePrice />,
+        },
+        {
+          path: "notarization",
+          element: <Notarization />,
         },
       ],
     },
