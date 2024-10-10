@@ -1,30 +1,25 @@
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  Modal,
-  Popconfirm,
-  Space,
-  Table,
-} from "antd";
+import { Button, Form, Input, Modal, Popconfirm, Space, Table } from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Value } from "sass";
 
-function Language() {
+function Notarization() {
   const [formVariable] = useForm();
   const [formUpdate] = useForm();
   const [isOpen, setIsOpen] = useState(false);
   const [visibleEditModal, setVisibleEditModal] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const [idLanguage, SetidLanguage] = useState("");
   const columns = [
     {
-      title: "Name",
+      title: "TypeNotarization",
       dataIndex: "name",
       key: "name",
+    },
+    {
+      title: "price",
+      dataIndex: "price",
+      key: "price",
     },
     {
       title: "Is Deleted",
@@ -65,8 +60,8 @@ function Language() {
     },
   ];
 
-  async function fetchLanguage() {
-    const response = await axios.get("https://localhost:7122/api/Language");
+  async function fetchNotarization() {
+    const response = await axios.get("https://localhost:7122/api/Notarization");
     console.log(response.data.data);
     setDataSource(response.data.data);
   }
@@ -75,7 +70,7 @@ function Language() {
     console.log(values);
 
     const response = await axios.post(
-      "https://localhost:7122/api/Language",
+      "https://localhost:7122/api/Notarization",
       values
     );
     setDataSource([...dataSource, values]);
@@ -96,35 +91,15 @@ function Language() {
       });
     console.log("cuong");
   }
-  // const handleSubmit = async (values) => {
-  //   console.log(values.id);
-
-  //   try {
-  //     if (values.id) {
-  //       //Update
-  //       await axios.put(
-  //         `https://localhost:7122/api/Language/${values.id}`,
-  //         values
-  //       );
-  //       console.log("ha1");
-  //     } else {
-  //       await axios.post("https://localhost:7122/api/Language", values);
-  //       console.log("ha2");
-  //     }
-  //     fetchLanguage();
-  //     setIsOpen(false);
-  //     handleHideModal();
-  //   } catch (error) {
-  //     alert("fsdf");
-  //   }
-  // };
 
   const handleDeleteLanguage = async (id) => {
     console.log(id);
 
-    await axios.delete(`https://localhost:7122/api/Language/${id}`);
+    await axios.delete(`https://localhost:7122/api/Notarization/${id}`);
 
-    const listAfterDelete = dataSource.filter((language) => language.id != id);
+    const listAfterDelete = dataSource.filter(
+      (notarization) => notarization.id != id
+    );
 
     setDataSource(listAfterDelete);
   };
@@ -142,7 +117,7 @@ function Language() {
   }
 
   useEffect(() => {
-    fetchLanguage();
+    fetchNotarization();
   }, []);
   return (
     <div className="languagePage">
@@ -153,19 +128,31 @@ function Language() {
           setIsOpen(true);
         }}
       >
-        Add New Language
+        Add New Notarization
       </Button>
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}
-        title="Add New Language"
+        title="Add New Notarization"
         onCancel={handleHideModal}
         onOk={handleOk}
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
-            label="Language Name"
+            label="TypeNotarization"
             name={"name"}
+            rules={[
+              {
+                required: true,
+                message: "Please Input TypeNotarization",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Price"
+            name={"price"}
             rules={[
               {
                 required: true,
@@ -208,4 +195,4 @@ function Language() {
   );
 }
 
-export default Language;
+export default Notarization;
