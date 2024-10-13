@@ -12,20 +12,20 @@ function Notarization() {
   const [dataSource, setDataSource] = useState([]);
   const columns = [
     {
-      title: "TypeNotarization",
+      title: "Notarization Type",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "price",
+      title: "Price",
       dataIndex: "price",
       key: "price",
     },
     {
-      title: "Is Deleted",
+      title: "Status",
       dataIndex: "isDeleted",
       key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Yes" : "No"),
+      render: (isDeleted) => (isDeleted ? "Stop" : "Active"),
     },
     {
       title: "Action",

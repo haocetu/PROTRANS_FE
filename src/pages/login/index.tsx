@@ -1,9 +1,26 @@
 import { Button, Form, Input } from "antd";
 import Authenlayout from "../../components/auth-layout";
 import "./index.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import api from "../../config/api";
+import { toast } from "react-toastify";
+import { login } from "../../redux/features/userSlice";
 
 function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogin = async (values) => {
+    try {
+      const response = await api.post("Authentication/Login", values);
+      toast.success("Successfull logged in");
+      dispatch(login(response.data));
+      navigate("/");
+    } catch (error) {
+      toast.error(error.response.data);
+    }
+  };
   return (
     <Authenlayout>
       <h3 className="login__h3">Login Into Your Account</h3>
@@ -11,6 +28,7 @@ function Login() {
         labelCol={{
           span: 24,
         }}
+        onFinish={handleLogin}
       >
         <Form.Item
           label="Email"
