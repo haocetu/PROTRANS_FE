@@ -7,6 +7,9 @@ import DashboardManager from "./pages/dashboard-manager";
 import Language from "./pages/language-management";
 import QuotePrice from "./pages/QuotePrice-manager";
 import Notarization from "./pages/notarization";
+import Order from "./pages/order-manager";
+
+import DynamicDocumentsForm from "./pages/documentType";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,6 +29,10 @@ function App() {
           path: "/register",
           element: <Register />,
         },
+        {
+          path: "/document",
+          element: <DynamicDocumentsForm />,
+        },
       ],
     },
     {
@@ -43,6 +50,10 @@ function App() {
         {
           path: "notarization",
           element: <Notarization />,
+        },
+        {
+          path: "order",
+          element: <Order />,
         },
       ],
     },
