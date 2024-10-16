@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   AuditOutlined,
   BookOutlined,
+  ShoppingCartOutlined,
   TranslationOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
@@ -30,6 +31,7 @@ const items: MenuItem[] = [
   getItem("Lanaguages", "language", <TranslationOutlined />),
   getItem("Quote Price", "quoteprice", <BookOutlined />),
   getItem("Notarization", "notarization", <AuditOutlined />),
+  getItem("Order", "order", <ShoppingCartOutlined />),
 ];
 
 const DashboardManager: React.FC = () => {

@@ -1,6 +1,7 @@
 .header{
     background-color: rgb(254, 254, 254);
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     padding: 10px 70px;
     border-bottom: solid 1px rgba($color: #000, $alpha: 0.1);
