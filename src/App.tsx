@@ -22,16 +22,17 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/login",
-          element: <Login />,
-        },
-        {
           path: "/register",
           element: <Register />,
         },
+      ],
+    },
+    {
+      path: "",
+      children: [
         {
-          path: "/document",
-          element: <DynamicDocumentsForm />,
+          path: "/login",
+          element: <Login />,
         },
       ],
     },
@@ -42,6 +43,10 @@ function App() {
         {
           path: "language",
           element: <Language />,
+        },
+        {
+          path: "document",
+          element: <DynamicDocumentsForm />,
         },
         {
           path: "quoteprice",
