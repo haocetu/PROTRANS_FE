@@ -1,17 +1,9 @@
-import {
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Radio,
-  Select,
-  Table,
-} from "antd";
+import { Button, Form, Input, InputNumber, Modal, Select, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function Order() {
   const [formVariable] = useForm();
@@ -20,6 +12,7 @@ function Order() {
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [language, setLanguage] = useState([]);
+  const navigate = useNavigate();
 
   const fetchNotarizationType = async () => {
     const response = await api.get("Notarization");
@@ -103,6 +96,20 @@ function Order() {
       title: "status",
       dataIndex: "status",
       key: "status",
+    },
+    {
+      title: "Action",
+      dataIndex: "id",
+      key: "id",
+      render: (id, data) => (
+        <Button
+          type="primary"
+          style={{ background: "orange" }}
+          onClick={() => navigate(`details/${id}`)}
+        >
+          Details
+        </Button>
+      ),
     },
   ];
 

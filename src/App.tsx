@@ -8,8 +8,9 @@ import Language from "./pages/language-management";
 import QuotePrice from "./pages/QuotePrice-manager";
 import Notarization from "./pages/notarization";
 import Order from "./pages/order-manager";
-
+import Translator from "./pages/admin/translatorAccount";
 import DynamicDocumentsForm from "./pages/documentType";
+import DocumentDetails from "./pages/documentDetails";
 
 function App() {
   const router = createBrowserRouter([
@@ -59,6 +60,18 @@ function App() {
         {
           path: "order",
           element: <Order />,
+        },
+        {
+          path: "translator",
+          element: <Translator />,
+        },
+        {
+          path: "createOrder",
+          element: <DynamicDocumentsForm />,
+        },
+        {
+          path: "order/details/:id",
+          element: <DocumentDetails />,
         },
       ],
     },
