@@ -109,8 +109,8 @@ const DynamicDocumentsForm = () => {
           {
             firstLanguageId: null,
             secondLanguageId: null,
-            urlPath: "",
-            fileType: "",
+            urlPath: null,
+            fileType: null,
             pageNumber: null,
             numberOfCopies: 1,
             notarizationRequest: false,
@@ -255,7 +255,10 @@ const DynamicDocumentsForm = () => {
                       ]}
                       label="Loại tệp"
                     >
-                      <Input placeholder="Loại tệp" />
+                      <Select placeholder="Loại tệp">
+                        <Select.Option value="Hard">Hard</Select.Option>
+                        <Select.Option value="Soft">Soft</Select.Option>
+                      </Select>
                     </Form.Item>
                   </Col>
                   <Col span={4}>
