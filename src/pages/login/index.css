@@ -1,7 +1,8 @@
-.login__h3{
-        font-size: xx-large;
-            color: #0a0ac1;
-            font-family: "Roboto", sans-serif;
-            font-weight: 500;
-            font-style: normal;
-        }
+.login__h3 {
+  font-size: xx-large;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  margin-bottom: 20px;
+  text-align: center;
+}
