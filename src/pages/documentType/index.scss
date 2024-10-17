@@ -1,0 +1,10 @@
+.ant-select-dropdown {
+    width: auto !important;
+    min-width: 200px; /* Tùy chỉnh theo nội dung */
+    max-height: 300px; /* Chiều cao tối đa nếu cần */
+    overflow-y: auto; /* Cuộn nếu nội dung vượt quá chiều cao */
+  }
+
+  .ant-select-selection-item {
+    white-space: nowrap; /* Hiển thị nội dung trong cùng một dòng */
+  }

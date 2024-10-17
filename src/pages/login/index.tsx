@@ -17,9 +17,9 @@ function Login() {
       const response = await api.post("Authentication/Login", values);
       toast.success("Successfull logged in");
       dispatch(login(response.data));
-      navigate("/");
+      navigate("/dashboardmanager");
     } catch (error) {
-      toast.error(error.response.data);
+      toast.error("Login Fail");
     }
   };
   return (

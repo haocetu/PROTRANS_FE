@@ -238,6 +238,7 @@ const DynamicDocumentsForm = () => {
                       label="Số trang"
                     >
                       <InputNumber
+                        min={1}
                         placeholder="Số trang"
                         style={{ width: "100%" }}
                       />
@@ -275,6 +276,7 @@ const DynamicDocumentsForm = () => {
                       label="Số bản cần dịch"
                     >
                       <InputNumber
+                        min={1}
                         placeholder="Số bản cần dịch"
                         style={{ width: "100%" }}
                       />
@@ -348,6 +350,7 @@ const DynamicDocumentsForm = () => {
                       label="Số bản công chứng"
                     >
                       <InputNumber
+                        min={0}
                         placeholder="Số bản công chứng"
                         style={{ width: "100%" }}
                       />
