@@ -9,9 +9,11 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async (values) => {
+    console.log("hello");
     try {
       await api.post("Authentication/Register", values);
       toast.success("Register Succesffuly");
+
       navigate("/login");
     } catch (error) {
       toast.error(error.response.data);
