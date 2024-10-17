@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 import api from "../../config/api";
 import { toast } from "react-toastify";
 import { login } from "../../redux/features/userSlice";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 function Login() {
   const dispatch = useDispatch();
