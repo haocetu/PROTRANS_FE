@@ -4,6 +4,7 @@ import api from "../../config/api";
 import { useParams } from "react-router-dom";
 import { ContainerOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
+import { toast } from "react-toastify";
 
 function DocumentDetails() {
   const [formVariable] = useForm();
@@ -13,10 +14,19 @@ function DocumentDetails() {
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedDocumentId, setSelectedDocumentId] = useState(null);
+  const [selectsecondlanguageId, setSelectsecondlanguageId] = useState(null);
+  const [dataAssignTrans, setDataAssignTrans] = useState([]);
+  //---------------------------------------------------------
+  const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+
+  const [Translator, setTranslator] = useState([]);
 
   //------------------------------------------------
   const fetchNotarizationType = async () => {
     const response = await api.get("Notarization");
+    setIsFetching(false);
     const data = response.data.data;
     console.log({ data });
 
@@ -35,6 +45,7 @@ function DocumentDetails() {
   //-----------------------------------------
   const fetchLanguages = async () => {
     const response = await api.get("Language");
+    setIsFetching(false);
     const data = response.data.data;
     console.log({ data });
 
@@ -54,6 +65,7 @@ function DocumentDetails() {
 
   const fetchDocumentType = async () => {
     const response = await api.get("DocumentType");
+    setIsFetching(false);
     const data = response.data.data;
     console.log({ data });
 
@@ -77,13 +89,13 @@ function DocumentDetails() {
       key: "firstLanguageId",
       render: (firstLanguageId) => {
         // Check if category is available and initialized
-        if (!language || language.length === 0) return "Loading...";
+        if (!language || language.length === 0) return null;
 
         // Find the category by ID and return its name
         const foundLanguage = language.find(
           (lang) => lang.value === firstLanguageId
         );
-        return foundLanguage ? foundLanguage.label : "Unknown Category";
+        return foundLanguage ? foundLanguage.label : null;
       },
     },
     {
@@ -92,13 +104,13 @@ function DocumentDetails() {
       key: "secondLanguageId",
       render: (secondLanguageId) => {
         // Check if category is available and initialized
-        if (!language || language.length === 0) return "Loading...";
+        if (!language || language.length === 0) return null;
 
         // Find the category by ID and return its name
         const foundLanguage = language.find(
           (lang) => lang.value === secondLanguageId
         );
-        return foundLanguage ? foundLanguage.label : "Unknown Category";
+        return foundLanguage ? foundLanguage.label : null;
       },
     },
     {
@@ -142,16 +154,13 @@ function DocumentDetails() {
       key: "notarizationId",
       render: (notarizationId) => {
         // Check if category is available and initialized
-        if (!notarizationType || notarizationType.length === 0)
-          return "Loading...";
+        if (!notarizationType || notarizationType.length === 0) return null;
 
         // Find the category by ID and return its name
         const foundnotarizationType = notarizationType.find(
           (lang) => lang.value === notarizationId
         );
-        return foundnotarizationType
-          ? foundnotarizationType.label
-          : "Unknown Category";
+        return foundnotarizationType ? foundnotarizationType.label : null;
       },
     },
     {
@@ -160,13 +169,13 @@ function DocumentDetails() {
       key: "documentTypeId",
       render: (documentTypeId) => {
         // Check if category is available and initialized
-        if (!documentType || documentType.length === 0) return "Loading...";
+        if (!documentType || documentType.length === 0) return null;
 
         // Find the category by ID and return its name
         const founddocumentType = documentType.find(
           (lang) => lang.value === documentTypeId
         );
-        return founddocumentType ? founddocumentType.label : "Unknown Category";
+        return founddocumentType ? founddocumentType.label : null;
       },
     },
     {
@@ -186,6 +195,9 @@ function DocumentDetails() {
       render: (id, data) => (
         <ContainerOutlined
           onClick={() => {
+            console.log(data.secondLanguageId);
+            setSelectsecondlanguageId(data.secondLanguageId);
+            setSelectedDocumentId(id);
             setIsOpen(true);
           }}
         />
@@ -203,6 +215,58 @@ function DocumentDetails() {
   //   fetchDocument();
   // }, []);
 
+  //----------------------Điều Phối-----------------------------------//
+  const fetchTranslator = async (selectsecondlanguageId) => {
+    try {
+      const response = await api.get(
+        `Document/GetByOrderId?id=${selectsecondlanguageId}`
+      );
+      const data = Array.isArray(response.data.data)
+        ? response.data.data
+        : [response.data.data];
+      console.log(data);
+      setDocument(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTranslator();
+  }, [selectsecondlanguageId]);
+  //---------------------AssignmentTranslation--------------------------------//
+
+  async function fetchAssignmentTranslation() {
+    const response = await api.get("AssignmentTranslation");
+    console.log(response.data.data);
+    setDocument(response.data.data);
+  }
+
+  const handlesubmitAssignTrans = async (values) => {
+    const payload = {
+      translatorId: values.translatorId,
+      status: "string",
+      documentId: selectedDocumentId,
+      deadline: values.deadline.toISOString(),
+    };
+
+    try {
+      const response = await api.post("AssignmentTranslation", payload);
+      setDataAssignTrans(response.data.data);
+      formVariable.resetFields();
+      toast.success("Assign Translator success");
+      setIsOpen(false);
+    } catch (error) {
+      toast.error("Assign fail");
+    }
+    console.log("payload:", payload);
+  };
+
+  useEffect(() => {
+    fetchAssignmentTranslation();
+  }, []);
+
+  //----------------------------------------------------------------------------//
   const fetchDetaildocuments = async () => {
     try {
       const response = await api.get(`Document/GetByOrderId?id=${id}`);
@@ -221,7 +285,12 @@ function DocumentDetails() {
 
   return (
     <div className="details">
-      <Table columns={columns} dataSource={document} rowKey="id"></Table>
+      <Table
+        columns={columns}
+        dataSource={document}
+        rowKey="id"
+        loading={isFetching}
+      ></Table>
       <Modal
         open={isOpen}
         title="Assign A Translator "
@@ -230,7 +299,7 @@ function DocumentDetails() {
           formVariable.submit();
         }}
       >
-        <Form form={formVariable}>
+        <Form form={formVariable} onFinish={handlesubmitAssignTrans}>
           <Form.Item
             label="Translator"
             name={"translatorId"}
