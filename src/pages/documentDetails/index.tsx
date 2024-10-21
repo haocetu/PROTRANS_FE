@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input, Modal, Table } from "antd";
+import { Button, DatePicker, Form, Input, Modal, Select, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { useParams } from "react-router-dom";
@@ -10,6 +10,7 @@ function DocumentDetails() {
   const [formVariable] = useForm();
   const { id } = useParams();
   const [document, setDocument] = useState<Document[]>();
+  const [translator, setTranslator] = useState([]);
   const [language, setLanguage] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
@@ -20,8 +21,6 @@ function DocumentDetails() {
   //---------------------------------------------------------
   const [loading, setLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
-
-  const [Translator, setTranslator] = useState([]);
 
   //------------------------------------------------
   const fetchNotarizationType = async () => {
@@ -219,20 +218,26 @@ function DocumentDetails() {
   const fetchTranslator = async (selectsecondlanguageId) => {
     try {
       const response = await api.get(
-        `Document/GetByOrderId?id=${selectsecondlanguageId}`
+        `Account/GetByLanguageId?id=${selectsecondlanguageId}`
       );
       const data = Array.isArray(response.data.data)
         ? response.data.data
         : [response.data.data];
       console.log(data);
-      setDocument(data);
+
+      const list = data.map((Account) => ({
+        value: Account.id,
+        label: <span>{Account.fullName}</span>,
+      }));
+
+      setTranslator(list);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    fetchTranslator();
+    fetchTranslator(selectsecondlanguageId);
   }, [selectsecondlanguageId]);
   //---------------------AssignmentTranslation--------------------------------//
 
@@ -310,7 +315,7 @@ function DocumentDetails() {
               },
             ]}
           >
-            <Input />
+            <Select options={translator} />
           </Form.Item>
           <Form.Item
             label="deadline"
