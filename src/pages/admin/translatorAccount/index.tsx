@@ -1,6 +1,6 @@
 import { Table } from "antd";
 
-function Translator() {
+function TranslatorAccount() {
   const columns = [
     {
       title: "userName",
@@ -46,4 +46,4 @@ function Translator() {
   );
 }
 
-export default Translator;
+export default TranslatorAccount;
