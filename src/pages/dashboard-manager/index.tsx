@@ -34,7 +34,7 @@ const items: MenuItem[] = [
   getItem("Quote Price", "quoteprice", <BookOutlined />),
   getItem("Notarization", "notarization", <AuditOutlined />),
   getItem("Order", "order", <ShoppingCartOutlined />),
-  getItem("Translator", "translator", <UserOutlined />),
+  getItem("TranslatorAccount", "translatorAccount", <UserOutlined />),
   getItem("Create Order", "createOrder", <FormOutlined />),
 ];
 

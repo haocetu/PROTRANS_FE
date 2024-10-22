@@ -8,9 +8,10 @@ import Language from "./pages/language-management";
 import QuotePrice from "./pages/QuotePrice-manager";
 import Notarization from "./pages/notarization";
 import Order from "./pages/order-manager";
-import Translator from "./pages/admin/translatorAccount";
 import DynamicDocumentsForm from "./pages/documentType";
 import DocumentDetails from "./pages/documentDetails";
+import TranslatorAccount from "./pages/admin/translatorAccount";
+import Translator from "./pages/translatorPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -25,6 +26,10 @@ function App() {
         {
           path: "/register",
           element: <Register />,
+        },
+        {
+          path: "/traslator",
+          element: <Translator />,
         },
       ],
     },
@@ -62,8 +67,8 @@ function App() {
           element: <Order />,
         },
         {
-          path: "translator",
-          element: <Translator />,
+          path: "translatorAccount",
+          element: <TranslatorAccount />,
         },
         {
           path: "createOrder",
