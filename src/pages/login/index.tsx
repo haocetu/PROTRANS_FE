@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import api from "../../config/api";
 import { toast } from "react-toastify";
 import { login } from "../../redux/features/userSlice";
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
   const dispatch = useDispatch();
@@ -15,9 +16,11 @@ function Login() {
   const handleLogin = async (values) => {
     try {
       const response = await api.post("Authentication/Login", values);
+
+      const decoded = jwtDecode(response.data.token);
+      dispatch(login(decoded));
       toast.success("Successfull logged in");
-      dispatch(login(response.data));
-      navigate("/dashboardmanager");
+      navigate("/traslator");
     } catch (error) {
       toast.error("Login Fail");
     }
