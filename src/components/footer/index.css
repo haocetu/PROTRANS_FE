@@ -1,0 +1,25 @@
+.footer {
+  text-align: center;
+  padding: 20px 0;
+  background-color: #001529;
+  color: white;
+}
+
+.custom-divider {
+  border-color: white;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.footer-content {
+  margin: 0 auto;
+  padding: 0 50px;
+  text-align: left;
+}
+
+.map-container {
+  display: flex;
+  justify-content: center; /* Căn giữa bản đồ */
+  margin: 20px 0; /* Khoảng cách trên và dưới */
+  margin-top: 0;
+}
