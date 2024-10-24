@@ -1,12 +1,4 @@
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Popconfirm,
-  Space,
-  Table,
-} from "antd";
+import { Button, Form, Input, Modal, Popconfirm, Space, Table } from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -19,7 +11,9 @@ function Language() {
   const [visibleEditModal, setVisibleEditModal] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [idLanguage, SetidLanguage] = useState("");
-  
+  const token = localStorage.getItem("token");
+
+  console.log("day la token", token);
   const columns = [
     {
       title: "Name",
@@ -66,6 +60,7 @@ function Language() {
   ];
 
   async function fetchLanguage() {
+    console.log("token", token);
     const response = await axios.get("https://localhost:7122/api/Language");
     console.log(response.data.data);
     setDataSource(response.data.data);

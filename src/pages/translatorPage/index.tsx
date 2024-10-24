@@ -8,6 +8,10 @@ function Translator() {
   const UserAccount = useSelector((store) => store.user);
   const UserAccount2 = useSelector((store) => store.user.Id);
 
+  const token = localStorage.getItem("token");
+
+  console.log("day la token", token);
+
   console.log(UserAccount);
 
   const columns = [
