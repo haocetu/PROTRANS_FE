@@ -20,7 +20,7 @@ function Footer() {
               <PushpinOutlined
                 style={{
                   marginRight: "8px",
-                  fontSize: "16px",
+                  fontSize: "14px",
                 }}
               />
               Trụ sở chính: 121 Phước Thiện, Phường Long Bình, TP. Thủ Đức.
@@ -29,7 +29,7 @@ function Footer() {
               <PhoneOutlined
                 style={{
                   marginRight: "8px",
-                  fontSize: "16px",
+                  fontSize: "14px",
                 }}
               />
               Liên hệ: 0974 222 011.
