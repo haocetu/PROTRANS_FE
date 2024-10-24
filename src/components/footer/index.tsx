@@ -13,7 +13,7 @@ function Footer() {
             <img
               src="/bank-images/ProTranslogo_standard_white.png"
               alt="logo"
-              width={400}
+              width={280}
               style={{ marginBottom: "20px" }}
             ></img>
             <Paragraph style={{ color: "white" }}>
