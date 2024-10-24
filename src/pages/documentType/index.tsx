@@ -25,6 +25,7 @@ const DynamicDocumentsForm = () => {
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [language, setLanguage] = useState([]);
+  const token = localStorage.getItem("token");
 
   const fetchNotarizationType = async () => {
     const response = await api.get("Notarization");
@@ -87,7 +88,11 @@ const DynamicDocumentsForm = () => {
     console.log("Order", values);
 
     try {
-      const response = await api.post("Order", values);
+      const response = await api.post("Order", values, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token in the request headers
+        },
+      });
       console.log(response.data.data);
       toast.success("Order created successfully!");
       form.resetFields();
