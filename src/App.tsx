@@ -12,6 +12,8 @@ import DynamicDocumentsForm from "./pages/documentType";
 import DocumentDetails from "./pages/documentDetails";
 import TranslatorAccount from "./pages/admin/translatorAccount";
 import Translator from "./pages/translatorPage";
+import AssignShipper from "./pages/assignShipper";
+import AssignNotarization from "./pages/AssignNotarization";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,10 +28,6 @@ function App() {
         {
           path: "/register",
           element: <Register />,
-        },
-        {
-          path: "/traslator",
-          element: <Translator />,
         },
       ],
     },
@@ -77,6 +75,18 @@ function App() {
         {
           path: "order/details/:id",
           element: <DocumentDetails />,
+        },
+        {
+          path: "traslator",
+          element: <Translator />,
+        },
+        {
+          path: "assignshipper",
+          element: <AssignShipper />,
+        },
+        {
+          path: "assignNotarization",
+          element: <AssignNotarization />,
         },
       ],
     },

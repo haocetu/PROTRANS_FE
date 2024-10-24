@@ -36,6 +36,9 @@ const items: MenuItem[] = [
   getItem("Order", "order", <ShoppingCartOutlined />),
   getItem("TranslatorAccount", "translatorAccount", <UserOutlined />),
   getItem("Create Order", "createOrder", <FormOutlined />),
+  getItem("Traslator Page", "traslator", <FormOutlined />),
+  getItem("Assign Shipper", "assignshipper", <FormOutlined />),
+  getItem("Assign Notarization", "assignNotarization", <FormOutlined />),
 ];
 
 const DashboardManager: React.FC = () => {

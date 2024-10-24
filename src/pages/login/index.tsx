@@ -17,10 +17,16 @@ function Login() {
     try {
       const response = await api.post("Authentication/Login", values);
 
+      const token = response.data.token; // Assuming response.data.data contains the JWT token
+      localStorage.setItem("token", token);
+
+      localStorage.getItem("token");
+      console.log(localStorage.getItem("token"));
+
       const decoded = jwtDecode(response.data.token);
       dispatch(login(decoded));
       toast.success("Successfull logged in");
-      navigate("/traslator");
+      navigate("/dashboardmanager");
     } catch (error) {
       toast.error("Login Fail");
     }
