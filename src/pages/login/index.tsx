@@ -86,6 +86,7 @@ function Login() {
               prefix={<LockOutlined />}
               placeholder="Password"
               style={{ width: "300px" }}
+              type="password"
             />
           </Form.Item>
 

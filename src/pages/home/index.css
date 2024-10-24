@@ -1,0 +1,89 @@
+.home-content {
+  padding: 0 50px;
+  margin-top: 64px;
+}
+
+.logo {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Hero Section */
+.hero-section {
+  background: #f0f2f5;
+  padding: 50px;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.hero-paragraph {
+  font-size: 20px;
+  margin: 20px 0;
+}
+
+.hero-button {
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+/* Services Section */
+.services-section {
+  padding: 30px 0;
+  text-align: center;
+}
+
+.services-title {
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.service-card {
+  min-height: 300px;
+  text-align: center;
+}
+
+.service-icon {
+  font-size: 48px;
+}
+
+.service-description {
+  margin-top: 20px;
+}
+
+/* Why Choose Us Section */
+.why-choose-us {
+  padding: 30px 0;
+  text-align: center;
+}
+
+.choose-us-title {
+  color: red;
+  font-size: 38px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.choose-us-card {
+  min-height: 420px;
+  text-align: center;
+}
+
+.choose-us-icon {
+  font-size: 48px;
+}
+
+/* Testimonials Section */
+.testimonials-section {
+  padding: 50px 0;
+  text-align: center;
+}
+
+.testimonials-title {
+  font-size: 32px;
+  margin-bottom: 30px;
+}
