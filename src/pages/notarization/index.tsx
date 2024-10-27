@@ -12,12 +12,12 @@ function Notarization() {
   const [dataSource, setDataSource] = useState([]);
   const columns = [
     {
-      title: "Notarization Type",
+      title: "Loại Công Chứng",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Price",
+      title: "Giá",
       dataIndex: "price",
       key: "price",
     },

@@ -16,12 +16,12 @@ function Language() {
   console.log("day la token", token);
   const columns = [
     {
-      title: "Name",
+      title: "Ngôn Ngữ",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Is Deleted",
+      title: "Trạng Thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
       render: (isDeleted) => (isDeleted ? "Yes" : "No"),

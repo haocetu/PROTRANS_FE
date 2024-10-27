@@ -16,17 +16,17 @@ function Translator() {
 
   const columns = [
     {
-      title: "documentId",
+      title: "Tài Liệu Dịch",
       dataIndex: "documentId",
       key: "documentId",
     },
     {
-      title: "deadline",
+      title: "Thời Hạn Nộp",
       dataIndex: "deadline",
       key: "deadline",
     },
     {
-      title: "status",
+      title: "Trạng Thái",
       dataIndex: "status",
       key: "status",
     },

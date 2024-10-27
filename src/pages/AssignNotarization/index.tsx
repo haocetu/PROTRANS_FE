@@ -88,7 +88,7 @@ function AssignNotarization() {
 
   const columns = [
     {
-      title: "First Language",
+      title: "Ngôn Ngữ Gốc",
       dataIndex: "firstLanguageId",
       key: "firstLanguageId",
       render: (firstLanguageId) => {
@@ -103,7 +103,7 @@ function AssignNotarization() {
       },
     },
     {
-      title: "Second Language",
+      title: "Ngôn Ngữ Dịch",
       dataIndex: "secondLanguageId",
       key: "secondLanguageId",
       render: (secondLanguageId) => {
@@ -118,37 +118,37 @@ function AssignNotarization() {
       },
     },
     {
-      title: "code",
+      title: "Mã Đơn Hàng",
       dataIndex: "code",
       key: "code",
     },
     {
-      title: "File Type",
+      title: "Loại Tệp",
       dataIndex: "fileType",
       key: "fileType",
     },
     {
-      title: "pageNumber",
+      title: "Số Trang",
       dataIndex: "pageNumber",
       key: "pageNumber",
     },
     {
-      title: "Number Of Copies",
+      title: "Số bản Copy",
       dataIndex: "numberOfCopies",
       key: "numberOfCopies",
     },
     {
-      title: "Notarization Request",
+      title: "Yêu Cầu Công Chứng",
       dataIndex: "notarizationRequest",
       key: "notarizationRequest",
     },
     {
-      title: "Number Notarizated Copies",
+      title: "Số Bản Copy Công Chứng",
       dataIndex: "numberOfNotarizatedCopies",
       key: "numberOfNotarizatedCopies",
     },
     {
-      title: "notarizationId",
+      title: "Loại Công Chứng",
       dataIndex: "notarizationId",
       key: "notarizationId",
       render: (notarizationId) => {
@@ -163,7 +163,7 @@ function AssignNotarization() {
       },
     },
     {
-      title: "documentTypeId",
+      title: "Loại Tài Liệu",
       dataIndex: "documentTypeId",
       key: "documentTypeId",
       render: (documentTypeId) => {
@@ -178,7 +178,7 @@ function AssignNotarization() {
       },
     },
     {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -230,7 +230,7 @@ function AssignNotarization() {
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}
-        title="Assign Notarization"
+        title="Giao Việc Công Chứng"
         onCancel={() => setIsOpen(false)}
         onOk={() => formVariable.submit()}
       >
@@ -248,7 +248,7 @@ function AssignNotarization() {
             <Select options={shipper} />
           </Form.Item>
           <Form.Item
-            label="numberOfNotarization"
+            label="Số Công Chứng"
             name={"numberOfNotarization"}
             rules={[
               {

@@ -73,32 +73,32 @@ function Order() {
 
   const columns = [
     {
-      title: "fullName",
+      title: "Khách Hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "phoneNumber",
+      title: "Số Điện Thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
     {
-      title: "address",
+      title: "Địa Chỉ",
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "totalPrice",
+      title: "Tổng Giá",
       dataIndex: "totalPrice",
       key: "totalPrice",
     },
     {
-      title: "status",
+      title: "Trạng Thái",
       dataIndex: "status",
       key: "status",
     },
     {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (

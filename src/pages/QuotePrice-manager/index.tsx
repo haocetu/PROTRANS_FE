@@ -56,7 +56,7 @@ function QuotePrice() {
 
   const columns = [
     {
-      title: "FirstLanguage",
+      title: "Ngôn Ngữ Gốc",
       dataIndex: "firstLanguageId", // Use firstLanguageId from QuotePrice data
       key: "firstLanguageId",
       render: (firstLanguageId) => {
@@ -71,7 +71,7 @@ function QuotePrice() {
       },
     },
     {
-      title: "SecondLanguage",
+      title: "Ngôn Ngữ Dịch",
       dataIndex: "secondLanguageId", // Use secondLanguageId from QuotePrice data
       key: "secondLanguageId",
       render: (secondLanguageId) => {
@@ -86,12 +86,12 @@ function QuotePrice() {
       },
     },
     {
-      title: "PricePerPage",
+      title: "Giá",
       dataIndex: "pricePerPage",
       key: "pricePerPage",
     },
     {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
