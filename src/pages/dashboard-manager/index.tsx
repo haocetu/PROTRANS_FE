@@ -30,15 +30,15 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Lanaguages", "language", <TranslationOutlined />),
-  getItem("Quote Price", "quoteprice", <BookOutlined />),
-  getItem("Notarization", "notarization", <AuditOutlined />),
-  getItem("Order", "order", <ShoppingCartOutlined />),
-  getItem("TranslatorAccount", "translatorAccount", <UserOutlined />),
-  getItem("Create Order", "createOrder", <FormOutlined />),
-  getItem("Traslator Page", "traslator", <FormOutlined />),
-  getItem("Assign Shipper", "assignshipper", <FormOutlined />),
-  getItem("Assign Notarization", "assignNotarization", <FormOutlined />),
+  getItem("Ngôn Ngữ", "language", <TranslationOutlined />),
+  getItem("Bảng Giá", "quoteprice", <BookOutlined />),
+  getItem("Loại Công Chứng", "notarization", <AuditOutlined />),
+  getItem("Đơn Hàng", "order", <ShoppingCartOutlined />),
+  getItem("Dịch thuật viên", "translatorAccount", <UserOutlined />),
+  getItem("Tạo đơn hàng", "createOrder", <FormOutlined />),
+  getItem("Trang Dịch thuật Viên", "traslator", <FormOutlined />),
+  getItem("Giao việc vận chuyển", "assignshipper", <FormOutlined />),
+  getItem("Giao Việc Công Chứng", "assignNotarization", <FormOutlined />),
 ];
 
 const DashboardManager: React.FC = () => {

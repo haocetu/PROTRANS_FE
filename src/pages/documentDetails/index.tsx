@@ -83,7 +83,7 @@ function DocumentDetails() {
   //--------------------------------------------------------
   const columns = [
     {
-      title: "First Language",
+      title: "Ngôn Ngữ Gốc",
       dataIndex: "firstLanguageId",
       key: "firstLanguageId",
       render: (firstLanguageId) => {
@@ -98,7 +98,7 @@ function DocumentDetails() {
       },
     },
     {
-      title: "Second Language",
+      title: "Ngôn Ngữ Dịch",
       dataIndex: "secondLanguageId",
       key: "secondLanguageId",
       render: (secondLanguageId) => {
@@ -113,42 +113,42 @@ function DocumentDetails() {
       },
     },
     {
-      title: "code",
+      title: "Mã",
       dataIndex: "code",
       key: "code",
     },
     {
-      title: "Url Path",
+      title: "Tệp",
       dataIndex: "urlPath",
       key: "urlPath",
     },
     {
-      title: "File Type",
+      title: "Loại Tài Liệu",
       dataIndex: "fileType",
       key: "fileType",
     },
     {
-      title: "Page Number",
+      title: "Số Trang",
       dataIndex: "pageNumber",
       key: "pageNumber",
     },
     {
-      title: "Number Copies",
+      title: "Số Trang Công Chứng",
       dataIndex: "numberOfCopies",
       key: "numberOfCopies",
     },
     {
-      title: "Notarization",
+      title: "Yêu Cầu Công Chứng",
       dataIndex: "notarizationRequest",
       key: "notarizationRequest",
     },
     {
-      title: "Number Notarizated Copies",
+      title: "Số bản Photo Công Chứng",
       dataIndex: "numberOfNotarizatedCopies",
       key: "numberOfNotarizatedCopies",
     },
     {
-      title: "notarization Type",
+      title: "Loại Công Chứng",
       dataIndex: "notarizationId",
       key: "notarizationId",
       render: (notarizationId) => {
@@ -163,7 +163,7 @@ function DocumentDetails() {
       },
     },
     {
-      title: "Document Type",
+      title: "Loại Tài Liệu",
       dataIndex: "documentTypeId",
       key: "documentTypeId",
       render: (documentTypeId) => {
@@ -178,17 +178,17 @@ function DocumentDetails() {
       },
     },
     {
-      title: "Translation Status",
+      title: "Trạng Thái Dịch",
       dataIndex: "translationStatus",
       key: "translationStatus",
     },
     {
-      title: "Notarization Status",
+      title: "Trạng Thái Công Chứng",
       dataIndex: "notarizationStatus",
       key: "notarizationStatus",
     },
     {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -298,7 +298,7 @@ function DocumentDetails() {
       ></Table>
       <Modal
         open={isOpen}
-        title="Assign A Translator "
+        title="Giao Việc Dịch "
         onCancel={() => setIsOpen(false)}
         onOk={() => {
           formVariable.submit();
@@ -306,7 +306,7 @@ function DocumentDetails() {
       >
         <Form form={formVariable} onFinish={handlesubmitAssignTrans}>
           <Form.Item
-            label="Translator"
+            label="Người Dịch"
             name={"translatorId"}
             rules={[
               {
@@ -318,7 +318,7 @@ function DocumentDetails() {
             <Select options={translator} />
           </Form.Item>
           <Form.Item
-            label="deadline"
+            label="Thời Gian Dịch"
             name={"deadline"}
             rules={[
               {

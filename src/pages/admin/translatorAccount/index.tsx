@@ -3,37 +3,37 @@ import { Table } from "antd";
 function TranslatorAccount() {
   const columns = [
     {
-      title: "userName",
+      title: "Tên Người Dùng",
       dataIndex: "userName",
       key: "userName",
     },
     {
-      title: "fullName",
+      title: "Tên Đầy Đủ",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "code",
+      title: "Mã Nhân Viên",
       dataIndex: "code",
       key: "code",
     },
     {
-      title: "email",
+      title: "Email",
       dataIndex: "email",
       key: "email",
     },
     {
-      title: "address",
+      title: "Địa Chỉ",
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "role",
+      title: "Vai Trò",
       dataIndex: "role",
       key: "role",
     },
     {
-      title: "Status",
+      title: "Trạng Thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
       render: (isDeleted) => (isDeleted ? "Stop" : "Active"),
