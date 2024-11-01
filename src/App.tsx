@@ -14,6 +14,9 @@ import TranslatorAccount from "./pages/admin/translatorAccount";
 import Translator from "./pages/translatorPage";
 import AssignShipper from "./pages/assignShipper";
 import AssignNotarization from "./pages/AssignNotarization";
+import StaffAccount from "./pages/admin/staffAccount";
+import ShipperAndStaff from "./pages/admin/createShipperandStaff";
+import ShipperAcccount from "./pages/admin/shipperAccount";
 
 function App() {
   const router = createBrowserRouter([
@@ -87,6 +90,18 @@ function App() {
         {
           path: "assignNotarization",
           element: <AssignNotarization />,
+        },
+        {
+          path: "staffaccount",
+          element: <StaffAccount />,
+        },
+        {
+          path: "createstaffandshipper",
+          element: <ShipperAndStaff />,
+        },
+        {
+          path: "shipperaccount",
+          element: <ShipperAcccount />,
         },
       ],
     },
