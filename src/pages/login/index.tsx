@@ -26,7 +26,7 @@ function Login() {
       const decoded = jwtDecode(response.data.token);
       dispatch(login(decoded));
       toast.success("Successfull logged in");
-      navigate("/dashboardmanager");
+      navigate("/");
     } catch (error) {
       toast.error("Login Fail");
     }
