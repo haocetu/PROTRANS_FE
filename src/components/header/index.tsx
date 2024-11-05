@@ -23,9 +23,25 @@ function Header() {
     if (key === "ManagerPage") {
       navigate("/dashboardmanager");
     }
+    if (key === "AdminPage") {
+      navigate("/dashboardadmin");
+    }
+    if (key === "TranslatorPage") {
+      navigate("/traslator");
+    }
   };
 
   const items: MenuProps["items"] = [
+    {
+      label: "Translator Page",
+      key: "TranslatorPage",
+      icon: <UserOutlined />,
+    },
+    {
+      label: "Admin Page",
+      key: "AdminPage",
+      icon: <UserOutlined />,
+    },
     {
       label: "Manager Page",
       key: "ManagerPage",

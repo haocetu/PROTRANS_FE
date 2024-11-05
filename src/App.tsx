@@ -14,9 +14,10 @@ import TranslatorAccount from "./pages/admin/translatorAccount";
 import Translator from "./pages/translatorPage";
 import AssignShipper from "./pages/assignShipper";
 import AssignNotarization from "./pages/AssignNotarization";
-import StaffAccount from "./pages/admin/staffAccount";
 import ShipperAndStaff from "./pages/admin/createShipperandStaff";
 import ShipperAcccount from "./pages/admin/shipperAccount";
+import DashboardAdmin from "./pages/dashboard-admin";
+import StaffAccount from "./pages/admin/staffAccount";
 
 function App() {
   const router = createBrowserRouter([
@@ -31,6 +32,10 @@ function App() {
         {
           path: "/register",
           element: <Register />,
+        },
+        {
+          path: "/traslator",
+          element: <Translator />,
         },
       ],
     },
@@ -68,10 +73,6 @@ function App() {
           element: <Order />,
         },
         {
-          path: "translatorAccount",
-          element: <TranslatorAccount />,
-        },
-        {
           path: "createOrder",
           element: <DynamicDocumentsForm />,
         },
@@ -80,16 +81,26 @@ function App() {
           element: <DocumentDetails />,
         },
         {
-          path: "traslator",
-          element: <Translator />,
-        },
-        {
           path: "assignshipper",
           element: <AssignShipper />,
         },
         {
           path: "assignNotarization",
           element: <AssignNotarization />,
+        },
+      ],
+    },
+    {
+      path: "dashboardadmin",
+      element: <DashboardAdmin />,
+      children: [
+        {
+          path: "translatorAccount",
+          element: <TranslatorAccount />,
+        },
+        {
+          path: "traslator",
+          element: <Translator />,
         },
         {
           path: "staffaccount",

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import {
-  AuditOutlined,
-  BookOutlined,
-  FormOutlined,
-  ShoppingCartOutlined,
-  TranslationOutlined,
+  DesktopOutlined,
+  FileOutlined,
+  PieChartOutlined,
+  TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
@@ -25,22 +24,18 @@ function getItem(
     key,
     icon,
     children,
-    label: <Link to={`/dashboardmanager/${key}`}>{label}</Link>,
+    label: <Link to={`/dashboardadmin/${key}`}>{label}</Link>,
   } as MenuItem;
 }
 
 const items: MenuItem[] = [
-  getItem("Ngôn Ngữ", "language", <TranslationOutlined />),
-  getItem("Bảng Giá", "quoteprice", <BookOutlined />),
-  getItem("Loại Công Chứng", "notarization", <AuditOutlined />),
-  getItem("Đơn Hàng", "order", <ShoppingCartOutlined />),
-  getItem("Tạo đơn hàng", "createOrder", <FormOutlined />),
-  getItem("Trang Dịch thuật Viên", "traslator", <FormOutlined />),
-  getItem("Giao việc vận chuyển", "assignshipper", <FormOutlined />),
-  getItem("Giao Việc Công Chứng", "assignNotarization", <FormOutlined />),
+  getItem("Nhân Viên", "staffaccount", <UserOutlined />),
+  getItem("tạo tài khoản nhân viên", "createstaffandshipper", <UserOutlined />),
+  getItem("Người vận chuyển", "shipperaccount", <UserOutlined />),
+  getItem("Dịch thuật viên", "translatorAccount", <UserOutlined />),
 ];
 
-const DashboardManager: React.FC = () => {
+const DashboardAdmin: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -65,7 +60,7 @@ const DashboardManager: React.FC = () => {
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>Manager</Breadcrumb.Item>
+            <Breadcrumb.Item>Admin</Breadcrumb.Item>
             <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
           </Breadcrumb>
           <div
@@ -87,4 +82,4 @@ const DashboardManager: React.FC = () => {
   );
 };
 
-export default DashboardManager;
+export default DashboardAdmin;
