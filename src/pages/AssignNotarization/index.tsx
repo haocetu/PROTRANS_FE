@@ -141,11 +141,12 @@ function AssignNotarization() {
       title: "Yêu Cầu Công Chứng",
       dataIndex: "notarizationRequest",
       key: "notarizationRequest",
+      render: (text) => (text ? "Có" : "Không"),
     },
     {
       title: "Số Bản Copy Công Chứng",
-      dataIndex: "numberOfNotarizatedCopies",
-      key: "numberOfNotarizatedCopies",
+      dataIndex: "numberOfNotarizedCopies",
+      key: "numberOfNotarizedCopies",
     },
     {
       title: "Loại Công Chứng",

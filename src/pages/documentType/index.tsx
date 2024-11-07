@@ -119,7 +119,7 @@ const DynamicDocumentsForm = () => {
             pageNumber: null,
             numberOfCopies: 1,
             notarizationRequest: false,
-            numberOfNotarizatedCopies: null,
+            numberOfNotarizedCopies: null,
             notarizationId: null,
             documentTypeId: null,
           },
@@ -344,8 +344,8 @@ const DynamicDocumentsForm = () => {
                   <Col span={4}>
                     <Form.Item
                       {...restField}
-                      name={[name, "numberOfNotarizatedCopies"]}
-                      fieldKey={[fieldKey, "numberOfNotarizatedCopies"]}
+                      name={[name, "numberOfNotarizedCopies"]}
+                      fieldKey={[fieldKey, "numberOfNotarizedCopies"]}
                       rules={[
                         {
                           required: true,

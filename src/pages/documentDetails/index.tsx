@@ -142,11 +142,12 @@ function DocumentDetails() {
       title: "Yêu Cầu Công Chứng",
       dataIndex: "notarizationRequest",
       key: "notarizationRequest",
+      render: (text) => (text ? "Có" : "Không"),
     },
     {
       title: "Số bản Photo Công Chứng",
-      dataIndex: "numberOfNotarizatedCopies",
-      key: "numberOfNotarizatedCopies",
+      dataIndex: "numberOfNotarizedCopies",
+      key: "numberOfNotarizedCopies",
     },
     {
       title: "Loại Công Chứng",
