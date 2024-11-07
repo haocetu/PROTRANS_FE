@@ -18,6 +18,7 @@ import ShipperAndStaff from "./pages/admin/createShipperandStaff";
 import ShipperAcccount from "./pages/admin/shipperAccount";
 import DashboardAdmin from "./pages/dashboard-admin";
 import StaffAccount from "./pages/admin/staffAccount";
+import SendRequest from "./pages/staff/sendrequest/indes";
 
 function App() {
   const router = createBrowserRouter([
@@ -36,6 +37,10 @@ function App() {
         {
           path: "/traslator",
           element: <Translator />,
+        },
+        {
+          path: "/sendrequest",
+          element: <SendRequest />,
         },
       ],
     },
