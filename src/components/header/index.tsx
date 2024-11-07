@@ -72,7 +72,7 @@ function Header() {
       <ul className="header__navigation">
         <li>Giới Thiệu</li>
         <li>Dịch Thuật</li>
-        <li>Phiên Dịch</li>
+        <li onClick={() => navigate("/sendrequest")}>Gửi yêu cầu</li>
         <li>Chuyên Ngành</li>
         <li>Bảng Giá</li>
       </ul>
