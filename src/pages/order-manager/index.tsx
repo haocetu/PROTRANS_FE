@@ -113,18 +113,18 @@ function Order() {
     },
   ];
 
-  async function handleSubmit(values) {
-    try {
-      const response = await api.post("Order", values);
+  // async function handleSubmit(values) {
+  //   try {
+  //     const response = await api.post("Order", values);
 
-      console.log(response.data.data);
-      setDataSource([...dataSource, response.data.data]);
-      formVariable.resetFields();
-      setIsOpen(false);
-    } catch (error) {
-      toast.error("Create Order Fail");
-    }
-  }
+  //     console.log(response.data.data);
+  //     setDataSource([...dataSource, response.data.data]);
+  //     formVariable.resetFields();
+  //     setIsOpen(false);
+  //   } catch (error) {
+  //     toast.error("Create Order Fail");
+  //   }
+  // }
 
   async function fetchOrder() {
     const response = await api.get("Order");
@@ -137,16 +137,16 @@ function Order() {
   }, []);
   return (
     <div className="orderPage">
-      <Button
+      {/* <Button
         type="primary"
         onClick={() => {
           setIsOpen(true);
         }}
       >
         Add New Order
-      </Button>
+      </Button> */}
       <Table columns={columns} dataSource={dataSource}></Table>
-      <Modal
+      {/* <Modal
         open={isOpen}
         title="Add New Order"
         onCancel={() => {
@@ -318,7 +318,7 @@ function Order() {
             <Select options={documentType} />
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

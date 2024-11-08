@@ -30,11 +30,11 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Request", "quoteprice", <BookOutlined />),
+  getItem("Quản lí yêu cầu", "requestmanager", <BookOutlined />),
   getItem("Đơn hàng Online", "notarization", <AuditOutlined />),
-  getItem("Tạo Đơn hàng Online", "order", <ShoppingCartOutlined />),
+  getItem("Tạo Đơn hàng Online", "orderonline", <ShoppingCartOutlined />),
   getItem("Tạo đơn hàng", "document", <FormOutlined />),
-  getItem("Đơn hàng Offline", "traslator", <FormOutlined />),
+  getItem("Đơn hàng Offline", "order", <FormOutlined />),
 ];
 
 const DashboardStaff: React.FC = () => {
