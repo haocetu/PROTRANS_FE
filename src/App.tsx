@@ -19,6 +19,8 @@ import ShipperAcccount from "./pages/admin/shipperAccount";
 import DashboardAdmin from "./pages/dashboard-admin";
 import StaffAccount from "./pages/admin/staffAccount";
 import SendRequest from "./pages/staff/sendrequest/indes";
+import DashboardStaff from "./pages/dashboard-staff";
+import RequestManager from "./pages/staff/request-manager";
 
 function App() {
   const router = createBrowserRouter([
@@ -118,6 +120,28 @@ function App() {
         {
           path: "shipperaccount",
           element: <ShipperAcccount />,
+        },
+      ],
+    },
+    {
+      path: "dashboardstaff",
+      element: <DashboardStaff />,
+      children: [
+        {
+          path: "requestmanager",
+          element: <RequestManager />,
+        },
+        {
+          path: "document",
+          element: <DynamicDocumentsForm />,
+        },
+        {
+          path: "order",
+          element: <Order />,
+        },
+        {
+          path: "order/details/:id",
+          element: <DocumentDetails />,
         },
       ],
     },
