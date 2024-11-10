@@ -1,4 +1,12 @@
-import { Form, Input, InputNumber, Modal, Select, Table } from "antd";
+import {
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Table,
+} from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { toast } from "react-toastify";
@@ -141,11 +149,12 @@ function AssignNotarization() {
       title: "Yêu Cầu Công Chứng",
       dataIndex: "notarizationRequest",
       key: "notarizationRequest",
+      render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
     },
     {
       title: "Số Bản Copy Công Chứng",
-      dataIndex: "numberOfNotarizatedCopies",
-      key: "numberOfNotarizatedCopies",
+      dataIndex: "numberOfNotarizedCopies",
+      key: "numberOfNotarizedCopies",
     },
     {
       title: "Loại Công Chứng",
@@ -195,7 +204,7 @@ function AssignNotarization() {
   const handlesubmitNotarization = async (values) => {
     const payload = {
       documentId: selectedDocumentId,
-      numberOfNotarization: values.numberOfNotarization,
+      deadline: values.deadline,
       shipperId: values.shipperId,
     };
 
@@ -248,16 +257,16 @@ function AssignNotarization() {
             <Select options={shipper} />
           </Form.Item>
           <Form.Item
-            label="Số Công Chứng"
-            name={"numberOfNotarization"}
+            label="Thời hạn nộp"
+            name={"deadline"}
             rules={[
               {
                 required: true,
-                message: "Please Input numberOfNotarization",
+                message: "Vui lòng nhập thời hạn nộp",
               },
             ]}
           >
-            <InputNumber />
+            <DatePicker />
           </Form.Item>
         </Form>
       </Modal>

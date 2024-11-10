@@ -1,5 +1,5 @@
+import { CheckOutlined, CloseOutlined, FormOutlined } from "@ant-design/icons";
 import {
-  Button,
   DatePicker,
   Form,
   Input,
@@ -11,15 +11,19 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
-import { CheckOutlined, CloseOutlined, FormOutlined } from "@ant-design/icons";
-import { useForm } from "antd/es/form/Form";
+import { useSelector } from "react-redux";
 import dayjs from "dayjs";
+import { useForm } from "antd/es/form/Form";
+import { toast } from "react-toastify";
 
-function RequestManager() {
+function MyRequest() {
   const [formUpdate] = useForm();
-  const [datasource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [datasource, setDataSource] = useState([]);
   const [idRequest, SetidRequest] = useState("");
+  const account = useSelector((store) => store.user);
+
+  console.log(account.Id);
   const columns = [
     {
       title: "Tên Khách hàng",
@@ -110,58 +114,42 @@ function RequestManager() {
     },
   ];
 
-  // async function handleEditRequest(value) {
-  //   const updateRequest = formUpdate.getFieldsValue();
-  //   console.log("day laf:", updateRequest);
+  async function handleEditRequest(values) {
+    console.log(values);
+    // const updateRequest = formUpdate.getFieldsValue();
+    // updateRequest.pickUpRequest = updateRequest.pickUpRequest ? true : false;
+    // updateRequest.shipRequest = updateRequest.shipRequest ? true : false;
 
-  //   try {
-  //     // Gửi yêu cầu PUT với requestId và payload updateRequest
-  //     const response = await api.put(
-  //       `Request/StaffUpdate?requestId=${idRequest}`,
-  //       value
-  //     );
-
-  //     console.log("Response:", response);
-  //   } catch (error) {
-  //     console.error("Error updating request:", error);
-  //   }
-  // }
-
-  async function handleEditRequest() {
-    const updateRequest = formUpdate.getFieldsValue();
-
-    // Chuyển đổi các giá trị boolean của Switch cho pickUpRequest và shipRequest
-    updateRequest.pickUpRequest = updateRequest.pickUpRequest ? true : false;
-    updateRequest.shipRequest = updateRequest.shipRequest ? true : false;
-
-    console.log(updateRequest);
     try {
-      // Gửi yêu cầu PUT với requestId và payload updateRequest
       const response = await api.put(
-        `Request/StaffUpdate?requestId=${idRequest}`,
-        updateRequest
+        `Request/CustomerUpdate?requestId=${idRequest}`,
+        values
       );
-
-      console.log("Response:", response);
+      console.log(response.data.data);
+      formUpdate.resetFields();
+      setIsOpen(false);
+      fetchMyRequest();
+      toast.success("Xác nhận đơn hàng thành công");
     } catch (error) {
       console.error("Error updating request:", error);
     }
   }
 
-  async function fetchRequest() {
-    const response = await api.get("Request/GetStatusWaitting");
+  async function fetchMyRequest() {
+    const response = await api.get(
+      `Request/GetStatusQuoted?customerId=${account.Id}`
+    );
     console.log("=============================");
     console.log(response.data.data);
     setDataSource(response.data.data);
   }
 
   useEffect(() => {
-    fetchRequest();
+    fetchMyRequest();
   }, []);
   return (
-    <div className="requestmanager">
+    <div className="MyReuqest">
       <Table columns={columns} dataSource={datasource} />
-
       <Modal
         open={isOpen}
         onCancel={() => {
@@ -174,64 +162,6 @@ function RequestManager() {
       >
         <Form form={formUpdate} onFinish={handleEditRequest}>
           <Form.Item
-            label="Thời hạn"
-            name={"deadline"}
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập thời hạn",
-              },
-            ]}
-          >
-            <DatePicker />
-          </Form.Item>
-          <Form.Item
-            label="Giá ước tính"
-            name={"estimatedPrice"}
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập giá ước tính",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Yêu cầu nhận hồ sơ"
-            name={"pickUpRequest"}
-            valuePropName="checked"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập Yêu cầu",
-              },
-            ]}
-          >
-            <Switch
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-              defaultChecked={false}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Yêu cầu giao hồ sơ"
-            name={"shipRequest"}
-            valuePropName="checked"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập Yêu cầu",
-              },
-            ]}
-          >
-            <Switch
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-              defaultChecked={false}
-            />
-          </Form.Item>
-          <Form.Item
             label="Trạng thái"
             name={"status"}
             rules={[
@@ -242,9 +172,8 @@ function RequestManager() {
             ]}
           >
             <Select placeholder="Trạng thái">
-              <Select.Option value="Waitting">Đang xử lí</Select.Option>
-              <Select.Option value="Quoted">Đã báo giá</Select.Option>
-              <Select.Option value="Cancel">Hủy</Select.Option>
+              <Select.Option value="Accept">Chấp nhận</Select.Option>
+              <Select.Option value="Refuse">Từ chối </Select.Option>
             </Select>
           </Form.Item>
         </Form>
@@ -253,4 +182,4 @@ function RequestManager() {
   );
 }
 
-export default RequestManager;
+export default MyRequest;

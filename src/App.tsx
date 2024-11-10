@@ -21,6 +21,7 @@ import StaffAccount from "./pages/admin/staffAccount";
 import SendRequest from "./pages/staff/sendrequest/indes";
 import DashboardStaff from "./pages/dashboard-staff";
 import RequestManager from "./pages/staff/request-manager";
+import MyRequest from "./pages/customer/myrequest";
 
 function App() {
   const router = createBrowserRouter([
@@ -43,6 +44,10 @@ function App() {
         {
           path: "/sendrequest",
           element: <SendRequest />,
+        },
+        {
+          path: "/myrequest",
+          element: <MyRequest />,
         },
       ],
     },
