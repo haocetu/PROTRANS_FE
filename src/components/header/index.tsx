@@ -29,9 +29,25 @@ function Header() {
     if (key === "TranslatorPage") {
       navigate("/traslator");
     }
+    if (key === "StaffPage") {
+      navigate("/dashboardstaff");
+    }
+    if (key === "MyRequest") {
+      navigate("/myrequest");
+    }
   };
 
   const items: MenuProps["items"] = [
+    {
+      label: "My Request Page",
+      key: "MyRequest",
+      icon: <UserOutlined />,
+    },
+    {
+      label: "Staff Page",
+      key: "StaffPage",
+      icon: <UserOutlined />,
+    },
     {
       label: "Translator Page",
       key: "TranslatorPage",
