@@ -23,6 +23,7 @@ import DashboardStaff from "./pages/dashboard-staff";
 import RequestManager from "./pages/staff/request-manager";
 import MyRequest from "./pages/customer/myrequest";
 import CreateOrderOnline from "./pages/staff/createorderonline";
+import QuotePageDesign from "./pages/design/quotePaged";
 
 function App() {
   const router = createBrowserRouter([
@@ -49,6 +50,10 @@ function App() {
         {
           path: "/myrequest",
           element: <MyRequest />,
+        },
+        {
+          path: "/quotePageDesign",
+          element: <QuotePageDesign />,
         },
       ],
     },
