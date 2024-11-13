@@ -140,6 +140,10 @@ function App() {
       element: <DashboardStaff />,
       children: [
         {
+          path: "order/details/:id",
+          element: <DocumentDetails />,
+        },
+        {
           path: "orderonlinemanage",
           element: <OrderOnlineManage />,
         },
