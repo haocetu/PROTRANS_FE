@@ -90,7 +90,7 @@ function Header() {
         <li>Dịch Thuật</li>
         <li onClick={() => navigate("/sendrequest")}>Gửi yêu cầu</li>
         <li>Chuyên Ngành</li>
-        <li>Bảng Giá</li>
+        <li onClick={() => navigate("/quotePageDesign")}>Bảng Giá</li>
       </ul>
       <div className="header__right">
         <div className="header__account">
