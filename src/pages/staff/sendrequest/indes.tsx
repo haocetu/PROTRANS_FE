@@ -39,16 +39,16 @@ function SendRequest() {
     headers: {
       authorization: "authorization-text",
     },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        toast.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        toast.error(`${info.file.name} file upload failed.`);
-      }
-    },
+    // onChange(info) {
+    //   if (info.file.status !== "uploading") {
+    //     console.log(info.file, info.fileList);
+    //   }
+    //   if (info.file.status === "done") {
+    //     toast.success(`${info.file.name} file uploaded successfully`);
+    //   } else if (info.file.status === "error") {
+    //     toast.error(`${info.file.name} file upload failed.`);
+    //   }
+    // },
   };
 
   //-----------------------------------------------
