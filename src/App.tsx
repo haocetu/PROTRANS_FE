@@ -24,6 +24,7 @@ import RequestManager from "./pages/staff/request-manager";
 import MyRequest from "./pages/customer/myrequest";
 import CreateOrderOnline from "./pages/staff/createorderonline";
 import QuotePageDesign from "./pages/design/quotePaged";
+import OrderOnlineManage from "./pages/admin/orderOnline-manage";
 
 function App() {
   const router = createBrowserRouter([
@@ -138,6 +139,10 @@ function App() {
       path: "dashboardstaff",
       element: <DashboardStaff />,
       children: [
+        {
+          path: "orderonlinemanage",
+          element: <OrderOnlineManage />,
+        },
         {
           path: "orderonline",
           element: <CreateOrderOnline />,
