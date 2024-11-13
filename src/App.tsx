@@ -19,6 +19,12 @@ import ShipperAcccount from "./pages/admin/shipperAccount";
 import DashboardAdmin from "./pages/dashboard-admin";
 import StaffAccount from "./pages/admin/staffAccount";
 import SendRequest from "./pages/staff/sendrequest/indes";
+import DashboardStaff from "./pages/dashboard-staff";
+import RequestManager from "./pages/staff/request-manager";
+import MyRequest from "./pages/customer/myrequest";
+import CreateOrderOnline from "./pages/staff/createorderonline";
+import QuotePageDesign from "./pages/design/quotePaged";
+import OrderOnlineManage from "./pages/admin/orderOnline-manage";
 
 function App() {
   const router = createBrowserRouter([
@@ -41,6 +47,14 @@ function App() {
         {
           path: "/sendrequest",
           element: <SendRequest />,
+        },
+        {
+          path: "/myrequest",
+          element: <MyRequest />,
+        },
+        {
+          path: "/quotePageDesign",
+          element: <QuotePageDesign />,
         },
       ],
     },
@@ -118,6 +132,36 @@ function App() {
         {
           path: "shipperaccount",
           element: <ShipperAcccount />,
+        },
+      ],
+    },
+    {
+      path: "dashboardstaff",
+      element: <DashboardStaff />,
+      children: [
+        {
+          path: "orderonlinemanage",
+          element: <OrderOnlineManage />,
+        },
+        {
+          path: "orderonline",
+          element: <CreateOrderOnline />,
+        },
+        {
+          path: "requestmanage",
+          element: <RequestManager />,
+        },
+        {
+          path: "document",
+          element: <DynamicDocumentsForm />,
+        },
+        {
+          path: "order",
+          element: <Order />,
+        },
+        {
+          path: "order/details/:id",
+          element: <DocumentDetails />,
         },
       ],
     },
