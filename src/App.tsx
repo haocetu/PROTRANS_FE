@@ -22,6 +22,7 @@ import SendRequest from "./pages/staff/sendrequest/indes";
 import DashboardStaff from "./pages/dashboard-staff";
 import RequestManager from "./pages/staff/request-manager";
 import MyRequest from "./pages/customer/myrequest";
+import CreateOrderOnline from "./pages/staff/createorderonline";
 
 function App() {
   const router = createBrowserRouter([
@@ -133,7 +134,11 @@ function App() {
       element: <DashboardStaff />,
       children: [
         {
-          path: "requestmanager",
+          path: "orderonline",
+          element: <CreateOrderOnline />,
+        },
+        {
+          path: "requestmanage",
           element: <RequestManager />,
         },
         {
