@@ -3,6 +3,7 @@ import {
   CloseOutlined,
   MinusCircleOutlined,
   PlusOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -16,17 +17,39 @@ import {
   Select,
   Space,
   Switch,
+  Upload,
+  UploadProps,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
 import { toast } from "react-toastify";
+import uploadFileFire from "../../../utils/upload";
 
 function SendRequest() {
   const [formVariable] = useForm();
   const [language, setLanguage] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
+
+  //--------------------------------
+  const props: UploadProps = {
+    name: "file",
+    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    headers: {
+      authorization: "authorization-text",
+    },
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        toast.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === "error") {
+        toast.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
 
   //-----------------------------------------------
   const fetchDocumentType = async () => {
@@ -84,6 +107,16 @@ function SendRequest() {
 
   async function handleSubmit(values) {
     console.log(values);
+    const originFileObj =
+      values.documents[0]?.urlPath?.fileList[0]?.originFileObj;
+    console.log(originFileObj);
+
+    const upFile = await uploadFileFire(originFileObj);
+
+    values.documents[0].urlPath = upFile;
+
+    console.log(values);
+
     try {
       const response = await api.post("Request", values);
       console.log(response.data.data);
@@ -320,7 +353,12 @@ function SendRequest() {
                           ]}
                           label="Đường dẫn"
                         >
-                          <Input placeholder="Đường dẫn" />
+                          {/* <Input placeholder="Đường dẫn" /> */}
+                          <Upload {...props}>
+                            <Button icon={<UploadOutlined />}>
+                              Click to Upload
+                            </Button>
+                          </Upload>
                         </Form.Item>
                       </Col>
                       <Col span={3}>
