@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Switch } from "antd";
+import { Col, Row, Switch, Upload, UploadProps } from "antd";
 import {
   Form,
   Input,
@@ -15,10 +15,12 @@ import {
   MinusCircleOutlined,
   CheckOutlined,
   CloseOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import api from "../../config/api";
 import { toast } from "react-toastify";
+import uploadFileFire from "../../utils/upload";
 
 const DynamicDocumentsForm = () => {
   const [form] = useForm();
@@ -26,7 +28,26 @@ const DynamicDocumentsForm = () => {
   const [documentType, setDocumentType] = useState([]);
   const [language, setLanguage] = useState([]);
   const token = localStorage.getItem("token");
+  //-----------------------------------------
+  const props: UploadProps = {
+    name: "file",
+    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    headers: {
+      authorization: "authorization-text",
+    },
+    // onChange(info) {
+    //   if (info.file.status !== "uploading") {
+    //     console.log(info.file, info.fileList);
+    //   }
+    //   if (info.file.status === "done") {
+    //     toast.success(`${info.file.name} file uploaded successfully`);
+    //   } else if (info.file.status === "error") {
+    //     toast.error(`${info.file.name} file upload failed.`);
+    //   }
+    // },
+  };
 
+  //-----------------------------------------------
   const fetchNotarizationType = async () => {
     const response = await api.get("Notarization");
     const data = response.data.data;
@@ -86,6 +107,15 @@ const DynamicDocumentsForm = () => {
 
   async function handleSubmit(values) {
     console.log("Order", values);
+    const originFileObj =
+      values.documents[0]?.urlPath?.fileList[0]?.originFileObj;
+    console.log(originFileObj);
+
+    const upFile = await uploadFileFire(originFileObj);
+
+    values.documents[0].urlPath = upFile;
+
+    console.log(values);
 
     try {
       const response = await api.post("Order", values, {
@@ -297,7 +327,12 @@ const DynamicDocumentsForm = () => {
                       ]}
                       label="Đường dẫn"
                     >
-                      <Input placeholder="Đường dẫn" />
+                      {/* <Input placeholder="Đường dẫn" /> */}
+                      <Upload {...props}>
+                        <Button icon={<UploadOutlined />}>
+                          Click to Upload
+                        </Button>
+                      </Upload>
                     </Form.Item>
                   </Col>
                   <Col span={3}>
