@@ -51,11 +51,11 @@ function Footer() {
         </Row>
         <Divider orientation="left" className="custom-divider"></Divider>
         <div style={{ textAlign: "center", margin: "20px" }}>
-          ProTrans ©2024 Được phát triển bởi đội ngũ chuyên nghiệp.
+          ProTrans ©2024 được phát triển bởi đội ngũ chuyên nghiệp.
         </div>
         <Divider orientation="left" className="custom-divider"></Divider>
         <div style={{ textAlign: "center", margin: "20px" }}>
-          ProTrans ©2024 Được phát triển bởi đội ngũ chuyên nghiệp.
+          ProTrans ©2024 được phát triển bởi đội ngũ chuyên nghiệp.
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ function DocumentDetails() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
   const [selectsecondlanguageId, setSelectsecondlanguageId] = useState(null);
+  const [selectfirstlanguageId, setSelectfirstlanguageId] = useState(null);
   const [dataAssignTrans, setDataAssignTrans] = useState([]);
   //---------------------------------------------------------
   const [loading, setLoading] = useState(false);
@@ -203,7 +204,9 @@ function DocumentDetails() {
       render: (id, data) => (
         <ContainerOutlined
           onClick={() => {
+            console.log(data.firstLanguageId);
             console.log(data.secondLanguageId);
+            setSelectfirstlanguageId(data.firstLanguageId);
             setSelectsecondlanguageId(data.secondLanguageId);
             setSelectedDocumentId(id);
             setIsOpen(true);
@@ -224,10 +227,10 @@ function DocumentDetails() {
   // }, []);
 
   //----------------------Điều Phối-----------------------------------//
-  const fetchTranslator = async (selectsecondlanguageId) => {
+  const fetchTranslator = async (selectfirstlanguageId, selectsecondlanguageId) => {
     try {
       const response = await api.get(
-        `Account/GetByLanguageId?id=${selectsecondlanguageId}`
+        `Account/GetBy2LanguageId?firstLanguageId=${selectfirstlanguageId}&secondLanguageId=${selectsecondlanguageId}`
       );
       const data = Array.isArray(response.data.data)
         ? response.data.data
@@ -246,8 +249,8 @@ function DocumentDetails() {
   };
 
   useEffect(() => {
-    fetchTranslator(selectsecondlanguageId);
-  }, [selectsecondlanguageId]);
+    fetchTranslator(selectfirstlanguageId, selectsecondlanguageId);
+  }, [selectfirstlanguageId, selectsecondlanguageId]);
   //---------------------AssignmentTranslation--------------------------------//
 
   async function fetchAssignmentTranslation() {
