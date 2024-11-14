@@ -2,7 +2,7 @@ import { Button, DatePicker, Form, Input, Modal, Select, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { useParams } from "react-router-dom";
-import { ContainerOutlined } from "@ant-design/icons";
+import { ContainerOutlined, FileZipOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 
@@ -122,6 +122,14 @@ function DocumentDetails() {
       title: "Tệp",
       dataIndex: "urlPath",
       key: "urlPath",
+      render: (urlPath) => {
+        // Check if there is a URL to render
+        return urlPath ? (
+          <a href={urlPath} target="_blank" rel="noopener noreferrer">
+            <FileZipOutlined />
+          </a>
+        ) : null;
+      },
     },
     {
       title: "Loại Tài Liệu",
