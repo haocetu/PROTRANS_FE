@@ -127,7 +127,7 @@ const DynamicDocumentsForm = () => {
       toast.success("Order created successfully!");
       form.resetFields();
     } catch (error) {
-      toast.error("Create Order Fail");
+      toast.error("Fail to create order. " + error.response.data.message);
     }
   }
 
@@ -149,6 +149,7 @@ const DynamicDocumentsForm = () => {
             pageNumber: null,
             numberOfCopies: 1,
             notarizationRequest: false,
+            shipRequest: false,
             numberOfNotarizedCopies: null,
             notarizationId: null,
             documentTypeId: null,
@@ -183,13 +184,33 @@ const DynamicDocumentsForm = () => {
         </Col>
       </Row>
       <Row gutter={16}>
-        <Col span={12}>
+        <Col span={8}>
           <Form.Item
             label="Địa chỉ"
             name="address"
             rules={[{ required: true, message: "Please enter your address!" }]}
           >
             <Input placeholder="Địa chỉ" />
+          </Form.Item>
+        </Col>
+        <Col span={4}>
+          <Form.Item
+            name="shipRequest"
+            valuePropName="checked"
+            label="Yêu cầu giao hàng"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <Switch
+              checkedChildren={<CheckOutlined />}
+              unCheckedChildren={<CloseOutlined />}
+              defaultChecked={false}
+            />
           </Form.Item>
         </Col>
       </Row>
