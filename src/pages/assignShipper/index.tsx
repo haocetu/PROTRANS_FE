@@ -93,7 +93,7 @@ function AssignShipper() {
   }, []);
 
   async function fetchOrder() {
-    const response = await api.get("Order");
+    const response = await api.get("Order/GetCompletedOrders");
     console.log(response.data.data);
     setDataSource(response.data.data);
   }

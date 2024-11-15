@@ -107,15 +107,23 @@ function SendRequest() {
 
   async function handleSubmit(values) {
     console.log(values);
-    const originFileObj =
-      values.documents[0]?.urlPath?.fileList[0]?.originFileObj;
-    console.log(originFileObj);
 
-    const upFile = await uploadFileFire(originFileObj);
+    // const originFileObj =
+    //   values.documents[0]?.urlPath?.file?.originFileObj || null;
 
-    values.documents[0].urlPath = upFile;
+    // if (originFileObj) {
+    //   const upFile = await uploadFileFire(originFileObj);
+    //   values.documents[0].urlPath = upFile;
+    // }
 
-    console.log(values);
+    for (let i = 0; i < values.documents.length; i++) {
+      const document = values.documents[i];
+      if (document?.urlPath?.file?.originFileObj) {
+        const originFileObj = document.urlPath.file.originFileObj;
+        const upFile = await uploadFileFire(originFileObj); // Upload each file individually
+        values.documents[i].urlPath = upFile; // Ensure each document gets a unique URL
+      }
+    }
 
     try {
       const response = await api.post("Request", values);
