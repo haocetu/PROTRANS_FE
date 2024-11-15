@@ -227,7 +227,12 @@ function DocumentDetails() {
   // }, []);
 
   //----------------------Điều Phối-----------------------------------//
-  const fetchTranslator = async (selectfirstlanguageId, selectsecondlanguageId) => {
+  const fetchTranslator = async (
+    selectfirstlanguageId,
+    selectsecondlanguageId
+  ) => {
+    console.log(selectfirstlanguageId);
+    console.log(selectsecondlanguageId);
     try {
       const response = await api.get(
         `Account/GetBy2LanguageId?firstLanguageId=${selectfirstlanguageId}&secondLanguageId=${selectsecondlanguageId}`
@@ -242,6 +247,7 @@ function DocumentDetails() {
         label: <span>{Account.fullName}</span>,
       }));
 
+      console.log(list);
       setTranslator(list);
     } catch (error) {
       console.log(error);
