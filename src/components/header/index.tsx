@@ -7,7 +7,7 @@ import { logout } from "../../redux/features/userSlice";
 
 function Header() {
   const navigate = useNavigate();
-  const account = useSelector((store) => store.user);
+  const account = useSelector((store) => store.accountmanage);
   const dispatch = useDispatch();
 
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
