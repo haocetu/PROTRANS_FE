@@ -1,33 +1,33 @@
 import { Button, DatePicker, Form, Input, Modal, Select, Table } from "antd";
-import { useEffect, useState } from "react";
 import api from "../../config/api";
-import { TruckOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { SnippetsOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 
-function AssignShipper() {
+function AssignHardCopy() {
   const [formVariable] = useForm();
   const [dataSource, setDataSource] = useState([]);
-  const [dataAssignshipper, setDataAssignShipper] = useState([]);
+  const [dataPickHardCopy, setdataPickHardCopy] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [shipper, setShipper] = useState([]);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const [selectedAgencyId, setSelectedAgencyId] = useState(null);
   const [agency, setAgency] = useState([]);
-
+  const [shipper, setShipper] = useState([]);
+  const [selectedAgencyId, setSelectedAgencyId] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  //--------------------------------------
   const fetchAgency = async () => {
     const response = await api.get("Agency");
     const data = response.data.data;
     console.log({ data });
 
-    const list = data.map((agen) => ({
-      value: agen.id,
-      label: <span>{agen.name}</span>,
+    const list = data.map((agency) => ({
+      value: agency.id,
+      label: <span>{agency.name}</span>,
     }));
 
     setAgency(list);
   };
-
+  //------------------------
   const columns = [
     {
       title: "Khách Hàng",
@@ -45,7 +45,12 @@ function AssignShipper() {
       key: "address",
     },
     {
-      title: "Chi nhánh",
+      title: "Thời hạn ",
+      dataIndex: "deadline",
+      key: "deadline",
+    },
+    {
+      title: "Chi nhánh ",
       dataIndex: "agencyId",
       key: "agencyId",
       render: (agencyId) => {
@@ -53,8 +58,8 @@ function AssignShipper() {
         if (!agency || agency.length === 0) return null;
 
         // Find the category by ID and return its name
-        const foundAgency = agency.find((agen) => agen.value === agencyId);
-        return foundAgency ? foundAgency.label : null;
+        const foundagency = agency.find((agen) => agen.value === agencyId);
+        return foundagency ? foundagency.label : null;
       },
     },
     {
@@ -63,7 +68,7 @@ function AssignShipper() {
       key: "totalPrice",
     },
     {
-      title: "Trạng Thái Đơn Hàng",
+      title: "Trạng Thái",
       dataIndex: "status",
       key: "status",
     },
@@ -72,39 +77,18 @@ function AssignShipper() {
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
-        <TruckOutlined
+        <SnippetsOutlined
           type="primary"
-          style={{ fontSize: "25px", color: "orange" }}
+          style={{ fontSize: "20px", color: "orange" }}
           onClick={() => {
             setIsOpen(true);
-            setSelectedOrderId(id);
             setSelectedAgencyId(data.agencyId);
+            setSelectedOrderId(id);
           }}
         />
       ),
     },
   ];
-  
-  async function handleSubmit(values) {
-    const payload = {
-      shipperId: values.shipperId,
-      orderId: selectedOrderId,
-      deadline: values.deadline,
-    };
-    console.log(payload);
-    try {
-      const response = await api.post("AssignmentShipping/Ship", payload);
-
-      console.log(response.data.data);
-      setDataAssignShipper([...dataAssignshipper, response.data.data]);
-      formVariable.resetFields();
-      setIsOpen(false);
-      toast.success("Giao việc thành công");
-    } catch (error) {
-      toast.error("Giao việc shipper thất bại");
-    }
-  }
-
   const fetchShipper = async () => {
     const response = await api.get(
       `Account/GetAllShipperByAgencyId?agencyId=${selectedAgencyId}`
@@ -116,8 +100,12 @@ function AssignShipper() {
       value: ship.id,
       label: (
         <span>
-          <strong>{ship.fullName}</strong> <br />
-          <small style={{ color: "#888" }}>{ship.agencyName}</small>
+          <strong>
+            {ship.fullName}
+            {"-"}
+            <small style={{ color: "#888" }}>{ship.agencyName}</small>
+          </strong>{" "}
+          <br />
         </span>
       ),
     }));
@@ -125,8 +113,28 @@ function AssignShipper() {
     setShipper(list);
   };
 
+  async function handleSubmit(values) {
+    const payload = {
+      shipperId: values.shipperId,
+      orderId: selectedOrderId,
+      deadline: values.deadline,
+    };
+    console.log(payload);
+    try {
+      const response = await api.post("AssignmentShipping/Ship", payload);
+
+      console.log(response.data.data);
+      setdataPickHardCopy([...dataPickHardCopy, response.data.data]);
+      formVariable.resetFields();
+      setIsOpen(false);
+      toast.success("Giao việc thành công");
+    } catch (error) {
+      toast.error("Giao việc shipper thất bại");
+    }
+  }
+
   async function fetchOrder() {
-    const response = await api.get("Order/GetCompletedOrders");
+    const response = await api.get("Order/GetOrdersToPickUp");
     console.log(response.data.data);
     setDataSource(response.data.data);
   }
@@ -141,38 +149,19 @@ function AssignShipper() {
   }, []);
 
   return (
-    <div className="AssignShipper">
+    <div className="AssignmentHardCopy">
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}
-        onCancel={() => {
-          setIsOpen(false);
-        }}
+        title="Giao Đi Lấy Bản Cứng"
+        onCancel={() => setIsOpen(false)}
         onOk={() => formVariable.submit()}
       >
         <Form form={formVariable} onFinish={handleSubmit}>
-          <Form.Item
-            label="Người vận chuyển"
-            name={"shipperId"}
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng cập nhập Người vận chuyển",
-              },
-            ]}
-          >
+          <Form.Item label="người vận chuyển" name={"shipperId"}>
             <Select options={shipper} />
           </Form.Item>
-          <Form.Item
-            label="Thời gian giao"
-            name={"deadline"}
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng cập nhập ảnh",
-              },
-            ]}
-          >
+          <Form.Item label="Thời hạn" name={"deadline"}>
             <DatePicker />
           </Form.Item>
         </Form>
@@ -181,4 +170,4 @@ function AssignShipper() {
   );
 }
 
-export default AssignShipper;
+export default AssignHardCopy;

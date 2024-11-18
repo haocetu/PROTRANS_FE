@@ -25,6 +25,7 @@ import MyRequest from "./pages/customer/myrequest";
 import CreateOrderOnline from "./pages/staff/createorderonline";
 import QuotePageDesign from "./pages/design/quotePaged";
 import OrderOnlineManage from "./pages/admin/orderOnline-manage";
+import AssignHardCopy from "./pages/assignmentHardCopy";
 
 function App() {
   const router = createBrowserRouter([
@@ -71,6 +72,10 @@ function App() {
       path: "dashboardmanager",
       element: <DashboardManager />,
       children: [
+        {
+          path: "assignhardcopy",
+          element: <AssignHardCopy />,
+        },
         {
           path: "language",
           element: <Language />,
