@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Select, Table } from "antd";
+import { Button, DatePicker, Form, Input, Modal, Select, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { TruckOutlined } from "@ant-design/icons";
@@ -12,6 +12,21 @@ function AssignShipper() {
   const [isOpen, setIsOpen] = useState(false);
   const [shipper, setShipper] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedAgencyId, setSelectedAgencyId] = useState(null);
+  const [agency, setAgency] = useState([]);
+
+  const fetchAgency = async () => {
+    const response = await api.get("Agency");
+    const data = response.data.data;
+    console.log({ data });
+
+    const list = data.map((agen) => ({
+      value: agen.id,
+      label: <span>{agen.name}</span>,
+    }));
+
+    setAgency(list);
+  };
 
   const columns = [
     {
@@ -28,6 +43,19 @@ function AssignShipper() {
       title: "Địa Chỉ",
       dataIndex: "address",
       key: "address",
+    },
+    {
+      title: "Chi nhánh",
+      dataIndex: "agencyId",
+      key: "agencyId",
+      render: (agencyId) => {
+        // Check if category is available and initialized
+        if (!agency || agency.length === 0) return null;
+
+        // Find the category by ID and return its name
+        const foundAgency = agency.find((agen) => agen.value === agencyId);
+        return foundAgency ? foundAgency.label : null;
+      },
     },
     {
       title: "Tổng Giá",
@@ -50,6 +78,7 @@ function AssignShipper() {
           onClick={() => {
             setIsOpen(true);
             setSelectedOrderId(id);
+            setSelectedAgencyId(data.agencyId);
           }}
         />
       ),
@@ -59,11 +88,11 @@ function AssignShipper() {
     const payload = {
       shipperId: values.shipperId,
       orderId: selectedOrderId,
-      imageUrl: values.imageUrl,
+      deadline: values.deadline,
     };
     console.log(payload);
     try {
-      const response = await api.post("Shipping", payload);
+      const response = await api.post("AssignmentShipping/Ship", payload);
 
       console.log(response.data.data);
       setDataAssignShipper([...dataAssignshipper, response.data.data]);
@@ -76,21 +105,24 @@ function AssignShipper() {
   }
 
   const fetchShipper = async () => {
-    const response = await api.get("Account/GetAllShipper");
+    const response = await api.get(
+      `Account/GetAllShipperByAgencyId?agencyId=${selectedAgencyId}`
+    );
     const data = response.data.data;
     console.log({ data });
 
     const list = data.map((ship) => ({
       value: ship.id,
-      label: <span>{ship.fullName}</span>,
+      label: (
+        <span>
+          <strong>{ship.fullName}</strong> <br />
+          <small style={{ color: "#888" }}>{ship.agencyId}</small>
+        </span>
+      ),
     }));
 
     setShipper(list);
   };
-
-  useEffect(() => {
-    fetchShipper();
-  }, []);
 
   async function fetchOrder() {
     const response = await api.get("Order/GetCompletedOrders");
@@ -99,6 +131,8 @@ function AssignShipper() {
   }
 
   useEffect(() => {
+    fetchAgency();
+    fetchShipper();
     fetchOrder();
   }, []);
 
@@ -126,8 +160,8 @@ function AssignShipper() {
             <Select options={shipper} />
           </Form.Item>
           <Form.Item
-            label="Ảnh"
-            name={"imageUrl"}
+            label="Thời gian giao"
+            name={"deadline"}
             rules={[
               {
                 required: true,
@@ -135,7 +169,7 @@ function AssignShipper() {
               },
             ]}
           >
-            <Input />
+            <DatePicker />
           </Form.Item>
         </Form>
       </Modal>
