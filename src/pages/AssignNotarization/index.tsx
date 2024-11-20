@@ -1,17 +1,22 @@
 import {
+  Button,
   DatePicker,
   Form,
   Input,
   InputNumber,
   Modal,
   Select,
+  Space,
   Table,
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { toast } from "react-toastify";
-import { AuditOutlined } from "@ant-design/icons";
+import { AuditOutlined, FileProtectOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addDocument } from "../../redux/features/documentItem";
 
 function AssignNotarization() {
   const [formVariable] = useForm();
@@ -23,6 +28,25 @@ function AssignNotarization() {
   const [language, setLanguage] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
+  const dispatch = useDispatch();
+
+  //-------------------------------------
+
+  function handlegetValue(e) {
+    console.log(e);
+    console.log("hi");
+    dispatch(
+      addDocument({
+        id: e.id,
+        firstlanguaged: e.firstLanguageId,
+        secondLanguageId: e.secondLanguageId,
+        code: e.id,
+      })
+    );
+    return toast.success("Add Documents Success");
+  }
+
+  //-------------------------------------
 
   const fetchDocumentType = async () => {
     const response = await api.get("DocumentType");
@@ -191,12 +215,21 @@ function AssignNotarization() {
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
-        <AuditOutlined
-          onClick={() => {
-            setIsOpen(true);
-            setSelectedDocumentId(id);
-          }}
-        />
+        <Space>
+          <AuditOutlined
+            onClick={() => {
+              setIsOpen(true);
+              setSelectedDocumentId(id);
+            }}
+          />
+          <Button
+            onClick={() => {
+              handlegetValue(data);
+            }}
+          >
+            Add Task list
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -236,6 +269,10 @@ function AssignNotarization() {
 
   return (
     <div className="AssignNotarizationPage">
+      <Link to="tasknotarizationlist">
+        <FileProtectOutlined style={{ fontSize: "50px", color: "orange" }} />
+      </Link>
+
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}

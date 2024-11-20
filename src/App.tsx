@@ -26,6 +26,7 @@ import CreateOrderOnline from "./pages/staff/createorderonline";
 import QuotePageDesign from "./pages/design/quotePaged";
 import OrderOnlineManage from "./pages/admin/orderOnline-manage";
 import AssignHardCopy from "./pages/assignmentHardCopy";
+import TaskNotarizationList from "./pages/manager/taskNotarizationList";
 
 function App() {
   const router = createBrowserRouter([
@@ -107,6 +108,10 @@ function App() {
         {
           path: "assignshipper",
           element: <AssignShipper />,
+        },
+        {
+          path: "tasknotarizationlist",
+          element: <TaskNotarizationList />,
         },
         {
           path: "assignNotarization",
