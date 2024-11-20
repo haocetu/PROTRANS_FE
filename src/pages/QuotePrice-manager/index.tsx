@@ -11,6 +11,7 @@ import {
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import api from "../../config/api";
 
 function QuotePrice() {
   const [formVariable] = useForm();
@@ -19,7 +20,7 @@ function QuotePrice() {
   const [language, setLanguage] = useState([]);
 
   const fetchLanguages = async () => {
-    const response = await axios.get(`https://localhost:7122/api/Language`);
+    const response = await api.get(`Language`);
     const data = response.data.data;
     console.log({ data });
 
@@ -99,7 +100,7 @@ function QuotePrice() {
           <Popconfirm
             title="Delete Category"
             description="Are you sure to delete this language?"
-            onConfirm={() => handleDeleteLanguage(id)}
+            // onConfirm={() => handleDeleteLanguage(id)}
             okText="Yes"
             cancelText="No"
           >
@@ -111,7 +112,7 @@ function QuotePrice() {
             type="primary"
             style={{ background: "orange" }}
             onClick={() => {
-              setVisibleEditModal(true);
+              // setVisibleEditModal(true);
               formVariable.setFieldsValue(data);
             }}
           >
@@ -123,7 +124,7 @@ function QuotePrice() {
   ];
 
   async function fetchQuotePrice() {
-    const response = await axios.get("https://localhost:7122/api/QuotePrice");
+    const response = await api.get("QuotePrice");
     console.log("=============================");
     console.log(response.data.data);
     setDataSource(response.data.data);
@@ -137,10 +138,7 @@ function QuotePrice() {
     console.log(values);
     try {
       console.log(values);
-      const response = await axios.post(
-        "https://localhost:7122/api/QuotePrice",
-        values
-      );
+      const response = await api.post("QuotePrice", values);
       console.log(response.data.data);
       setDataSource([...dataSource, response.data.data]);
       formVariable.resetFields();

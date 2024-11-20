@@ -1,8 +1,8 @@
 import { Button, Form, Input, Modal, Popconfirm, Space, Table } from "antd";
 import { useForm } from "antd/es/form/Form";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Value } from "sass";
+import api from "../../config/api";
 
 function Notarization() {
   const [formVariable] = useForm();
@@ -49,7 +49,7 @@ function Notarization() {
             style={{ background: "orange" }}
             onClick={() => {
               setVisibleEditModal(true);
-              SetidCategory(id);
+              // SetidCategory(id);
               formVariable.setFieldsValue(data);
             }}
           >
@@ -61,7 +61,7 @@ function Notarization() {
   ];
 
   async function fetchNotarization() {
-    const response = await axios.get("https://localhost:7122/api/Notarization");
+    const response = await api.get("Notarization");
     console.log(response.data.data);
     setDataSource(response.data.data);
   }
@@ -69,33 +69,30 @@ function Notarization() {
   async function handleSubmit(values) {
     console.log(values);
 
-    const response = await axios.post(
-      "https://localhost:7122/api/Notarization",
-      values
-    );
+    const response = await api.post("Notarization", values);
     setDataSource([...dataSource, values]);
     formVariable.resetFields();
     handleHideModal();
   }
 
-  async function handleEditLanguage(value) {
-    const updateCategory = formUpdate.getFieldsValue();
-    console.log(updateCategory);
-    axios
-      .put(`https://localhost:7122/api/Language/${value.id}`, {
-        name: value.name,
-      })
-      .then(() => {
-        fetchLanguage();
-        setVisibleEditModal(false);
-      });
-    console.log("cuong");
-  }
+  // async function handleEditLanguage(value) {
+  //   const updateCategory = formUpdate.getFieldsValue();
+  //   console.log(updateCategory);
+  //   api
+  //     .put(`Language/${value.id}`, {
+  //       name: value.name,
+  //     })
+  //     .then(() => {
+  //       fetchLanguage();
+  //       setVisibleEditModal(false);
+  //     });
+  //   console.log("cuong");
+  // }
 
   const handleDeleteLanguage = async (id) => {
     console.log(id);
 
-    await axios.delete(`https://localhost:7122/api/Notarization/${id}`);
+    await api.delete(`Notarization/${id}`);
 
     const listAfterDelete = dataSource.filter(
       (notarization) => notarization.id != id

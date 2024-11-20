@@ -2,11 +2,14 @@ import { Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { useSelector } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
 
 function Translator() {
   const [dataSource, setDataSource] = useState([]);
-  const UserAccount = useSelector((store) => store.user);
-  const UserAccount2 = useSelector((store) => store.user.Id);
+  const UserAccount = useSelector((store: RootState) => store.accountmanage);
+  const UserAccount2 = useSelector(
+    (store: RootState) => store.accountmanage.Id
+  );
 
   const token = localStorage.getItem("token");
 

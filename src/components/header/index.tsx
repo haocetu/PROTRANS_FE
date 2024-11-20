@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Dropdown, MenuProps, message } from "antd";
 import { logout } from "../../redux/features/userSlice";
+import { RootState } from "../../redux/rootReducer";
 
 function Header() {
   const navigate = useNavigate();
-  const account = useSelector((store) => store.accountmanage);
+  const account = useSelector((store: RootState) => store.accountmanage);
   const dispatch = useDispatch();
 
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {

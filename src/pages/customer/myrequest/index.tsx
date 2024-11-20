@@ -15,13 +15,14 @@ import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
+import { RootState } from "../../../redux/rootReducer";
 
 function MyRequest() {
   const [formUpdate] = useForm();
   const [isOpen, setIsOpen] = useState(false);
   const [datasource, setDataSource] = useState([]);
   const [idRequest, SetidRequest] = useState("");
-  const account = useSelector((store) => store.accountmanage);
+  const account = useSelector((store: RootState) => store.accountmanage);
 
   console.log(account.Id);
   const columns = [

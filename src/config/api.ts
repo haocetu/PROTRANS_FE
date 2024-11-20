@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://localhost:7122/api/", // server BE
+  //baseURL: "https://localhost:7122/api/",
+  baseURL: "https://protrans.azurewebsites.net/api/", // server BE
 });
 
 api.interceptors.request.use(

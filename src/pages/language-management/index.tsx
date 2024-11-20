@@ -3,6 +3,7 @@ import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Value } from "sass";
+import api from "../../config/api";
 
 function Language() {
   const [formVariable] = useForm();
@@ -61,7 +62,7 @@ function Language() {
 
   async function fetchLanguage() {
     console.log("token", token);
-    const response = await axios.get("https://localhost:7122/api/Language");
+    const response = await api.get("Language");
     console.log(response.data.data);
     setDataSource(response.data.data);
   }
@@ -69,10 +70,7 @@ function Language() {
   async function handleSubmit(values) {
     console.log(values);
 
-    const response = await axios.post(
-      "https://localhost:7122/api/Language",
-      values
-    );
+    const response = await api.post("Language", values);
     setDataSource([...dataSource, values]);
     formVariable.resetFields();
     handleHideModal();
@@ -81,8 +79,8 @@ function Language() {
   async function handleEditLanguage(value) {
     const updateCategory = formUpdate.getFieldsValue();
     console.log(updateCategory);
-    axios
-      .put(`https://localhost:7122/api/Language/${value.id}`, {
+    api
+      .put(`Language/${value.id}`, {
         name: value.name,
       })
       .then(() => {
@@ -117,7 +115,7 @@ function Language() {
   const handleDeleteLanguage = async (id) => {
     console.log(id);
 
-    await axios.delete(`https://localhost:7122/api/Language/${id}`);
+    await api.delete(`Language/${id}`);
 
     const listAfterDelete = dataSource.filter((language) => language.id != id);
 
