@@ -21,7 +21,7 @@ function MyRequest() {
   const [isOpen, setIsOpen] = useState(false);
   const [datasource, setDataSource] = useState([]);
   const [idRequest, SetidRequest] = useState("");
-  const account = useSelector((store) => store.user);
+  const account = useSelector((store) => store.accountmanage);
 
   console.log(account.Id);
   const columns = [
