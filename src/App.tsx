@@ -108,6 +108,10 @@ function App() {
           path: "assignshipper",
           element: <AssignShipper />,
         },
+        // {
+        //   path: "tasknotarizationlist",
+        //   element: <TaskNotarizationList />,
+        // },
         {
           path: "assignNotarization",
           element: <AssignNotarization />,

@@ -121,12 +121,13 @@ function AssignHardCopy() {
     };
     console.log(payload);
     try {
-      const response = await api.post("AssignmentShipping/Ship", payload);
+      const response = await api.post("AssignmentShipping/PickUp", payload);
 
       console.log(response.data.data);
       setdataPickHardCopy([...dataPickHardCopy, response.data.data]);
       formVariable.resetFields();
       setIsOpen(false);
+      fetchOrder();
       toast.success("Giao việc thành công");
     } catch (error) {
       toast.error("Giao việc shipper thất bại");

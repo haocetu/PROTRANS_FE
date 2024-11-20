@@ -39,6 +39,7 @@ const items: MenuItem[] = [
   getItem("Giao việc vận chuyển", "assignshipper", <FormOutlined />),
   getItem("Giao Việc Công Chứng", "assignNotarization", <FormOutlined />),
   getItem("Giao Đi nhận bản Cứng", "assignhardcopy", <FormOutlined />),
+  // getItem("Task Notarization List", "tasknotarizationlist", <FormOutlined />),
 ];
 
 const DashboardManager: React.FC = () => {
