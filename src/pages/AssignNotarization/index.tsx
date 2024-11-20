@@ -28,25 +28,25 @@ function AssignNotarization() {
   const [language, setLanguage] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  //-------------------------------------
+  // //-------------------------------------
 
-  function handlegetValue(e) {
-    console.log(e);
-    console.log("hi");
-    dispatch(
-      addDocument({
-        id: e.id,
-        firstlanguaged: e.firstLanguageId,
-        secondLanguageId: e.secondLanguageId,
-        code: e.id,
-      })
-    );
-    return toast.success("Add Documents Success");
-  }
+  // function handlegetValue(e) {
+  //   console.log(e);
+  //   console.log("hi");
+  //   dispatch(
+  //     addDocument({
+  //       id: e.id,
+  //       firstlanguaged: e.firstLanguageId,
+  //       secondLanguageId: e.secondLanguageId,
+  //       code: e.id,
+  //     })
+  //   );
+  //   return toast.success("Add Documents Success");
+  // }
 
-  //-------------------------------------
+  // //-------------------------------------
 
   const fetchDocumentType = async () => {
     const response = await api.get("DocumentType");
@@ -222,13 +222,13 @@ function AssignNotarization() {
               setSelectedDocumentId(id);
             }}
           />
-          <Button
+          {/* <Button
             onClick={() => {
               handlegetValue(data);
             }}
           >
             Add Task list
-          </Button>
+          </Button> */}
         </Space>
       ),
     },
