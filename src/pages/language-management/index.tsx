@@ -179,7 +179,7 @@ function Language() {
         }}
         onOk={() => {
           formUpdate.submit();
-          handleEditLanguage(Value);
+          // handleEditLanguage(Value);
         }}
       >
         <Form form={formUpdate} onFinish={handleSubmit}>
