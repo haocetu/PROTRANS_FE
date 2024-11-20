@@ -49,7 +49,7 @@ function Language() {
             style={{ background: "orange" }}
             onClick={() => {
               setVisibleEditModal(true);
-              SetidCategory(id);
+              //SetidCategory(id);
               formVariable.setFieldsValue(data);
             }}
           >
@@ -76,27 +76,27 @@ function Language() {
     handleHideModal();
   }
 
-  async function handleEditLanguage(value) {
-    const updateCategory = formUpdate.getFieldsValue();
-    console.log(updateCategory);
-    api
-      .put(`Language/${value.id}`, {
-        name: value.name,
-      })
-      .then(() => {
-        fetchLanguage();
-        setVisibleEditModal(false);
-      });
-    console.log("cuong");
-  }
+  // async function handleEditLanguage(value) {
+  //   const updateCategory = formUpdate.getFieldsValue();
+  //   console.log(updateCategory);
+  //   api
+  //     .put(`Language/${value.id}`, {
+  //       name: value.name,
+  //     })
+  //     .then(() => {
+  //       fetchLanguage();
+  //       setVisibleEditModal(false);
+  //     });
+  //   console.log("cuong");
+  // }
   // const handleSubmit = async (values) => {
   //   console.log(values.id);
 
   //   try {
   //     if (values.id) {
   //       //Update
-  //       await axios.put(
-  //         `https://localhost:7122/api/Language/${values.id}`,
+  //       await api.put(
+  //         `Language/${values.id}`,
   //         values
   //       );
   //       console.log("ha1");
