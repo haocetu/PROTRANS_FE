@@ -83,6 +83,7 @@ function Header() {
           alt="logo"
           className="header__logo"
           width={150}
+          onClick={() => navigate("/")}
         />
       </div>
       <ul className="header__navigation">
