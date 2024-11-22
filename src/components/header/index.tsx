@@ -12,7 +12,6 @@ function Header() {
   const dispatch = useDispatch();
 
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    message.info("Click on left button.");
     console.log("click left button", e);
   };
 

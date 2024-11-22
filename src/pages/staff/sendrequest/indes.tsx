@@ -132,7 +132,7 @@ function SendRequest() {
       toast.success("Gửi yêu cầu thành công.");
       formVariable.resetFields();
     } catch (error) {
-      toast.error("Gửi yêu cầu thất bại.");
+      toast.error("Gửi yêu cầu thất bại. " + error.response.data.message);
     }
   }
 
