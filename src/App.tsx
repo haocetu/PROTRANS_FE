@@ -65,7 +65,11 @@ function App() {
         },
         {
           path: "/sendrequest",
-          element: <SendRequest />,
+          element: (
+            <AdminRoute role="Customer">
+              <SendRequest />
+            </AdminRoute>
+          ),
         },
         {
           path: "/myrequest",
