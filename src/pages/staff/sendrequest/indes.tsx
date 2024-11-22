@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import api from "../../../config/api";
 import { toast } from "react-toastify";
 import uploadFileFire from "../../../utils/upload";
+import "./index.scss";
 
 function SendRequest() {
   const [formVariable] = useForm();
@@ -128,16 +129,16 @@ function SendRequest() {
     try {
       const response = await api.post("Request", values);
       console.log(response.data.data);
-      toast.success("tạo yêu cầu thành công");
+      toast.success("Gửi yêu cầu thành công.");
       formVariable.resetFields();
     } catch (error) {
-      toast.error("tạo request thất bại");
+      toast.error("Gửi yêu cầu thất bại.");
     }
   }
 
   return (
     <div className="sendrequest">
-      <div className="sendrequesttop">Trang gửi Yêu Cầu</div>
+      <div className="sendrequesttop">Gửi yêu cầu dịch thuật</div>
       <div className="sendrequestmiddle">
         <Form
           form={formVariable}
@@ -152,9 +153,9 @@ function SendRequest() {
                 firstLanguageId: null,
                 secondLanguageId: null,
                 urlPath: null,
-                fileType: null,
-                pageNumber: null,
-                numberOfCopies: null,
+                fileType: "Soft",
+                pageNumber: 1,
+                numberOfCopies: 1,
                 notarizationRequest: false,
                 numberOfNotarizatedCopies: null,
                 notarizationId: null,
@@ -171,20 +172,22 @@ function SendRequest() {
                 label="Thời gian yêu cầu"
                 name="deadline"
                 rules={[
-                  { required: true, message: "Vui lòng Thời gian yêu cầu!" },
+                  { required: true, message: "Vui lòng chọn thời gian yêu cầu!" },
                 ]}
               >
                 <DatePicker />
               </Form.Item>
             </Col>
-            <Col span={4}>
+          </Row>
+          <Row gutter={16}>
+          <Col span={4}>
               <Form.Item
                 label="Yêu cầu nhận tài liệu"
                 name="pickUpRequest"
                 valuePropName="checked"
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "vui lòng chọn nhận tài liệu",
                   },
                 ]}
@@ -196,15 +199,13 @@ function SendRequest() {
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label="Yêu cầu ship"
+                label="Yêu cầu giao hàng"
                 name="shipRequest"
                 valuePropName="checked"
                 rules={[
-                  { required: true, message: "vui lòng chọn ship tài liệu" },
+                  { required: false, message: "vui lòng chọn ship tài liệu" },
                 ]}
               >
                 <Switch
@@ -315,25 +316,6 @@ function SendRequest() {
                       <Col span={4}>
                         <Form.Item
                           {...restField}
-                          name={[name, "fileType"]}
-                          fieldKey={[fieldKey, "fileType"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "File Type is required",
-                            },
-                          ]}
-                          label="Loại tệp"
-                        >
-                          <Select placeholder="Loại tệp">
-                            <Select.Option value="Hard">Hard</Select.Option>
-                            <Select.Option value="Soft">Soft</Select.Option>
-                          </Select>
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item
-                          {...restField}
                           name={[name, "numberOfCopies"]}
                           fieldKey={[fieldKey, "numberOfCopies"]}
                           rules={[
@@ -359,12 +341,12 @@ function SendRequest() {
                           rules={[
                             { required: true, message: "URL Path is required" },
                           ]}
-                          label="Đường dẫn"
+                          label="Tệp"
                         >
                           {/* <Input placeholder="Đường dẫn" /> */}
                           <Upload {...props}>
                             <Button icon={<UploadOutlined />}>
-                              Click to Upload
+                              Tải lên
                             </Button>
                           </Upload>
                         </Form.Item>
@@ -462,7 +444,7 @@ function SendRequest() {
 
           <Form.Item style={{ display: "flex", justifyContent: "center" }}>
             <Button type="primary" htmlType="submit" style={{ width: "160px" }}>
-              Tạo đơn hàng
+              Gửi yêu cầu
             </Button>
           </Form.Item>
         </Form>
