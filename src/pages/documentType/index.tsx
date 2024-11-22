@@ -124,10 +124,10 @@ const DynamicDocumentsForm = () => {
         },
       });
       console.log(response.data.data);
-      toast.success("Order created successfully!");
+      toast.success("Đơn hàng được tạo thành công!");
       form.resetFields();
     } catch (error) {
-      toast.error("Fail to create order. " + error.response.data.message);
+      toast.error("Tạo đơn hàng không thành công. " + error.response.data.message);
     }
   }
 
