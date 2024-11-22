@@ -25,10 +25,10 @@ function Login() {
 
       const decoded = jwtDecode(response.data.token);
       dispatch(login(decoded));
-      toast.success("Successfull logged in");
+      toast.success("Đăng nhập thành công.");
       navigate("/");
     } catch (error) {
-      toast.error("Login Fail");
+      toast.error("Tên đăng nhập hoặc mật khẩu không hợp lệ.");
     }
   };
   return (
