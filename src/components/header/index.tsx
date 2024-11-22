@@ -2,7 +2,7 @@ import { UserOutlined } from "@ant-design/icons";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Dropdown, MenuProps, message } from "antd";
+import { Button, Dropdown, MenuProps, message } from "antd";
 import { logout } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/rootReducer";
 
@@ -19,7 +19,7 @@ function Header() {
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "logout") {
       dispatch(logout());
-      navigate("/login");
+      navigate("/");
     }
     if (key === "ManagerPage") {
       navigate("/dashboardmanager");
@@ -90,7 +90,18 @@ function Header() {
       <ul className="header__navigation">
         <li>Giới Thiệu</li>
         <li>Dịch Thuật</li>
-        <li onClick={() => navigate("/sendrequest")}>Gửi yêu cầu</li>
+        <li
+          onClick={() => {
+            if (account) {
+              navigate("/sendrequest");
+              window.scrollTo(0, 0);
+            } else {
+              navigate("/login");
+            }
+          }}
+        >
+          Gửi yêu cầu
+        </li>
         <li>Chuyên Ngành</li>
         <li onClick={() => navigate("/quotePageDesign")}>Bảng Giá</li>
       </ul>
@@ -98,14 +109,11 @@ function Header() {
         <div className="header__account">
           {account ? (
             <Dropdown.Button menu={menuProps} onClick={handleButtonClick}>
+              <UserOutlined />
               {account.Username}
             </Dropdown.Button>
           ) : (
-            <UserOutlined
-              size={100}
-              className="icon"
-              onClick={() => navigate("/login")}
-            />
+            <Button onClick={() => navigate("/login")}>Đăng nhập</Button>
           )}
         </div>
       </div>
