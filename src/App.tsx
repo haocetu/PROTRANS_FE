@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Layout from "./components/layout";
 import Home from "./pages/home";
 import Login from "./pages/login";
@@ -26,8 +30,22 @@ import CreateOrderOnline from "./pages/staff/createorderonline";
 import QuotePageDesign from "./pages/design/quotePaged";
 import OrderOnlineManage from "./pages/admin/orderOnline-manage";
 import AssignHardCopy from "./pages/assignmentHardCopy";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { logout } from "./redux/features/userSlice";
 
 function App() {
+  const AdminRoute = ({ children, role }) => {
+    const user = useSelector((store) => store.accountmanage);
+    const dispatch = useDispatch();
+    if (user?.role === role) {
+      return children;
+    } else {
+      toast.error(" Access Denied");
+      dispatch(logout());
+      return <Navigate to="/login" />;
+    }
+  };
   const router = createBrowserRouter([
     {
       path: "",
@@ -39,7 +57,11 @@ function App() {
         },
         {
           path: "/traslator",
-          element: <Translator />,
+          element: (
+            <AdminRoute role="Translator">
+              <Translator />
+            </AdminRoute>
+          ),
         },
         {
           path: "/sendrequest",
@@ -47,7 +69,11 @@ function App() {
         },
         {
           path: "/myrequest",
-          element: <MyRequest />,
+          element: (
+            <AdminRoute role="Customer">
+              <MyRequest />
+            </AdminRoute>
+          ),
         },
         {
           path: "/quotePageDesign",
@@ -70,7 +96,11 @@ function App() {
     },
     {
       path: "dashboardmanager",
-      element: <DashboardManager />,
+      element: (
+        <AdminRoute role="Manager">
+          <DashboardManager />
+        </AdminRoute>
+      ),
       children: [
         {
           path: "assignhardcopy",
@@ -120,7 +150,11 @@ function App() {
     },
     {
       path: "dashboardadmin",
-      element: <DashboardAdmin />,
+      element: (
+        <AdminRoute role="Admin">
+          <DashboardAdmin />
+        </AdminRoute>
+      ),
       children: [
         {
           path: "translatorAccount",
@@ -146,7 +180,11 @@ function App() {
     },
     {
       path: "dashboardstaff",
-      element: <DashboardStaff />,
+      element: (
+        <AdminRoute role="Staff">
+          <DashboardStaff />
+        </AdminRoute>
+      ),
       children: [
         {
           path: "orderonlinemanage/details/:id",
