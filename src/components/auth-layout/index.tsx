@@ -11,7 +11,7 @@ function Authenlayout({ children }: AuthenlayoutProps) {
         display: "flex",
         justifyContent: "center", // Căn giữa theo chiều ngang
         alignItems: "center", // Căn giữa theo chiều dọc
-        backgroundImage: 'url("https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?cs=srgb&dl=pexels-stywo-1054218.jpg&fm=jpg")',
+        backgroundImage: `url('/bank-images/auth_background.jpg')`,
         backgroundSize: "cover", // Đảm bảo hình ảnh bao phủ toàn bộ màn hình
         backgroundPosition: "center", // Căn giữa hình nền
       }}

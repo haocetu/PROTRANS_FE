@@ -38,10 +38,6 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/register",
-          element: <Register />,
-        },
-        {
           path: "/traslator",
           element: <Translator />,
         },
@@ -65,6 +61,10 @@ function App() {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/register",
+          element: <Register />,
         },
       ],
     },
