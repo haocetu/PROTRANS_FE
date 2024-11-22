@@ -33,10 +33,11 @@ import AssignHardCopy from "./pages/assignmentHardCopy";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { logout } from "./redux/features/userSlice";
+import { RootState } from "./redux/rootReducer";
 
 function App() {
   const AdminRoute = ({ children, role }) => {
-    const user = useSelector((store) => store.accountmanage);
+    const user = useSelector((store: RootState) => store.accountmanage);
     const dispatch = useDispatch();
     if (user?.role === role) {
       return children;
