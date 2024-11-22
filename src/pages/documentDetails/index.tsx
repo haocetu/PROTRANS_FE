@@ -255,7 +255,9 @@ function DocumentDetails() {
   };
 
   useEffect(() => {
-    fetchTranslator(selectfirstlanguageId, selectsecondlanguageId);
+    if (selectfirstlanguageId && selectsecondlanguageId) {
+      fetchTranslator(selectfirstlanguageId, selectsecondlanguageId);
+    }
   }, [selectfirstlanguageId, selectsecondlanguageId]);
   //---------------------AssignmentTranslation--------------------------------//
 
@@ -291,14 +293,19 @@ function DocumentDetails() {
 
   //----------------------------------------------------------------------------//
   const fetchDetaildocuments = async () => {
+    setLoading(true);
     try {
       const response = await api.get(`Document/GetByOrderId?id=${id}`);
       const data = Array.isArray(response.data.data)
         ? response.data.data
         : [response.data.data];
-      setDocument(data);
+      if (data.length > 0) {
+        setDocument(data);
+        setLoading(false);
+      }
     } catch (error) {
-      console.log(error);
+      toast.error("Không có dữ liệu");
+      setLoading(false);
     }
   };
 
@@ -308,12 +315,16 @@ function DocumentDetails() {
 
   return (
     <div className="details">
-      <Table
-        columns={columns}
-        dataSource={document}
-        rowKey="id"
-        loading={isFetching}
-      ></Table>
+      {loading ? (
+        "Đang tải"
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={document}
+          rowKey="id"
+          loading={isFetching}
+        ></Table>
+      )}
       <Modal
         open={isOpen}
         title="Giao Việc Dịch "
