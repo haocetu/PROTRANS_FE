@@ -1,7 +1,6 @@
 import { Button, Form, Input, Modal, Popconfirm, Space, Table } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
-import { Value } from "sass";
 import api from "../../config/api";
 
 function Notarization() {
@@ -116,6 +115,7 @@ function Notarization() {
   useEffect(() => {
     fetchNotarization();
   }, []);
+
   return (
     <div className="languagePage">
       <Button

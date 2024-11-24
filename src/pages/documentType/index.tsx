@@ -111,11 +111,20 @@ const DynamicDocumentsForm = () => {
       values.documents[0]?.urlPath?.fileList[0]?.originFileObj;
     console.log(originFileObj);
 
-    const upFile = await uploadFileFire(originFileObj);
+    // const upFile = await uploadFileFire(originFileObj);
 
-    values.documents[0].urlPath = upFile;
+    // values.documents[0].urlPath = upFile;
 
-    console.log(values);
+    // console.log(values);
+
+    for (let i = 0; i < values.documents.length; i++) {
+      const document = values.documents[i];
+      if (document?.urlPath?.file?.originFileObj) {
+        const originFileObj = document.urlPath.file.originFileObj;
+        const upFile = await uploadFileFire(originFileObj); // Upload each file individually
+        values.documents[i].urlPath = upFile; // Ensure each document gets a unique URL
+      }
+    }
 
     try {
       const response = await api.post("Order", values, {
@@ -127,7 +136,9 @@ const DynamicDocumentsForm = () => {
       toast.success("Đơn hàng được tạo thành công!");
       form.resetFields();
     } catch (error) {
-      toast.error("Tạo đơn hàng không thành công. " + error.response.data.message);
+      toast.error(
+        "Tạo đơn hàng không thành công. " + error.response.data.message
+      );
     }
   }
 
