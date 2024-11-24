@@ -75,7 +75,7 @@ const DashboardAdmin: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
+          Protrans ©{new Date().getFullYear()} Created by ProTransTeam
         </Footer>
       </Layout>
     </Layout>
