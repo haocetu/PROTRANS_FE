@@ -8,7 +8,7 @@
 .custom-divider {
   border-color: white;
   width: 80%;
-  margin: 0 auto;
+  margin: 20px auto;
 }
 
 .footer-content {
@@ -22,4 +22,67 @@
   justify-content: center; /* Căn giữa bản đồ */
   margin: 20px 0; /* Khoảng cách trên và dưới */
   margin-top: 0;
+}
+
+.footer-logo {
+  width: 280px;
+  margin-bottom: 20px;
+}
+
+.footer-paragraph {
+  color: white;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.footer-icon {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.footer-note {
+  text-align: center;
+}
+
+.map-frame {
+  border: 0;
+  width: 800px;
+  height: 400px;
+}
+
+.footer-links {
+  margin-top: 60px;
+}
+
+.footer-list {
+  list-style-type: disc;
+  color: white;
+  padding-left: 20px;
+}
+
+.footer-list li {
+  margin-bottom: 8px;
+}
+
+.footer-link {
+  color: white;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: white;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.social-icon {
+  font-size: 32px;
+  margin-right: 14px;
+}
+
+.social-icon:hover {
+  transform: scale(1.2);
+  color: #ff4081;
+  transition: transform 0.3s, color 0.3s;
 }
