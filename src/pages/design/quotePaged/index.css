@@ -20,16 +20,24 @@
 .images {
   width: 850px;
   height: auto;
-  margin-bottom: 20px;
 }
 
-.quote-page h3 {
+.figure {
   text-align: center;
-  align-self: center;
-  align-self: center;
-  justify-content: center;
   font-style: italic;
-  color: white;
-  background-color: #555;
+  background-color: #e8e8e8;
   width: 850px;
+  margin: 0 auto;
+}
+
+.why-choose ul {
+  list-style-type: disc; /* Định dạng kiểu dấu đầu dòng */
+  margin-left: 20px; /* Khoảng cách lề trái cho danh sách */
+}
+
+.why-choose li {
+  text-align: left;
+  margin-bottom: 10px; /* Khoảng cách giữa các mục */
+  font-size: 16px; /* Kích thước chữ cho các mục */
+  line-height: 1.6; /* Tăng giãn dòng để mục dễ đọc hơn */
 }
