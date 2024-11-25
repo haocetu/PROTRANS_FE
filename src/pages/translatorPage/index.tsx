@@ -6,6 +6,7 @@ import { RootState } from "../../redux/rootReducer";
 import { useForm } from "antd/es/form/Form";
 import { FolderOutlined } from "@ant-design/icons";
 import "./index.scss";
+import { toast } from "react-toastify";
 
 function Translator() {
   const [formDocument] = useForm();
@@ -51,7 +52,7 @@ function Translator() {
       title: "Tài Liệu Dịch",
       dataIndex: "documentId",
       key: "documentId",
-      render: (documentId, data) => (
+      render: (documentId, dataDocument) => (
         <FolderOutlined
           style={{ cursor: "pointer" }}
           onClick={() => {
@@ -65,6 +66,20 @@ function Translator() {
       title: "Trạng Thái",
       dataIndex: "status",
       key: "status",
+    },
+    {
+      title: "",
+      dataIndex: "id",
+      key: "id",
+      render: (id, data) => (
+        <Button
+          type="primary"
+          style={{ background: "green" }}
+          onClick={() => handleCompleteDocument(id)}
+        >
+          Hoàn Thành
+        </Button>
+      ),
     },
   ];
 
@@ -93,6 +108,18 @@ function Translator() {
     }
   }, [idDocument]);
 
+  async function handleCompleteDocument(id) {
+    console.log(id);
+    try {
+      const response = await api.put(`AssignmentTranslation/Complete?id=${id}`);
+
+      console.log(response.data.data);
+      toast.success("Đã Cập nhập thành công");
+      fetchAssignment();
+    } catch (error) {
+      toast.error("Đã cập nhập thất bại");
+    }
+  }
   const fetchAssignment = async () => {
     console.log(UserAccount2);
     try {
