@@ -31,7 +31,7 @@ function Register() {
         layout="vertical"
       >
         <Form.Item
-          label="User Name"
+          label="Tên Tài khoản"
           name="userName"
           rules={[{ required: true, message: "Please input your username!" }]}
         >
@@ -39,7 +39,7 @@ function Register() {
         </Form.Item>
         <Form.Item
           name="fullName"
-          label="Full Name"
+          label="Họ và Tên"
           rules={[{ required: true, message: "Please input your full name!" }]}
         >
           <Input placeholder="Full Name" />
@@ -47,7 +47,7 @@ function Register() {
 
         <Form.Item
           name="phoneNumber"
-          label="phoneNumber"
+          label="Số điện thoại"
           rules={[
             { required: true, message: "Please input your phone number!" },
           ]}
@@ -56,7 +56,7 @@ function Register() {
         </Form.Item>
 
         <Form.Item
-          label="Address"
+          label="Địa chỉ:"
           name="address"
           rules={[{ required: true, message: "Please input your address!" }]}
         >
@@ -75,7 +75,7 @@ function Register() {
         </Form.Item>
 
         <Form.Item
-          label="Date of Birth"
+          label="Ngày Sinh:"
           name="dob"
           rules={[
             { required: true, message: "Please select your date of birth!" },
@@ -85,7 +85,7 @@ function Register() {
         </Form.Item>
 
         <Form.Item
-          label="Gender"
+          label="Giới tính"
           name="gender"
           rules={[{ required: true, message: "Please select your gender!" }]}
         >
@@ -97,15 +97,39 @@ function Register() {
         </Form.Item>
         <Form.Item
           name="password"
-          label="Password"
+          label="Mật khẩu"
           rules={[{ required: true, message: "Please input your password!" }]}
         >
           <Input.Password placeholder="Password" />
         </Form.Item>
+        <Form.Item
+          label="Nhập lại mật khẩu"
+          name={"confirmPassword"}
+          rules={[
+            {
+              required: true,
+              message: "Please Input Confirm Password",
+            },
+            {
+              min: 6,
+              message: "Password must be at least 6 characters",
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("password") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Passwords do not match!"));
+              },
+            }),
+          ]}
+        >
+          <Input type="password" placeholder="Confirm Password" />
+        </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Submit
+            Gửi
           </Button>
         </Form.Item>
       </Form>
