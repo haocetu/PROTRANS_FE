@@ -1,17 +1,7 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Space,
-  Switch,
-  Table,
-} from "antd";
+import { DatePicker, Form, Input, Modal, Select, Space, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
-import { CheckOutlined, CloseOutlined, FormOutlined } from "@ant-design/icons";
+import { FormOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
@@ -21,6 +11,82 @@ function RequestManager() {
   const [datasource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [idRequest, SetidRequest] = useState("");
+  // const [language, setLanguage] = useState([]);
+  // const [documentType, setDocumentType] = useState([]);
+  // const [notarizationType, setNotarizationType] = useState([]);
+
+  // const props: UploadProps = {
+  //   name: "file",
+  //   action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+  //   headers: {
+  //     authorization: "authorization-text",
+  //   },
+  //   onChange(info) {
+  //     if (info.file.status !== "uploading") {
+  //       console.log(info.file, info.fileList);
+  //     }
+  //     if (info.file.status === "done") {
+  //       toast.success(`${info.file.name} file uploaded successfully`);
+  //     } else if (info.file.status === "error") {
+  //       toast.error(`${info.file.name} file upload failed.`);
+  //     }
+  //   },
+  // };
+
+  // ========================================
+  // const fetchNotarizationType = async () => {
+  //   const response = await api.get("Notarization");
+  //   const data = response.data.data;
+  //   console.log({ data });
+
+  //   const list = data.map((notarization) => ({
+  //     value: notarization.id,
+  //     label: <span>{notarization.name}</span>,
+  //   }));
+
+  //   setNotarizationType(list);
+  // };
+
+  // useEffect(() => {
+  //   fetchNotarizationType();
+  // }, []);
+
+  // =========================================
+  // const fetchDocumentType = async () => {
+  //   const response = await api.get("DocumentType");
+  //   const data = response.data.data;
+  //   console.log({ data });
+
+  //   const list = data.map((Document) => ({
+  //     value: Document.id,
+  //     label: <span>{Document.name}</span>,
+  //   }));
+
+  //   setDocumentType(list);
+  // };
+
+  // useEffect(() => {
+  //   fetchDocumentType();
+  // }, []);
+
+  //==========================================
+  // const fetchLanguages = async () => {
+  //   const response = await api.get("Language");
+  //   const data = response.data.data;
+  //   console.log({ data });
+
+  //   const list = data.map((language) => ({
+  //     value: language.id,
+  //     label: <span>{language.name}</span>,
+  //   }));
+
+  //   setLanguage(list);
+  // };
+
+  // useEffect(() => {
+  //   fetchLanguages();
+  // }, []);
+
   const columns = [
     {
       title: "Tên Khách hàng",
@@ -127,7 +193,6 @@ function RequestManager() {
   //     console.error("Error updating request:", error);
   //   }
   // }
-
   async function handleEditRequest() {
     const updateRequest = formUpdate.getFieldsValue();
 
@@ -201,7 +266,7 @@ function RequestManager() {
           >
             <Input />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label="Yêu cầu nhận hồ sơ"
             name={"pickUpRequest"}
             valuePropName="checked"
@@ -217,8 +282,8 @@ function RequestManager() {
               unCheckedChildren={<CloseOutlined />}
               defaultChecked={false}
             />
-          </Form.Item>
-          <Form.Item
+          </Form.Item> */}
+          {/* <Form.Item
             label="Yêu cầu giao hồ sơ"
             name={"shipRequest"}
             valuePropName="checked"
@@ -234,7 +299,7 @@ function RequestManager() {
               unCheckedChildren={<CloseOutlined />}
               defaultChecked={false}
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             label="Trạng thái"
             name={"status"}
