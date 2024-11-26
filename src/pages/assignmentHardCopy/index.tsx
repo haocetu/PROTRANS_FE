@@ -30,27 +30,22 @@ function AssignHardCopy() {
   //------------------------
   const columns = [
     {
-      title: "Khách Hàng",
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
     {
-      title: "Địa Chỉ",
+      title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "Thời hạn ",
-      dataIndex: "deadline",
-      key: "deadline",
-    },
-    {
-      title: "Chi nhánh ",
+      title: "Chi nhánh",
       dataIndex: "agencyId",
       key: "agencyId",
       render: (agencyId) => {
@@ -63,12 +58,12 @@ function AssignHardCopy() {
       },
     },
     {
-      title: "Tổng Giá",
+      title: "Tổng giá",
       dataIndex: "totalPrice",
       key: "totalPrice",
     },
     {
-      title: "Trạng Thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },
@@ -85,6 +80,7 @@ function AssignHardCopy() {
             setSelectedAgencyId(data.agencyId);
             setSelectedOrderId(id);
           }}
+          title="Giao đi nhận bản cứng"
         />
       ),
     },
@@ -128,9 +124,9 @@ function AssignHardCopy() {
       formVariable.resetFields();
       setIsOpen(false);
       fetchOrder();
-      toast.success("Giao việc thành công");
+      toast.success("Giao việc thành công.");
     } catch (error) {
-      toast.error("Giao việc shipper thất bại");
+      toast.error("Giao việc thất bại!");
     }
   }
 
@@ -154,16 +150,16 @@ function AssignHardCopy() {
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}
-        title="Giao Đi Lấy Bản Cứng"
+        title="Giao đi nhận bản cứng"
         onCancel={() => setIsOpen(false)}
         onOk={() => formVariable.submit()}
       >
         <Form form={formVariable} onFinish={handleSubmit}>
-          <Form.Item label="người vận chuyển" name={"shipperId"}>
+          <Form.Item label="Nhân viên đi nhận" name={"shipperId"}>
             <Select options={shipper} />
           </Form.Item>
           <Form.Item label="Thời hạn" name={"deadline"}>
-            <DatePicker />
+            <DatePicker placeholder="Chọn ngày" />
           </Form.Item>
         </Form>
       </Modal>

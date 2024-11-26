@@ -30,17 +30,17 @@ function AssignShipper() {
 
   const columns = [
     {
-      title: "Khách Hàng",
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
     {
-      title: "Địa Chỉ",
+      title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
     },
@@ -58,12 +58,12 @@ function AssignShipper() {
       },
     },
     {
-      title: "Tổng Giá",
+      title: "Tổng giá",
       dataIndex: "totalPrice",
       key: "totalPrice",
     },
     {
-      title: "Trạng Thái Đơn Hàng",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },
@@ -75,6 +75,7 @@ function AssignShipper() {
         <TruckOutlined
           type="primary"
           style={{ fontSize: "25px", color: "orange" }}
+          title="Giao việc"
           onClick={() => {
             setIsOpen(true);
             setSelectedOrderId(id);
@@ -99,6 +100,7 @@ function AssignShipper() {
       setDataAssignShipper([...dataAssignshipper, response.data.data]);
       formVariable.resetFields();
       setIsOpen(false);
+      fetchOrder();
       toast.success("Giao việc thành công");
     } catch (error) {
       toast.error("Giao việc shipper thất bại");
@@ -152,6 +154,7 @@ function AssignShipper() {
           setIsOpen(false);
         }}
         onOk={() => formVariable.submit()}
+        title="Giao việc vận chuyển"
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
@@ -160,23 +163,23 @@ function AssignShipper() {
             rules={[
               {
                 required: true,
-                message: "Vui lòng cập nhập Người vận chuyển",
+                message: "* vui lòng chọn",
               },
             ]}
           >
             <Select options={shipper} />
           </Form.Item>
           <Form.Item
-            label="Thời gian giao"
+            label="Thời hạn"
             name={"deadline"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng cập nhập ảnh",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <DatePicker />
+            <DatePicker placeholder="Chọn ngày" />
           </Form.Item>
         </Form>
       </Modal>

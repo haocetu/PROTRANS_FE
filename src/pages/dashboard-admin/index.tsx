@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   DesktopOutlined,
   FileOutlined,
+  LoginOutlined,
   PieChartOutlined,
   TeamOutlined,
   UserOutlined,
@@ -12,6 +13,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/features/userSlice";
+import "./index.css";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -32,9 +34,9 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Nhân Viên", "staffaccount", <UserOutlined />),
-  getItem("tạo tài khoản nhân viên", "createstaffandshipper", <UserOutlined />),
-  getItem("Người vận chuyển", "shipperaccount", <UserOutlined />),
+  getItem("Nhân viên", "staffaccount", <UserOutlined />),
+  getItem("Tạo tài khoản nhân viên", "createstaffandshipper", <UserOutlined />),
+  getItem("Nhân viên vận chuyển", "shipperaccount", <UserOutlined />),
   getItem("Dịch thuật viên", "translatorAccount", <UserOutlined />),
 ];
 
@@ -63,24 +65,26 @@ const DashboardAdmin: React.FC = () => {
         />
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header className="header-container">
+          <UserOutlined style={{ fontSize: "24px" }} />
+          <div className="account">{account.Username}</div>
+          <Button
+            type="primary"
+            className="logout-button"
+            onClick={() => {
+              dispatch(logout());
+              navigate("/login");
+            }}
+            title="Đăng xuất"
+          >
+            <LoginOutlined />
+            Đăng xuất
+          </Button>
+        </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>Admin</Breadcrumb.Item>
             <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-            <Breadcrumb.Item>{account.Username}</Breadcrumb.Item>
-            <Breadcrumb.Item>
-              <Button
-                type="primary"
-                style={{ background: "red" }}
-                onClick={() => {
-                  dispatch(logout());
-                  navigate("/login");
-                }}
-              >
-                Đăng xuất
-              </Button>
-            </Breadcrumb.Item>
           </Breadcrumb>
           <div
             style={{
@@ -94,7 +98,7 @@ const DashboardAdmin: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          Protrans ©{new Date().getFullYear()} Created by ProTransTeam
+          ProTrans ©2024 được phát triển bởi đội ngũ chuyên nghiệp.
         </Footer>
       </Layout>
     </Layout>
