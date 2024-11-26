@@ -2,6 +2,7 @@ import { Col, Divider, Row, Typography } from "antd";
 import "./index.css";
 import {
   FacebookFilled,
+  FacebookOutlined,
   InstagramOutlined,
   MailOutlined,
   PhoneOutlined,
@@ -88,11 +89,6 @@ function Footer() {
                       Các điều khoản và điều kiện
                     </a>
                   </li>
-                  <li>
-                    <a href="#" className="footer-link">
-                      Tư vấn pháp lý
-                    </a>
-                  </li>
                 </ul>
               </Col>
               <Col span={8}>
@@ -103,7 +99,7 @@ function Footer() {
                   Theo dõi chúng tôi
                 </Title>
                 <InstagramOutlined className="social-icon" />
-                <FacebookFilled className="social-icon" />
+                <FacebookOutlined className="social-icon" />
                 <YoutubeOutlined className="social-icon" />
               </Col>
             </Row>
