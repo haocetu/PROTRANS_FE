@@ -12,12 +12,12 @@ function CreateOrderOnline() {
   console.log(token);
   const columns = [
     {
-      title: "Tên Khách hàng",
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
@@ -26,13 +26,13 @@ function CreateOrderOnline() {
       dataIndex: "address",
       key: "address",
     },
+    // {
+    //   title: "Email",
+    //   dataIndex: "email",
+    //   key: "email",
+    // },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Thời gian hoàn thành",
+      title: "Thời hạn",
       dataIndex: "deadline",
       key: "deadline",
       render: (deadline) => {
@@ -51,24 +51,24 @@ function CreateOrderOnline() {
       render: (pickUpRequest) => (pickUpRequest ? "Có" : "Không"),
     },
     {
-      title: "Yêu cầu ship",
+      title: "Yêu cầu giao hàng",
       dataIndex: "shipRequest",
       key: "shipRequest",
       render: (shipRequest) => (shipRequest ? "Có" : "Không"),
     },
+    // {
+    //   title: "Trạng thái xóa",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
+    //   render: (isDeleted) => (isDeleted ? "Có" : "Không"),
+    // },
     {
-      title: "Trạng Thái xóa",
-      dataIndex: "isDeleted",
-      key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Có" : "Không"),
-    },
-    {
-      title: "trạng thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },
     {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -91,6 +91,7 @@ function CreateOrderOnline() {
               }
               handleSubmit(id);
             }}
+            title="Tạo đơn hàng"
           />
         </Space>
       ),
@@ -109,9 +110,10 @@ function CreateOrderOnline() {
       });
 
       console.log(response.data.data);
-      toast.success("tạo order thành công");
+      fetchMyRequest();
+      toast.success("Tạo đơn hàng thành công.");
     } catch (error) {
-      toast.error("Tạo order thất bại");
+      toast.error("Tạo đơn hàng thất bại.");
     }
   }
 
