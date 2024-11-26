@@ -23,16 +23,24 @@ function Header() {
     if (key === "MyRequest") {
       navigate("/myrequest");
     }
+    if (key === "HistoryOrder") {
+      navigate("/myhistoryorder");
+    }
   };
 
   const items: MenuProps["items"] = [
     {
-      label: "My Request Page",
+      label: "Theo dõi đơn hàng",
+      key: "HistoryOrder",
+      icon: <UserOutlined />,
+    },
+    {
+      label: "Xác Nhận Yêu Cầu",
       key: "MyRequest",
       icon: <UserOutlined />,
     },
     {
-      label: "Logout",
+      label: "Đăng Xuất",
       key: "logout",
       icon: <UserOutlined />,
     },

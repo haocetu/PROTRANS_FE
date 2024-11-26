@@ -235,7 +235,7 @@ function DocumentDetails() {
     console.log(selectsecondlanguageId);
     try {
       const response = await api.get(
-        `Account/GetBy2LanguageId?firstLanguageId=${selectfirstlanguageId}&secondLanguageId=${selectsecondlanguageId}`
+        `Account/GetBy2LanguageId?firstLanguageId=${selectfirstlanguageId}&secondLanguageId=${selectsecondlanguageId}&documentId=${selectedDocumentId}`
       );
       const data = Array.isArray(response.data.data)
         ? response.data.data
@@ -255,10 +255,10 @@ function DocumentDetails() {
   };
 
   useEffect(() => {
-    if (selectfirstlanguageId && selectsecondlanguageId) {
+    if (selectfirstlanguageId && selectsecondlanguageId && selectedDocumentId) {
       fetchTranslator(selectfirstlanguageId, selectsecondlanguageId);
     }
-  }, [selectfirstlanguageId, selectsecondlanguageId]);
+  }, [selectfirstlanguageId, selectsecondlanguageId, selectedDocumentId]);
   //---------------------AssignmentTranslation--------------------------------//
 
   async function fetchAssignmentTranslation() {
