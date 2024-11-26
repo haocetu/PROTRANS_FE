@@ -8,8 +8,11 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
-import { Link, Outlet } from "react-router-dom";
+import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { RootState } from "../../redux/rootReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/features/userSlice";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -43,6 +46,10 @@ const DashboardStaff: React.FC = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  const account = useSelector((store: RootState) => store.accountmanage);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -64,6 +71,19 @@ const DashboardStaff: React.FC = () => {
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>Staff</Breadcrumb.Item>
             <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
+            <Breadcrumb.Item>{account.Username}</Breadcrumb.Item>
+            <Breadcrumb.Item>
+              <Button
+                type="primary"
+                style={{ background: "red" }}
+                onClick={() => {
+                  dispatch(logout());
+                  navigate("/login");
+                }}
+              >
+                Đăng xuất
+              </Button>
+            </Breadcrumb.Item>
           </Breadcrumb>
           <div
             style={{
