@@ -3,17 +3,18 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import Authenlayout from "../../components/auth-layout";
 import "./index.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import api from "../../config/api";
 import { toast } from "react-toastify";
 import { login } from "../../redux/features/userSlice";
 import { jwtDecode } from "jwt-decode";
-import { RootState } from "../../redux/rootReducer";
+import { User } from "../../models/user";
+//import { RootState } from "../../redux/rootReducer";
 
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((store: RootState) => store.accountmanage);
+  //const user = useSelector((store: RootState) => store.accountmanage);
 
   const handleLogin = async (values) => {
     try {
@@ -25,27 +26,56 @@ function Login() {
       localStorage.getItem("token");
       console.log(localStorage.getItem("token"));
 
-      const decoded = jwtDecode(response.data.token);
+      const decoded = jwtDecode<User>(response.data.token);
       dispatch(login(decoded));
 
-      if (decoded?.role === "Customer") {
-        toast.success("Đăng nhập thành công.");
-        navigate("/");
-      } else if (decoded?.role === "Staff") {
-        toast.success("Đăng nhập thành công.");
-        navigate("/dashboardstaff");
-      } else if (decoded?.role === "Admin") {
-        toast.success("Đăng nhập thành công.");
-        navigate("/dashboardadmin");
-      } else if (decoded?.role === "Shipper") {
-        toast.error("Shipper không được đăng nhập vào hệ thống");
-        navigate("/login");
-      } else if (decoded?.role === "Translator") {
-        toast.success("Đăng nhập thành công.");
-        navigate("/traslator");
-      } else if (decoded?.role === "Manager") {
-        toast.success("Đăng nhập thành công.");
-        navigate("/dashboardmanager");
+      // if (decoded?.role === "Customer") {
+      //   toast.success("Đăng nhập thành công.");
+      //   navigate("/");
+      // } else if (decoded?.role === "Staff") {
+      //   toast.success("Đăng nhập thành công.");
+      //   navigate("/dashboardstaff");
+      // } else if (decoded?.role === "Admin") {
+      //   toast.success("Đăng nhập thành công.");
+      //   navigate("/dashboardadmin");
+      // } else if (decoded?.role === "Shipper") {
+      //   toast.error("Shipper không được đăng nhập vào hệ thống");
+      //   navigate("/login");
+      // } else if (decoded?.role === "Translator") {
+      //   toast.success("Đăng nhập thành công.");
+      //   navigate("/traslator");
+      // } else if (decoded?.role === "Manager") {
+      //   toast.success("Đăng nhập thành công.");
+      //   navigate("/dashboardmanager");
+      // }
+      switch (decoded?.role) {
+        case "Customer":
+          toast.success("Đăng nhập thành công.");
+          navigate("/");
+          break;
+        case "Staff":
+          toast.success("Đăng nhập thành công.");
+          navigate("/dashboardstaff");
+          break;
+        case "Admin":
+          toast.success("Đăng nhập thành công.");
+          navigate("/dashboardadmin");
+          break;
+        case "Shipper":
+          toast.error("Shipper không được đăng nhập vào hệ thống");
+          navigate("/login");
+          break;
+        case "Translator": // Corrected route
+          toast.success("Đăng nhập thành công.");
+          navigate("/translator");
+          break;
+        case "Manager":
+          toast.success("Đăng nhập thành công.");
+          navigate("/dashboardmanager");
+          break;
+        default:
+          toast.error("Vai trò không xác định.");
+          navigate("/login");
       }
     } catch (error) {
       toast.error("Tên đăng nhập hoặc mật khẩu không hợp lệ.");

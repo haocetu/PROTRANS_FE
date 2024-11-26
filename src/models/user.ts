@@ -3,6 +3,6 @@ export interface User{
     Username: string,
     email: string,
     phoneNumber: string,
-    role: "ADMIN" | "MANAGER" | "STAFF" | "CUSTOMER"
+    role: "Admin" | "Manager" | "Staff" | "Customer" | "Translator" | "Shipper"
 
 }
