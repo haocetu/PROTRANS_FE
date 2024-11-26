@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/rootReducer";
 import api from "../../../config/api";
+import "./index.css";
 
 function HistoryOrder() {
   const [datasource, setDataSource] = useState([]);
@@ -29,12 +30,12 @@ function HistoryOrder() {
 
   const columns = [
     {
-      title: "Tên Khách hàng",
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
@@ -44,13 +45,13 @@ function HistoryOrder() {
       key: "address",
     },
     {
-      title: "Yêu Cầu Giao",
+      title: "Yêu cầu giao hàng",
       dataIndex: "shipRequest",
       key: "shipRequest",
       render: (shipRequest) => (shipRequest ? "Có" : "Không"),
     },
     {
-      title: "Thời gian hoàn thành",
+      title: "Thời hạn",
       dataIndex: "deadline",
       key: "deadline",
       render: (deadline) => {
@@ -58,7 +59,7 @@ function HistoryOrder() {
       },
     },
     {
-      title: "Tổng Giá",
+      title: "Tổng giá",
       dataIndex: "totalPrice",
       key: "totalPrice",
     },
@@ -76,7 +77,7 @@ function HistoryOrder() {
       },
     },
     {
-      title: "trạng thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },

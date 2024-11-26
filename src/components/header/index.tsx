@@ -30,17 +30,17 @@ function Header() {
 
   const items: MenuProps["items"] = [
     {
-      label: "Theo dõi đơn hàng",
+      label: "Đơn hàng của tôi",
       key: "HistoryOrder",
       icon: <UserOutlined />,
     },
     {
-      label: "Xác Nhận Yêu Cầu",
+      label: "Yêu cầu đã gửi",
       key: "MyRequest",
       icon: <UserOutlined />,
     },
     {
-      label: "Đăng Xuất",
+      label: "Đăng xuất",
       key: "logout",
       icon: <UserOutlined />,
     },

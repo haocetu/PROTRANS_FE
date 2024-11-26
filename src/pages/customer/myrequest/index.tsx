@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 import { RootState } from "../../../redux/rootReducer";
+import "./index.css";
 
 function MyRequest() {
   const [formUpdate] = useForm();
@@ -27,12 +28,12 @@ function MyRequest() {
   console.log(account.Id);
   const columns = [
     {
-      title: "Tên Khách hàng",
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
@@ -41,13 +42,13 @@ function MyRequest() {
       dataIndex: "address",
       key: "address",
     },
+    // {
+    //   title: "Email",
+    //   dataIndex: "email",
+    //   key: "email",
+    // },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Thời gian hoàn thành",
+      title: "Thời hạn",
       dataIndex: "deadline",
       key: "deadline",
       render: (deadline) => {
@@ -66,24 +67,24 @@ function MyRequest() {
       render: (pickUpRequest) => (pickUpRequest ? "Có" : "Không"),
     },
     {
-      title: "Yêu cầu ship",
+      title: "Yêu cầu giao hàng",
       dataIndex: "shipRequest",
       key: "shipRequest",
       render: (shipRequest) => (shipRequest ? "Có" : "Không"),
     },
+    // {
+    //   title: "Trạng thái xóa",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
+    //   render: (isDeleted) => (isDeleted ? "Có" : "Không"),
+    // },
     {
-      title: "Trạng Thái xóa",
-      dataIndex: "isDeleted",
-      key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Có" : "Không"),
-    },
-    {
-      title: "trạng thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },
     {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -130,7 +131,7 @@ function MyRequest() {
       formUpdate.resetFields();
       setIsOpen(false);
       fetchMyRequest();
-      toast.success("Xác nhận đơn hàng thành công");
+      toast.success("Xác nhận đơn hàng thành công.");
     } catch (error) {
       console.error("Error updating request:", error);
     }
@@ -149,7 +150,7 @@ function MyRequest() {
     fetchMyRequest();
   }, []);
   return (
-    <div className="MyReuqest">
+    <div className="myrequest">
       <Table columns={columns} dataSource={datasource} />
       <Modal
         open={isOpen}
@@ -160,6 +161,7 @@ function MyRequest() {
         onOk={() => {
           formUpdate.submit();
         }}
+        closable={false}
       >
         <Form form={formUpdate} onFinish={handleEditRequest}>
           <Form.Item
@@ -168,7 +170,7 @@ function MyRequest() {
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập trạng thái",
+                message: "* vui lòng chọn",
               },
             ]}
           >

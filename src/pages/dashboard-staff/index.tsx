@@ -37,7 +37,7 @@ function getItem(
 const items: MenuItem[] = [
   getItem("Quản lí yêu cầu", "requestmanage", <BookOutlined />),
   getItem("Đơn hàng online", "orderonlinemanage", <AuditOutlined />),
-  getItem("Tạo tạo đơn hàng online", "orderonline", <ShoppingCartOutlined />),
+  getItem("Tạo đơn hàng online", "orderonline", <ShoppingCartOutlined />),
   getItem("Tạo đơn hàng", "document", <FormOutlined />),
   getItem("Đơn hàng offline", "order", <FormOutlined />),
 ];
