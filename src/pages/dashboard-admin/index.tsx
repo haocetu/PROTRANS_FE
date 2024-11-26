@@ -98,7 +98,7 @@ const DashboardAdmin: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          Protrans ©{new Date().getFullYear()} Created by ProTransTeam
+          ProTrans ©2024 được phát triển bởi đội ngũ chuyên nghiệp.
         </Footer>
       </Layout>
     </Layout>
