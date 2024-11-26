@@ -14,6 +14,7 @@ import api from "../../../config/api";
 import { CheckOutlined, CloseOutlined, FormOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
 function RequestManager() {
   const [formUpdate] = useForm();
@@ -142,9 +143,12 @@ function RequestManager() {
         updateRequest
       );
 
-      console.log("Response:", response);
+      fetchRequest();
+      formUpdate.resetFields();
+      toast.success("Gửi báo giá thành công");
+      setIsOpen(false);
     } catch (error) {
-      console.error("Error updating request:", error);
+      toast.error("Gửi báo giá thất bại");
     }
   }
 

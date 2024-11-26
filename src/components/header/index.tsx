@@ -20,18 +20,6 @@ function Header() {
       dispatch(logout());
       navigate("/");
     }
-    if (key === "ManagerPage") {
-      navigate("/dashboardmanager");
-    }
-    if (key === "AdminPage") {
-      navigate("/dashboardadmin");
-    }
-    if (key === "TranslatorPage") {
-      navigate("/traslator");
-    }
-    if (key === "StaffPage") {
-      navigate("/dashboardstaff");
-    }
     if (key === "MyRequest") {
       navigate("/myrequest");
     }
@@ -41,26 +29,6 @@ function Header() {
     {
       label: "My Request Page",
       key: "MyRequest",
-      icon: <UserOutlined />,
-    },
-    {
-      label: "Staff Page",
-      key: "StaffPage",
-      icon: <UserOutlined />,
-    },
-    {
-      label: "Translator Page",
-      key: "TranslatorPage",
-      icon: <UserOutlined />,
-    },
-    {
-      label: "Admin Page",
-      key: "AdminPage",
-      icon: <UserOutlined />,
-    },
-    {
-      label: "Manager Page",
-      key: "ManagerPage",
       icon: <UserOutlined />,
     },
     {
