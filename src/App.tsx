@@ -57,7 +57,7 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/traslator",
+          path: "/translator",
           element: (
             <AdminRoute role="Translator">
               <Translator />
