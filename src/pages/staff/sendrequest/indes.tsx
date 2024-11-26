@@ -136,6 +136,19 @@ function SendRequest() {
     }
   }
 
+  const handleNotarizationChange = (index, checked) => {
+    const newDocuments = formVariable.getFieldValue("documents");
+    newDocuments[index].notarizationRequest = checked;
+    if (!checked) {
+      newDocuments[index].numberOfNotarizedCopies = 0;
+      newDocuments[index].notarizationId = null;
+    }
+    if (checked) {
+      newDocuments[index].numberOfNotarizedCopies = 1;
+    }
+    formVariable.setFieldsValue({ documents: newDocuments });
+  };
+
   return (
     <div className="sendrequest">
       <div className="sendrequesttop">Gửi yêu cầu dịch thuật</div>
@@ -157,7 +170,7 @@ function SendRequest() {
                 pageNumber: 1,
                 numberOfCopies: 1,
                 notarizationRequest: false,
-                numberOfNotarizatedCopies: null,
+                numberOfNotarizedCopies: 0,
                 notarizationId: null,
                 documentTypeId: null,
               },
@@ -166,21 +179,27 @@ function SendRequest() {
         >
           <Row gutter={16}>
             {" "}
-            <Col span={8}>
+            <Col span={4}>
               {" "}
               <Form.Item
                 label="Thời gian yêu cầu"
                 name="deadline"
                 rules={[
-                  { required: true, message: "Vui lòng chọn thời gian yêu cầu!" },
+                  {
+                    required: true,
+                    message: "* vui lòng chọn",
+                  },
                 ]}
               >
-                <DatePicker />
+                <DatePicker
+                  placeholder="Chọn ngày"
+                  disabledDate={(current) => {
+                    return current && current.isBefore(new Date(), "day");
+                  }}
+                />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
-          <Col span={4}>
+            <Col span={4}>
               <Form.Item
                 label="Yêu cầu nhận tài liệu"
                 name="pickUpRequest"
@@ -188,7 +207,7 @@ function SendRequest() {
                 rules={[
                   {
                     required: false,
-                    message: "vui lòng chọn nhận tài liệu",
+                    message: "* vui lòng chọn",
                   },
                 ]}
               >
@@ -204,9 +223,7 @@ function SendRequest() {
                 label="Yêu cầu giao hàng"
                 name="shipRequest"
                 valuePropName="checked"
-                rules={[
-                  { required: false, message: "vui lòng chọn ship tài liệu" },
-                ]}
+                rules={[{ required: false, message: "* vui lòng chọn" }]}
               >
                 <Switch
                   checkedChildren={<CheckOutlined />}
@@ -220,7 +237,7 @@ function SendRequest() {
           <Form.List name="documents">
             {(fields, { add, remove }) => (
               <>
-                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                {fields.map(({ key, name, fieldKey, ...restField }, index) => (
                   <Space
                     key={key}
                     style={{ display: "block", marginBottom: 8 }}
@@ -233,7 +250,7 @@ function SendRequest() {
                       Tài liệu
                     </Divider>
                     <Row gutter={16}>
-                      <Col span={7}>
+                      <Col span={6}>
                         <Form.Item
                           {...restField}
                           name={[name, "firstLanguageId"]}
@@ -241,7 +258,7 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "First Language ID is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Ngôn ngữ gốc"
@@ -253,7 +270,7 @@ function SendRequest() {
                         </Form.Item>
                       </Col>
 
-                      <Col span={7}>
+                      <Col span={6}>
                         <Form.Item
                           {...restField}
                           name={[name, "secondLanguageId"]}
@@ -261,7 +278,7 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "Second Language ID is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Ngôn ngữ cần dịch"
@@ -272,7 +289,7 @@ function SendRequest() {
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={7}>
+                      <Col span={4}>
                         <Form.Item
                           {...restField}
                           name={[name, "documentTypeId"]}
@@ -280,7 +297,7 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "Document Type ID is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Loại tài liệu"
@@ -299,10 +316,11 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "Page Number is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Số trang"
+                          initialValue={1}
                         >
                           <InputNumber
                             min={1}
@@ -321,33 +339,32 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "Number of Copies is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Số bản cần dịch"
+                          initialValue={1}
                         >
                           <InputNumber
                             min={1}
                             placeholder="Số bản cần dịch"
-                            style={{ width: "100%" }}
+                            style={{ width: "75%" }}
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={4}>
+                      <Col span={3}>
                         <Form.Item
                           {...restField}
                           name={[name, "urlPath"]}
                           fieldKey={[fieldKey, "urlPath"]}
                           rules={[
-                            { required: true, message: "URL Path is required" },
+                            { required: true, message: "* vui lòng chọn" },
                           ]}
                           label="Tệp"
                         >
                           {/* <Input placeholder="Đường dẫn" /> */}
                           <Upload {...props}>
-                            <Button icon={<UploadOutlined />}>
-                              Tải lên
-                            </Button>
+                            <Button icon={<UploadOutlined />}>Tải lên</Button>
                           </Upload>
                         </Form.Item>
                       </Col>
@@ -358,18 +375,61 @@ function SendRequest() {
                           valuePropName="checked"
                           fieldKey={[fieldKey, "notarizationRequest"]}
                           label="Công chứng"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            textAlign: "center",
-                          }}
+                          initialValue={false}
                         >
                           <Switch
                             checkedChildren={<CheckOutlined />}
                             unCheckedChildren={<CloseOutlined />}
                             defaultChecked={false}
+                            onChange={(checked) =>
+                              handleNotarizationChange(index, checked)
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={4}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "numberOfNotarizedCopies"]}
+                          fieldKey={[fieldKey, "numberOfNotarizedCopies"]}
+                          rules={[
+                            {
+                              required: formVariable.getFieldValue([
+                                "documents",
+                                index,
+                                "notarizationRequest",
+                              ]),
+                              message: "* vui lòng chọn",
+                            },
+                          ]}
+                          label="Số bản công chứng"
+                          initialValue={0}
+                        >
+                          <InputNumber
+                            min={1}
+                            placeholder=""
+                            style={{ width: "75%" }}
+                            value={formVariable.getFieldValue([
+                              "documents",
+                              index,
+                              "numberOfNotarizedCopies",
+                            ])}
+                            onChange={(value) => {
+                              const newDocuments =
+                                formVariable.getFieldValue("documents");
+                              newDocuments[index].numberOfNotarizedCopies =
+                                value;
+                              formVariable.setFieldsValue({
+                                documents: newDocuments,
+                              });
+                            }}
+                            disabled={
+                              !formVariable.getFieldValue([
+                                "documents",
+                                index,
+                                "notarizationRequest",
+                              ])
+                            }
                           />
                         </Form.Item>
                       </Col>
@@ -380,8 +440,12 @@ function SendRequest() {
                           fieldKey={[fieldKey, "notarizationId"]}
                           rules={[
                             {
-                              required: true,
-                              message: "Notarization ID is required",
+                              required: formVariable.getFieldValue([
+                                "documents",
+                                index,
+                                "notarizationRequest",
+                              ]),
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Loại công chứng"
@@ -389,26 +453,13 @@ function SendRequest() {
                           <Select
                             options={notarizationType}
                             placeholder="Loại công chứng"
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item
-                          {...restField}
-                          name={[name, "numberOfNotarizatedCopies"]}
-                          fieldKey={[fieldKey, "numberOfNotarizatedCopies"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Number of Notarized Copies is required",
-                            },
-                          ]}
-                          label="Số bản công chứng"
-                        >
-                          <InputNumber
-                            min={0}
-                            placeholder="Số bản công chứng"
-                            style={{ width: "100%" }}
+                            disabled={
+                              !formVariable.getFieldValue([
+                                "documents",
+                                index,
+                                "notarizationRequest",
+                              ])
+                            }
                           />
                         </Form.Item>
                       </Col>
