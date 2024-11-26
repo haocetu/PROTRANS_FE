@@ -34,6 +34,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { logout } from "./redux/features/userSlice";
 import { RootState } from "./redux/rootReducer";
+import HistoryOrder from "./pages/customer/myhistoryorder";
 
 function App() {
   const AdminRoute = ({ children, role }) => {
@@ -77,6 +78,14 @@ function App() {
           element: (
             <AdminRoute role="Customer">
               <MyRequest />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "/myhistoryorder",
+          element: (
+            <AdminRoute role="Customer">
+              <HistoryOrder />
             </AdminRoute>
           ),
         },

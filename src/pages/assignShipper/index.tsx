@@ -84,7 +84,7 @@ function AssignShipper() {
       ),
     },
   ];
-  
+
   async function handleSubmit(values) {
     const payload = {
       shipperId: values.shipperId,
@@ -116,8 +116,11 @@ function AssignShipper() {
       value: ship.id,
       label: (
         <span>
-          <strong>{ship.fullName}</strong> <br />
-          <small style={{ color: "#888" }}>{ship.agencyName}</small>
+          <strong>
+            {ship.fullName} -{" "}
+            <small style={{ color: "#888" }}>{ship.agencyName}</small>
+          </strong>{" "}
+          <br />
         </span>
       ),
     }));
