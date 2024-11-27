@@ -205,7 +205,7 @@ function DocumentDetails() {
         (data.translationStatus === "Processing" ||
           data.translationStatus === "Waiting") &&
         (data.notarizationStatus === "PickedUp" ||
-          data.notarizationStatus === "None") ? (
+          data.notarizationStatus === "None" || data.notarizationStatus === "Waiting") ? (
           <ContainerOutlined
             onClick={() => {
               console.log(data.firstLanguageId);
