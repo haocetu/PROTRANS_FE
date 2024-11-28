@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  ArrowRightOutlined,
   AuditOutlined,
   BookOutlined,
   FormOutlined,
@@ -83,7 +84,7 @@ const DashboardManager: React.FC = () => {
             }}
             title="Đăng xuất"
           >
-            <LoginOutlined />
+            <ArrowRightOutlined />
             Đăng xuất
           </Button>
         </Header>
