@@ -1,16 +1,30 @@
-import { Table } from "antd";
+import { Table, Button } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/rootReducer";
 import api from "../../../config/api";
 import "./index.css";
+import {
+  AlignRightOutlined,
+  CheckCircleOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
+  CloseOutlined,
+  FormOutlined,
+  TruckFilled,
+  TruckOutlined,
+} from "@ant-design/icons";
 
 function HistoryOrder() {
   const [datasource, setDataSource] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const account = useSelector((store: RootState) => store.accountmanage);
   const [agency, setAgency] = useState([]);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [activeButton, setActiveButton] = useState<string>(""); // Lưu trạng thái nút đang được nhấn
 
+  // Lấy thông tin các agency
   const fetchAgency = async () => {
     const response = await api.get("Agency");
     const data = response.data.data;
@@ -27,6 +41,36 @@ function HistoryOrder() {
   useEffect(() => {
     fetchAgency();
   }, []);
+
+  // Lấy tất cả đơn hàng của khách hàng
+  async function fetchMyOrders() {
+    const response = await api.get(`Order/GetByCustomerId?id=${account.Id}`);
+    console.log(response.data.data);
+    setDataSource(response.data.data);
+    setFilteredData(response.data.data);
+  }
+
+  useEffect(() => {
+    if (account.Id) {
+      fetchMyOrders();
+    }
+  }, [account.Id]);
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setActiveButton(status);
+  };
+
+  useEffect(() => {
+    if (statusFilter === "") {
+      setFilteredData(datasource);
+    } else {
+      const filtered = datasource.filter(
+        (order) => order.status === statusFilter
+      );
+      setFilteredData(filtered);
+    }
+  }, [statusFilter, datasource]);
 
   const columns = [
     {
@@ -54,9 +98,7 @@ function HistoryOrder() {
       title: "Thời hạn",
       dataIndex: "deadline",
       key: "deadline",
-      render: (deadline) => {
-        return dayjs(deadline).format("DD/MM/YYYY HH:mm");
-      },
+      render: (deadline) => dayjs(deadline).format("DD/MM/YYYY HH:mm"),
     },
     {
       title: "Tổng giá",
@@ -68,12 +110,9 @@ function HistoryOrder() {
       dataIndex: "agencyId",
       key: "agencyId",
       render: (agencyId) => {
-        // Check if category is available and initialized
         if (!agency || agency.length === 0) return "Loading...";
-
-        // Find the category by ID and return its name
-        const foundagency = agency.find((agen) => agen.value === agencyId);
-        return foundagency ? foundagency.label : "Unknown Category";
+        const foundAgency = agency.find((agen) => agen.value === agencyId);
+        return foundAgency ? foundAgency.label : "Unknown";
       },
     },
     {
@@ -83,21 +122,65 @@ function HistoryOrder() {
     },
   ];
 
-  async function fetchMyRequest() {
-    const response = await api.get(`Order/GetByCustomerId?id=${account.Id}`);
-    console.log("=============================");
-    console.log(response.data.data);
-    setDataSource(response.data.data);
-  }
-
-  useEffect(() => {
-    if (account.Id) {
-      fetchMyRequest();
-    }
-  }, []);
   return (
     <div className="historyorderpage">
-      <Table columns={columns} dataSource={datasource}></Table>
+      <h1>ĐƠN HÀNG CỦA BẠN</h1>
+      <div>
+        <Button
+          className={`filter-button ${activeButton === "" ? "active" : ""}`}
+          onClick={() => handleStatusFilter("")}
+        >
+          <AlignRightOutlined />
+          Tất cả
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Processing" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Processing")}
+        >
+          <ClockCircleOutlined />
+          Chờ xử lý
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Implementing" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Implementing")}
+        >
+          <FormOutlined />
+          Đang thực hiện
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Delivering" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Delivering")}
+        >
+          <TruckOutlined />
+          Đang giao
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Completed" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Completed")}
+        >
+          <CheckOutlined />
+          Đã hoàn thành
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Canceled" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Canceled")}
+        >
+          <CloseOutlined />
+          Đã hủy
+        </Button>
+      </div>
+
+      <Table columns={columns} dataSource={filteredData} />
     </div>
   );
 }
