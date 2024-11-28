@@ -162,9 +162,9 @@ function HistoryOrder() {
         </Button>
         <Button
           className={`filter-button ${
-            activeButton === "Completed" ? "active" : ""
+            activeButton === "Delivered" ? "active" : ""
           }`}
-          onClick={() => handleStatusFilter("Completed")}
+          onClick={() => handleStatusFilter("Delivered")}
         >
           <CheckOutlined />
           Đã hoàn thành
