@@ -1,5 +1,14 @@
-import { CheckOutlined, CloseOutlined, FormOutlined } from "@ant-design/icons";
 import {
+  AlignRightOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
+  CloseOutlined,
+  FormOutlined,
+  PauseOutlined,
+  TruckOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
   DatePicker,
   Form,
   Input,
@@ -22,26 +31,46 @@ function MyRequest() {
   const [formUpdate] = useForm();
   const [isOpen, setIsOpen] = useState(false);
   const [datasource, setDataSource] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [idRequest, SetidRequest] = useState("");
   const account = useSelector((store: RootState) => store.accountmanage);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [activeButton, setActiveButton] = useState<string>(""); // Lưu trạng thái nút đang được nhấn
 
   console.log(account.Id);
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setActiveButton(status);
+  };
+
+  useEffect(() => {
+    if (statusFilter === "") {
+      setFilteredData(datasource);
+    } else {
+      const filtered = datasource.filter(
+        (order) => order.status === statusFilter
+      );
+      setFilteredData(filtered);
+    }
+  }, [statusFilter, datasource]);
+
   const columns = [
-    {
-      title: "Tên khách hàng",
-      dataIndex: "fullName",
-      key: "fullName",
-    },
-    {
-      title: "Số điện thoại",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-    },
-    {
-      title: "Địa chỉ",
-      dataIndex: "address",
-      key: "address",
-    },
+    // {
+    //   title: "Tên khách hàng",
+    //   dataIndex: "fullName",
+    //   key: "fullName",
+    // },
+    // {
+    //   title: "Số điện thoại",
+    //   dataIndex: "phoneNumber",
+    //   key: "phoneNumber",
+    // },
+    // {
+    //   title: "Địa chỉ",
+    //   dataIndex: "address",
+    //   key: "address",
+    // },
     // {
     //   title: "Email",
     //   dataIndex: "email",
@@ -87,32 +116,39 @@ function MyRequest() {
       title: "",
       dataIndex: "id",
       key: "id",
-      render: (id, data) => (
-        <Space>
-          <FormOutlined
-            onClick={() => {
-              setIsOpen(true);
-              SetidRequest(id);
-              const newData = { ...data };
-              console.log(newData);
+      render: (id, data) => {
+        if (data.status === "Quoted") {
+          return (
+            <Space>
+              <FormOutlined
+                onClick={() => {
+                  setIsOpen(true);
+                  SetidRequest(id);
+                  const newData = { ...data };
+                  console.log(newData);
 
-              for (const key of Object.keys(data)) {
-                const value = newData[key];
+                  for (const key of Object.keys(data)) {
+                    const value = newData[key];
 
-                const date: any = new Date(value);
-                // const time: any = date.getTime();
-                //|| isNaN(time)
-                if (typeof value === "number") {
-                } else {
-                  newData[key] = dayjs(value);
-                }
-              }
-              console.log(newData);
-              formUpdate.setFieldsValue(newData);
-            }}
-          />
-        </Space>
-      ),
+                    const date: any = new Date(value);
+                    // const time: any = date.getTime();
+                    //|| isNaN(time)
+                    if (typeof value === "number") {
+                    } else {
+                      newData[key] = dayjs(value);
+                    }
+                  }
+                  console.log(newData);
+                  formUpdate.setFieldsValue(newData);
+                }}
+              />
+            </Space>
+          );
+        } else {
+          // Nếu status không phải "Quoted", không render cột này
+          return null;
+        }
+      },
     },
   ];
 
@@ -139,11 +175,12 @@ function MyRequest() {
 
   async function fetchMyRequest() {
     const response = await api.get(
-      `Request/GetStatusQuoted?customerId=${account.Id}`
+      `Request/GetByCustomerId?customerId=${account.Id}`
     );
     console.log("=============================");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setFilteredData(response.data.data);
   }
 
   useEffect(() => {
@@ -151,7 +188,62 @@ function MyRequest() {
   }, []);
   return (
     <div className="myrequest">
-      <Table columns={columns} dataSource={datasource} />
+      <h1>YÊU CẦU CỦA BẠN</h1>
+      <div>
+        <Button
+          className={`filter-button ${activeButton === "" ? "active" : ""}`}
+          onClick={() => handleStatusFilter("")}
+        >
+          <AlignRightOutlined />
+          Tất cả
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Waitting" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Waitting")}
+        >
+          <ClockCircleOutlined />
+          Chờ xử lý
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Quoted" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Quoted")}
+        >
+          <FormOutlined />
+          Đã báo giá
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Refuse" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Refuse")}
+        >
+          <CloseOutlined />
+          Đã từ chối
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Accept" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Accept")}
+        >
+          <CheckOutlined />
+          Đã chấp nhận
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Finish" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Finish")}
+        >
+          <PauseOutlined />
+          Kết thúc
+        </Button>
+      </div>
+      <Table columns={columns} dataSource={filteredData} />
       <Modal
         open={isOpen}
         onCancel={() => {
