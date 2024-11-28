@@ -74,7 +74,7 @@ function AssignNotarization() {
 
   const fetchDocument = async () => {
     try {
-      const response = await api.get("Document");
+      const response = await api.get("Document/GetDocumentsToBeNotarized");
       setDataSource(response.data.data);
     } catch (error) {
       toast.error("Fail");
@@ -95,7 +95,7 @@ function AssignNotarization() {
       ),
     },
     {
-      title: "Ngôn Ngữ Gốc",
+      title: "Ngôn ngữ gốc",
       dataIndex: "firstLanguageId",
       key: "firstLanguageId",
       render: (firstLanguageId) => {
@@ -107,7 +107,7 @@ function AssignNotarization() {
       },
     },
     {
-      title: "Ngôn Ngữ Dịch",
+      title: "Ngôn ngữ dịch",
       dataIndex: "secondLanguageId",
       key: "secondLanguageId",
       render: (secondLanguageId) => {
@@ -119,14 +119,9 @@ function AssignNotarization() {
       },
     },
     {
-      title: "Mã Đơn Hàng",
+      title: "Mã tài liệu",
       dataIndex: "code",
       key: "code",
-    },
-    {
-      title: "Loại Tệp",
-      dataIndex: "fileType",
-      key: "fileType",
     },
     {
       title: "Số Trang",
@@ -134,38 +129,7 @@ function AssignNotarization() {
       key: "pageNumber",
     },
     {
-      title: "Số bản Copy",
-      dataIndex: "numberOfCopies",
-      key: "numberOfCopies",
-    },
-    {
-      title: "Yêu Cầu Công Chứng",
-      dataIndex: "notarizationRequest",
-      key: "notarizationRequest",
-      render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
-    },
-    {
-      title: "Số Bản Copy Công Chứng",
-      dataIndex: "numberOfNotarizedCopies",
-      key: "numberOfNotarizedCopies",
-    },
-    {
-      title: "Loại Công Chứng",
-      dataIndex: "notarizationId",
-      key: "notarizationId",
-      render: (notarizationId) => {
-        // Check if category is available and initialized
-        if (!notarizationType || notarizationType.length === 0) return null;
-
-        // Find the category by ID and return its name
-        const foundnotarizationType = notarizationType.find(
-          (lang) => lang.value === notarizationId
-        );
-        return foundnotarizationType ? foundnotarizationType.label : null;
-      },
-    },
-    {
-      title: "Loại Tài Liệu",
+      title: "Loại tài liệu",
       dataIndex: "documentTypeId",
       key: "documentTypeId",
       render: (documentTypeId) => {
@@ -180,23 +144,38 @@ function AssignNotarization() {
       },
     },
     {
-      title: "",
-      dataIndex: "id",
-      key: "id",
-      render: (id) => (
-        <AuditOutlined
-          onClick={() => {
-            setIsOpen(true);
-            setSelectedDocumentIds([id]);
-          }}
-        />
-      ),
+      title: "Yêu cầu công chứng",
+      dataIndex: "notarizationRequest",
+      key: "notarizationRequest",
+      render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
+    },
+    {
+      title: "Số bản công chứng",
+      dataIndex: "numberOfNotarizedCopies",
+      key: "numberOfNotarizedCopies",
+    },
+    {
+      title: "Loại công chứng",
+      dataIndex: "notarizationId",
+      key: "notarizationId",
+      render: (notarizationId) => {
+        // Check if category is available and initialized
+        if (!notarizationType || notarizationType.length === 0) return null;
+
+        // Find the category by ID and return its name
+        const foundnotarizationType = notarizationType.find(
+          (lang) => lang.value === notarizationId
+        );
+        return foundnotarizationType ? foundnotarizationType.label : null;
+      },
     },
   ];
 
   const handleSelectDocument = (id) => {
     if (selectedDocumentIds.includes(id)) {
-      setSelectedDocumentIds(selectedDocumentIds.filter((docId) => docId !== id));
+      setSelectedDocumentIds(
+        selectedDocumentIds.filter((docId) => docId !== id)
+      );
     } else {
       setSelectedDocumentIds([...selectedDocumentIds, id]);
     }
@@ -204,7 +183,7 @@ function AssignNotarization() {
 
   const handleAssignNotarization = () => {
     if (selectedDocumentIds.length === 0) {
-      toast.error("Vui lòng chọn ít nhất một tài liệu để giao việc");
+      toast.error("Vui lòng chọn ít nhất một tài liệu để giao việc.");
       return;
     }
     setIsOpen(true);
@@ -220,10 +199,11 @@ function AssignNotarization() {
     try {
       const response = await api.post("AssignmentNotarization", payload);
       formVariable.resetFields();
-      toast.success("Assign Translator success");
+      toast.success("Giao việc thành công.");
       setIsOpen(false);
+      fetchDocument();
     } catch (error) {
-      toast.error("Assign fail");
+      toast.error("Giao việc thất bại!");
     }
   };
 
@@ -234,39 +214,39 @@ function AssignNotarization() {
         onClick={handleAssignNotarization}
         style={{ marginBottom: 16 }}
       >
-        Giao Việc
+        Giao việc
       </Button>
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}
-        title="Giao Việc Công Chứng"
+        title="Giao việc công chứng"
         onCancel={() => setIsOpen(false)}
         onOk={() => formVariable.submit()}
       >
         <Form form={formVariable} onFinish={handlesubmitNotarization}>
           <Form.Item
-            label="người đi công chứng"
+            label="Nhân viên"
             name={"shipperId"}
             rules={[
               {
                 required: true,
-                message: "Please Input Shipper",
+                message: "* vui lòng chọn",
               },
             ]}
           >
             <Select options={shipper} />
           </Form.Item>
           <Form.Item
-            label="Thời hạn nộp"
+            label="Thời hạn"
             name={"deadline"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập thời hạn nộp",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <DatePicker />
+            <DatePicker placeholder="Chọn ngày" />
           </Form.Item>
         </Form>
       </Modal>

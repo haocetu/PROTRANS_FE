@@ -3,6 +3,7 @@ import {
   AuditOutlined,
   BookOutlined,
   FormOutlined,
+  LoginOutlined,
   ShoppingCartOutlined,
   TranslationOutlined,
   UserOutlined,
@@ -13,6 +14,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/features/userSlice";
+import "./index.css";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -33,14 +35,14 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Ngôn Ngữ", "language", <TranslationOutlined />),
-  getItem("Bảng Giá", "quoteprice", <BookOutlined />),
-  getItem("Loại Công Chứng", "notarization", <AuditOutlined />),
-  getItem("Đơn Hàng", "order", <ShoppingCartOutlined />),
+  getItem("Ngôn ngữ", "language", <TranslationOutlined />),
+  getItem("Bảng giá", "quoteprice", <BookOutlined />),
+  getItem("Loại công chứng", "notarization", <AuditOutlined />),
+  getItem("Đơn hàng", "order", <ShoppingCartOutlined />),
   getItem("Tạo đơn hàng", "createOrder", <FormOutlined />),
   getItem("Giao việc vận chuyển", "assignshipper", <FormOutlined />),
-  getItem("Giao Việc Công Chứng", "assignNotarization", <FormOutlined />),
-  getItem("Giao Đi nhận bản Cứng", "assignhardcopy", <FormOutlined />),
+  getItem("Giao việc công chứng", "assignNotarization", <FormOutlined />),
+  getItem("Giao đi nhận bản cứng", "assignhardcopy", <FormOutlined />),
   // getItem("Task Notarization List", "tasknotarizationlist", <FormOutlined />),
 ];
 
@@ -69,24 +71,26 @@ const DashboardManager: React.FC = () => {
         />
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header className="header-container">
+          <UserOutlined style={{ fontSize: "24px" }} />
+          <div className="account">{account.Username}</div>
+          <Button
+            type="primary"
+            className="logout-button"
+            onClick={() => {
+              dispatch(logout());
+              navigate("/login");
+            }}
+            title="Đăng xuất"
+          >
+            <LoginOutlined />
+            Đăng xuất
+          </Button>
+        </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>Manager</Breadcrumb.Item>
             <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-            <Breadcrumb.Item>{account.Username}</Breadcrumb.Item>
-            <Breadcrumb.Item>
-              <Button
-                type="primary"
-                style={{ background: "red" }}
-                onClick={() => {
-                  dispatch(logout());
-                  navigate("/login");
-                }}
-              >
-                Đăng xuất
-              </Button>
-            </Breadcrumb.Item>
           </Breadcrumb>
           <div
             style={{
@@ -100,7 +104,7 @@ const DashboardManager: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          Protrans ©{new Date().getFullYear()} Created by ProTransTeam
+          ProTrans ©2024 được phát triển bởi đội ngũ chuyên nghiệp.
         </Footer>
       </Layout>
     </Layout>

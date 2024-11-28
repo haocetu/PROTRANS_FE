@@ -201,18 +201,22 @@ function DocumentDetails() {
       title: "",
       dataIndex: "id",
       key: "id",
-      render: (id, data) => (
-        <ContainerOutlined
-          onClick={() => {
-            console.log(data.firstLanguageId);
-            console.log(data.secondLanguageId);
-            setSelectfirstlanguageId(data.firstLanguageId);
-            setSelectsecondlanguageId(data.secondLanguageId);
-            setSelectedDocumentId(id);
-            setIsOpen(true);
-          }}
-        />
-      ),
+      render: (id, data) =>
+        (data.translationStatus === "Processing" ||
+          data.translationStatus === "Waiting") &&
+        (data.notarizationStatus === "PickedUp" ||
+          data.notarizationStatus === "None" || data.notarizationStatus === "Waiting") ? (
+          <ContainerOutlined
+            onClick={() => {
+              console.log(data.firstLanguageId);
+              console.log(data.secondLanguageId);
+              setSelectfirstlanguageId(data.firstLanguageId);
+              setSelectsecondlanguageId(data.secondLanguageId);
+              setSelectedDocumentId(id);
+              setIsOpen(true);
+            }}
+          />
+        ) : null,
     },
   ];
 
@@ -244,7 +248,24 @@ function DocumentDetails() {
 
       const list = data.map((Account) => ({
         value: Account.id,
-        label: <span>{Account.fullName}</span>,
+        label: (
+          <span
+            style={{
+              whiteSpace: "normal",
+              width: "auto",
+              maxWidth: "none",
+              display: "inline-block",
+            }}
+          >
+            <strong>
+              {Account.fullName} -{" "}
+              <small style={{ color: "#888" }}>
+                {Account.agencyName} {"("}cách {Account.distance} km{")"} - Đang
+                nhận {Account.assignmentsInProgress} việc
+              </small>
+            </strong>
+          </span>
+        ),
       }));
 
       console.log(list);
@@ -280,6 +301,7 @@ function DocumentDetails() {
       setDataAssignTrans(response.data.data);
       formVariable.resetFields();
       toast.success("Assign Translator success");
+      fetchDetaildocuments();
       setIsOpen(false);
     } catch (error) {
       toast.error("Assign fail");

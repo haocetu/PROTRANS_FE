@@ -210,10 +210,10 @@ function RequestManager() {
 
       fetchRequest();
       formUpdate.resetFields();
-      toast.success("Gửi báo giá thành công");
+      toast.success("Gửi báo giá thành công.");
       setIsOpen(false);
     } catch (error) {
-      toast.error("Gửi báo giá thất bại");
+      toast.error("Gửi báo giá thất bại.");
     }
   }
 
