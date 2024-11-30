@@ -202,10 +202,7 @@ function DocumentDetails() {
       dataIndex: "id",
       key: "id",
       render: (id, data) =>
-        (data.translationStatus === "Processing" ||
-          data.translationStatus === "Waiting") &&
-        (data.notarizationStatus === "PickedUp" ||
-          data.notarizationStatus === "None" || data.notarizationStatus === "Waiting") ? (
+        data.translationStatus === "Processing" ? (
           <ContainerOutlined
             onClick={() => {
               console.log(data.firstLanguageId);
