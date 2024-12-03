@@ -1,15 +1,7 @@
 import React, { useState } from "react";
-import {
-  ArrowRightOutlined,
-  DesktopOutlined,
-  FileOutlined,
-  LoginOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { ArrowRightOutlined, UserOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
+import { Breadcrumb, Button, Dropdown, Layout, Menu, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,6 +42,25 @@ const DashboardAdmin: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handleMenuClick = ({ key }) => {
+    if (key === "logout") {
+      dispatch(logout());
+      navigate("/login");
+    } else if (key === "myOrders") {
+      navigate("/myOrders");
+    } else if (key === "myRequests") {
+      navigate("/myRequests");
+    }
+  };
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item key="logout" icon={<ArrowRightOutlined />}>
+        Đăng xuất
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -67,20 +78,10 @@ const DashboardAdmin: React.FC = () => {
       </Sider>
       <Layout>
         <Header className="header-container">
-          <UserOutlined style={{ fontSize: "24px" }} />
-          <div className="account">{account.Username}</div>
-          <Button
-            type="primary"
-            className="logout-button"
-            onClick={() => {
-              dispatch(logout());
-              navigate("/login");
-            }}
-            title="Đăng xuất"
-          >
-            <ArrowRightOutlined />
-            Đăng xuất
-          </Button>
+          <Dropdown.Button overlay={menu} placement="bottomRight">
+            <UserOutlined />
+            {account.Username}
+          </Dropdown.Button>
         </Header>
         <Content style={{ margin: "0 16px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
