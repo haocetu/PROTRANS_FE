@@ -279,12 +279,6 @@ function DocumentDetails() {
   }, [selectfirstlanguageId, selectsecondlanguageId, selectedDocumentId]);
   //---------------------AssignmentTranslation--------------------------------//
 
-  async function fetchAssignmentTranslation() {
-    const response = await api.get("AssignmentTranslation");
-    console.log(response.data.data);
-    setDocument(response.data.data);
-  }
-
   const handlesubmitAssignTrans = async (values) => {
     const payload = {
       translatorId: values.translatorId,
@@ -305,10 +299,6 @@ function DocumentDetails() {
     }
     console.log("payload:", payload);
   };
-
-  useEffect(() => {
-    fetchAssignmentTranslation();
-  }, []);
 
   //----------------------------------------------------------------------------//
   const fetchDetaildocuments = async () => {
