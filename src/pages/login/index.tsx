@@ -1,5 +1,5 @@
 import { Button, Form, Input } from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { LoadingOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import Authenlayout from "../../components/auth-layout";
 import "./index.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,17 +9,20 @@ import { toast } from "react-toastify";
 import { login } from "../../redux/features/userSlice";
 import { jwtDecode } from "jwt-decode";
 import { User } from "../../models/user";
+import { useState } from "react";
 //import { RootState } from "../../redux/rootReducer";
 
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   //const user = useSelector((store: RootState) => store.accountmanage);
 
   const handleLogin = async (values) => {
+    setLoading(true);
     try {
       const response = await api.post("Authentication/Login", values);
-
+      setLoading(false);
       const token = response.data.token; // Assuming response.data.data contains the JWT token
       localStorage.setItem("token", token);
 
@@ -79,6 +82,7 @@ function Login() {
       }
     } catch (error) {
       toast.error("Tên đăng nhập hoặc mật khẩu không hợp lệ.");
+      setLoading(false);
     }
   };
   return (
@@ -141,7 +145,7 @@ function Login() {
           </Form.Item>
 
           <Button type="primary" htmlType="submit" style={{ width: "300px" }}>
-            Đăng nhập
+            {loading ? <LoadingOutlined /> : "Đăng nhập"}
           </Button>
         </Form>
         <div className="link">
