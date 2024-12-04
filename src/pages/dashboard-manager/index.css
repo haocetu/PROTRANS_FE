@@ -6,11 +6,6 @@
   background-color: var(--color-bg-container); /* Sử dụng biến màu nếu có */
 }
 
-.account {
-  font-weight: bold; /* Tùy chọn: thay đổi kiểu chữ cho tên tài khoản */
-  margin: 10px;
-}
-
 .logout-button {
   font-weight: bold;
   background-color: red;
