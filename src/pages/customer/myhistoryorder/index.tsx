@@ -1,4 +1,4 @@
-import { Table, Button } from "antd";
+import { Table, Button, Spin } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -22,7 +22,8 @@ function HistoryOrder() {
   const account = useSelector((store: RootState) => store.accountmanage);
   const [agency, setAgency] = useState([]);
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [activeButton, setActiveButton] = useState<string>(""); // Lưu trạng thái nút đang được nhấn
+  const [activeButton, setActiveButton] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   // Lấy thông tin các agency
   const fetchAgency = async () => {
@@ -44,10 +45,12 @@ function HistoryOrder() {
 
   // Lấy tất cả đơn hàng của khách hàng
   async function fetchMyOrders() {
+    setLoading(true);
     const response = await api.get(`Order/GetByCustomerId?id=${account.Id}`);
     console.log(response.data.data);
     setDataSource(response.data.data);
     setFilteredData(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -65,9 +68,8 @@ function HistoryOrder() {
     if (statusFilter === "") {
       setFilteredData(datasource);
     } else {
-      const filtered = datasource.filter(
-        (order) => order.status === statusFilter
-      );
+      const filtered =
+        datasource?.filter((order) => order.status === statusFilter) || []; // Kiểm tra datasource không null
       setFilteredData(filtered);
     }
   }, [statusFilter, datasource]);
@@ -180,7 +182,14 @@ function HistoryOrder() {
         </Button>
       </div>
 
-      <Table columns={columns} dataSource={filteredData} />
+      <Table
+        columns={columns}
+        dataSource={filteredData}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+      />
     </div>
   );
 }

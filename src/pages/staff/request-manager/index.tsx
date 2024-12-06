@@ -8,6 +8,7 @@ import {
   Modal,
   Select,
   Space,
+  Spin,
   Table,
 } from "antd";
 import { useEffect, useState } from "react";
@@ -44,7 +45,8 @@ function RequestManager() {
   const [notarizationType, setNotarizationType] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [statusFilter, setStatusFilter] = useState<string>("Waitting");
-  const [activeButton, setActiveButton] = useState<string>("Waitting"); // Lưu trạng thái nút đang được nhấn
+  const [activeButton, setActiveButton] = useState<string>("Waitting");
+  const [loading, setLoading] = useState(false);
 
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
@@ -55,9 +57,8 @@ function RequestManager() {
     if (statusFilter === "") {
       setFilteredData(datasource);
     } else {
-      const filtered = datasource.filter(
-        (order) => order.status === statusFilter
-      );
+      const filtered =
+        datasource?.filter((order) => order.status === statusFilter) || []; // Kiểm tra datasource không null
       setFilteredData(filtered);
     }
   }, [statusFilter, datasource]);
@@ -304,10 +305,12 @@ function RequestManager() {
   }
 
   async function fetchRequest() {
+    setLoading(true);
     const response = await api.get("Request/ToQuote");
     console.log("=============================");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -370,7 +373,14 @@ function RequestManager() {
           Kết thúc
         </Button>
       </div>
-      <Table columns={columns} dataSource={filteredData} />
+      <Table
+        columns={columns}
+        dataSource={filteredData}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+      />
       <Modal
         open={isOpen}
         onCancel={() => {
