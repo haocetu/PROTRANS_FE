@@ -1,0 +1,13 @@
+.document-content {
+  display: flex;
+  gap: 20px;
+}
+
+.document-content label {
+  font-weight: bold;
+}
+
+.request-content {
+  display: flex;
+  gap: 20px;
+}
