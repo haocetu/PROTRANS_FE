@@ -15,6 +15,7 @@ import {
   Modal,
   Select,
   Space,
+  Spin,
   Switch,
   Table,
 } from "antd";
@@ -35,7 +36,8 @@ function MyRequest() {
   const [idRequest, SetidRequest] = useState("");
   const account = useSelector((store: RootState) => store.accountmanage);
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [activeButton, setActiveButton] = useState<string>(""); // Lưu trạng thái nút đang được nhấn
+  const [activeButton, setActiveButton] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   console.log(account.Id);
 
@@ -48,9 +50,8 @@ function MyRequest() {
     if (statusFilter === "") {
       setFilteredData(datasource);
     } else {
-      const filtered = datasource.filter(
-        (order) => order.status === statusFilter
-      );
+      const filtered =
+        datasource?.filter((order) => order.status === statusFilter) || []; // Kiểm tra datasource không null
       setFilteredData(filtered);
     }
   }, [statusFilter, datasource]);
@@ -174,6 +175,7 @@ function MyRequest() {
   }
 
   async function fetchMyRequest() {
+    setLoading(true);
     const response = await api.get(
       `Request/GetByCustomerId?customerId=${account.Id}`
     );
@@ -181,6 +183,7 @@ function MyRequest() {
     console.log(response.data.data);
     setDataSource(response.data.data);
     setFilteredData(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -243,7 +246,14 @@ function MyRequest() {
           Kết thúc
         </Button>
       </div>
-      <Table columns={columns} dataSource={filteredData} />
+      <Table
+        columns={columns}
+        dataSource={filteredData}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+      />
       <Modal
         open={isOpen}
         onCancel={() => {
