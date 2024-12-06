@@ -20,6 +20,7 @@ import {
   CloseSquareFilled,
   CopyOutlined,
   FormOutlined,
+  HourglassOutlined,
 } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
@@ -135,9 +136,12 @@ function RequestManager() {
       },
     },
     {
-      title: "Giá ước tính",
+      title: "Giá ước tính (VNĐ)",
       dataIndex: "estimatedPrice",
       key: "estimatedPrice",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     // {
     //   title: "Trạng thái xóa",
@@ -149,42 +153,73 @@ function RequestManager() {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (status) => {
+        switch (status) {
+          case "Waitting":
+            return (
+              <div className="status-waiting">
+                <HourglassOutlined />
+                &nbsp; Chờ báo giá
+              </div>
+            );
+          case "Quoted":
+            return (
+              <div className="status-quoted">
+                <HourglassOutlined />
+                &nbsp; Đã báo giá
+              </div>
+            );
+          case "Refuse":
+            return (
+              <div className="status-refused">
+                <HourglassOutlined />
+                &nbsp; Bị từ chối
+              </div>
+            );
+          default:
+            return status;
+        }
+      },
     },
     {
       title: "",
       dataIndex: "id",
       key: "id",
-      render: (id, data) => (
-        <Space>
-          <FormOutlined
-            onClick={() => {
-              setIsOpen(true);
-              setIdRequest(id);
-              const newData = { ...data };
-              console.log(newData);
+      render: (id, data) => {
+        if (data.status === "Waitting") {
+          return (
+            <Space>
+              <FormOutlined
+                onClick={() => {
+                  setIsOpen(true);
+                  setIdRequest(id);
+                  const newData = { ...data };
+                  console.log(newData);
 
-              // Lấy dữ liệu request dựa trên id
-              const selectedRequest = datasource.find(
-                (request) => request.id === id
-              );
-              if (selectedRequest) {
-                // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
-                const newData = {
-                  ...selectedRequest,
-                  deadline: dayjs(selectedRequest.deadline),
-                  documents: selectedRequest.documents || [],
-                  status: "Quoted",
-                };
+                  // Lấy dữ liệu request dựa trên id
+                  const selectedRequest = datasource.find(
+                    (request) => request.id === id
+                  );
+                  if (selectedRequest) {
+                    // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
+                    const newData = {
+                      ...selectedRequest,
+                      deadline: dayjs(selectedRequest.deadline),
+                      documents: selectedRequest.documents || [],
+                      status: "Quoted",
+                    };
 
-                console.log("Dữ liệu được thiết lập:", newData);
+                    console.log("Dữ liệu được thiết lập:", newData);
 
-                // Thiết lập giá trị cho form
-                formUpdate.setFieldsValue(newData);
-              }
-            }}
-          />
-        </Space>
-      ),
+                    // Thiết lập giá trị cho form
+                    formUpdate.setFieldsValue(newData);
+                  }
+                }}
+              />
+            </Space>
+          );
+        } else return null;
+      },
     },
   ];
 
@@ -253,6 +288,8 @@ function RequestManager() {
         onOk={() => {
           formUpdate.submit();
         }}
+        okText="Gửi báo giá"
+        cancelText="Đóng"
       >
         <Form form={formUpdate} onFinish={handleEditRequest}>
           <Form.Item
@@ -448,6 +485,13 @@ function RequestManager() {
                           options={notarizationType}
                           placeholder="Loại công chứng"
                           style={{ width: "400px" }}
+                          disabled={
+                            !formUpdate.getFieldValue([
+                              "documents",
+                              name,
+                              "notarizationRequest",
+                            ])
+                          }
                         />
                       </Form.Item>
                       <Form.Item
