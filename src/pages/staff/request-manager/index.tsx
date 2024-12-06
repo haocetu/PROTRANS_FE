@@ -1,4 +1,5 @@
 import {
+  Button,
   DatePicker,
   Divider,
   Form,
@@ -12,15 +13,20 @@ import {
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
 import {
+  AlignRightOutlined,
   ArrowRightOutlined,
   CheckCircleFilled,
   CheckCircleOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
   CloseCircleFilled,
   CloseCircleOutlined,
+  CloseOutlined,
   CloseSquareFilled,
   CopyOutlined,
   FormOutlined,
   HourglassOutlined,
+  PauseOutlined,
 } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
@@ -36,6 +42,25 @@ function RequestManager() {
   const [language, setLanguage] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [statusFilter, setStatusFilter] = useState<string>("Waitting");
+  const [activeButton, setActiveButton] = useState<string>("Waitting"); // Lưu trạng thái nút đang được nhấn
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setActiveButton(status);
+  };
+
+  useEffect(() => {
+    if (statusFilter === "") {
+      setFilteredData(datasource);
+    } else {
+      const filtered = datasource.filter(
+        (order) => order.status === statusFilter
+      );
+      setFilteredData(filtered);
+    }
+  }, [statusFilter, datasource]);
 
   // const props: UploadProps = {
   //   name: "file",
@@ -158,22 +183,36 @@ function RequestManager() {
           case "Waitting":
             return (
               <div className="status-waiting">
-                <HourglassOutlined />
-                &nbsp; Chờ báo giá
+                <ClockCircleOutlined />
+                &nbsp; Chờ xử lý
               </div>
             );
           case "Quoted":
             return (
               <div className="status-quoted">
-                <HourglassOutlined />
+                <FormOutlined />
                 &nbsp; Đã báo giá
               </div>
             );
           case "Refuse":
             return (
               <div className="status-refused">
-                <HourglassOutlined />
+                <CloseOutlined />
                 &nbsp; Bị từ chối
+              </div>
+            );
+          case "Accept":
+            return (
+              <div className="status-accepted">
+                <CheckOutlined />
+                &nbsp; Được chấp nhận
+              </div>
+            );
+          case "Finish":
+            return (
+              <div className="status-finished">
+                <PauseOutlined />
+                &nbsp; Kết thúc
               </div>
             );
           default:
@@ -277,7 +316,61 @@ function RequestManager() {
 
   return (
     <div className="requestmanager">
-      <Table columns={columns} dataSource={datasource} />
+      <div>
+        <Button
+          className={`filter-button ${activeButton === "" ? "active" : ""}`}
+          onClick={() => handleStatusFilter("")}
+        >
+          <AlignRightOutlined />
+          Tất cả
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Waitting" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Waitting")}
+        >
+          <ClockCircleOutlined />
+          Chờ xử lý
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Quoted" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Quoted")}
+        >
+          <FormOutlined />
+          Đã báo giá
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Refuse" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Refuse")}
+        >
+          <CloseOutlined />
+          Bị từ chối
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Accept" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Accept")}
+        >
+          <CheckOutlined />
+          Được chấp nhận
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Finish" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Finish")}
+        >
+          <PauseOutlined />
+          Kết thúc
+        </Button>
+      </div>
+      <Table columns={columns} dataSource={filteredData} />
       <Modal
         open={isOpen}
         onCancel={() => {
