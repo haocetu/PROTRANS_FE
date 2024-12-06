@@ -121,6 +121,47 @@ function HistoryOrder() {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (status) => {
+        switch (status) {
+          case "Processing":
+            return (
+              <div className="status-processing">
+                <ClockCircleOutlined />
+                &nbsp; Chờ xử lý
+              </div>
+            );
+          case "Implementing":
+            return (
+              <div className="status-implementing">
+                <FormOutlined />
+                &nbsp; Đang thực hiện
+              </div>
+            );
+          case "Delivering":
+            return (
+              <div className="status-delivering">
+                <TruckOutlined />
+                &nbsp; Đang giao
+              </div>
+            );
+          case "Delivered":
+            return (
+              <div className="status-delivered">
+                <CheckOutlined />
+                &nbsp; Đã hoàn thành
+              </div>
+            );
+          case "Canceled":
+            return (
+              <div className="status-canceled">
+                <CloseOutlined />
+                &nbsp; Đã hủy
+              </div>
+            );
+          default:
+            return status;
+        }
+      },
     },
   ];
 
