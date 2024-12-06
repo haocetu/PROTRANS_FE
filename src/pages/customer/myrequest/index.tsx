@@ -112,6 +112,47 @@ function MyRequest() {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (status) => {
+        switch (status) {
+          case "Waitting":
+            return (
+              <div className="status-waiting">
+                <ClockCircleOutlined />
+                &nbsp; Chờ xử lý
+              </div>
+            );
+          case "Quoted":
+            return (
+              <div className="status-quoted">
+                <FormOutlined />
+                &nbsp; Đã báo giá
+              </div>
+            );
+          case "Refuse":
+            return (
+              <div className="status-refused">
+                <CloseOutlined />
+                &nbsp; Đã từ chối
+              </div>
+            );
+          case "Accept":
+            return (
+              <div className="status-accepted">
+                <CheckOutlined />
+                &nbsp; Đã chấp nhận
+              </div>
+            );
+          case "Finish":
+            return (
+              <div className="status-finished">
+                <PauseOutlined />
+                &nbsp; Kết thúc
+              </div>
+            );
+          default:
+            return status;
+        }
+      },
     },
     {
       title: "",
