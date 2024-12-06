@@ -1,19 +1,40 @@
-import { DatePicker, Form, Input, Modal, Select, Space, Table } from "antd";
+import {
+  DatePicker,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Space,
+  Table,
+} from "antd";
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
-import { FormOutlined } from "@ant-design/icons";
+import {
+  ArrowRightOutlined,
+  CheckCircleFilled,
+  CheckCircleOutlined,
+  CloseCircleFilled,
+  CloseCircleOutlined,
+  CloseSquareFilled,
+  CopyOutlined,
+  FormOutlined,
+} from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import "./index.css";
+import FormItem from "antd/es/form/FormItem";
 
 function RequestManager() {
   const [formUpdate] = useForm();
   const [datasource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [idRequest, SetidRequest] = useState("");
-  // const [language, setLanguage] = useState([]);
-  // const [documentType, setDocumentType] = useState([]);
-  // const [notarizationType, setNotarizationType] = useState([]);
+  const [idRequest, setIdRequest] = useState("");
+  const [language, setLanguage] = useState([]);
+  const [documentType, setDocumentType] = useState([]);
+  const [notarizationType, setNotarizationType] = useState([]);
 
   // const props: UploadProps = {
   //   name: "file",
@@ -33,68 +54,65 @@ function RequestManager() {
   //   },
   // };
 
-  // ========================================
-  // const fetchNotarizationType = async () => {
-  //   const response = await api.get("Notarization");
-  //   const data = response.data.data;
-  //   console.log({ data });
+  const fetchNotarizationType = async () => {
+    const response = await api.get("Notarization");
+    const data = response.data.data;
+    console.log({ data });
 
-  //   const list = data.map((notarization) => ({
-  //     value: notarization.id,
-  //     label: <span>{notarization.name}</span>,
-  //   }));
+    const list = data.map((notarization) => ({
+      value: notarization.id,
+      label: <span>{notarization.name}</span>,
+    }));
 
-  //   setNotarizationType(list);
-  // };
+    setNotarizationType(list);
+  };
 
-  // useEffect(() => {
-  //   fetchNotarizationType();
-  // }, []);
+  useEffect(() => {
+    fetchNotarizationType();
+  }, []);
 
-  // =========================================
-  // const fetchDocumentType = async () => {
-  //   const response = await api.get("DocumentType");
-  //   const data = response.data.data;
-  //   console.log({ data });
+  const fetchDocumentType = async () => {
+    const response = await api.get("DocumentType");
+    const data = response.data.data;
+    console.log({ data });
 
-  //   const list = data.map((Document) => ({
-  //     value: Document.id,
-  //     label: <span>{Document.name}</span>,
-  //   }));
+    const list = data.map((Document) => ({
+      value: Document.id,
+      label: <span>{Document.name}</span>,
+    }));
 
-  //   setDocumentType(list);
-  // };
+    setDocumentType(list);
+  };
 
-  // useEffect(() => {
-  //   fetchDocumentType();
-  // }, []);
+  useEffect(() => {
+    fetchDocumentType();
+  }, []);
 
-  //==========================================
-  // const fetchLanguages = async () => {
-  //   const response = await api.get("Language");
-  //   const data = response.data.data;
-  //   console.log({ data });
+  const fetchLanguages = async () => {
+    const response = await api.get("Language");
+    const data = response.data.data;
+    console.log({ data });
 
-  //   const list = data.map((language) => ({
-  //     value: language.id,
-  //     label: <span>{language.name}</span>,
-  //   }));
+    const list = data.map((language) => ({
+      value: language.id,
+      label: <span>{language.name}</span>,
+    }));
 
-  //   setLanguage(list);
-  // };
+    setLanguage(list);
+  };
 
-  // useEffect(() => {
-  //   fetchLanguages();
-  // }, []);
+  useEffect(() => {
+    fetchLanguages();
+  }, []);
 
   const columns = [
     {
-      title: "Tên Khách hàng",
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
@@ -109,7 +127,7 @@ function RequestManager() {
       key: "email",
     },
     {
-      title: "Thời gian hoàn thành",
+      title: "Thời hạn yêu cầu",
       dataIndex: "deadline",
       key: "deadline",
       render: (deadline) => {
@@ -121,31 +139,19 @@ function RequestManager() {
       dataIndex: "estimatedPrice",
       key: "estimatedPrice",
     },
+    // {
+    //   title: "Trạng thái xóa",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
+    //   render: (isDeleted) => (isDeleted ? "Có" : "Không"),
+    // },
     {
-      title: "Yêu cầu nhận tài liệu",
-      dataIndex: "pickUpRequest",
-      key: "pickUpRequest",
-      render: (pickUpRequest) => (pickUpRequest ? "Có" : "Không"),
-    },
-    {
-      title: "Yêu cầu ship",
-      dataIndex: "shipRequest",
-      key: "shipRequest",
-      render: (shipRequest) => (shipRequest ? "Có" : "Không"),
-    },
-    {
-      title: "Trạng Thái xóa",
-      dataIndex: "isDeleted",
-      key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Có" : "Không"),
-    },
-    {
-      title: "trạng thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },
     {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -153,23 +159,28 @@ function RequestManager() {
           <FormOutlined
             onClick={() => {
               setIsOpen(true);
-              SetidRequest(id);
+              setIdRequest(id);
               const newData = { ...data };
               console.log(newData);
 
-              for (const key of Object.keys(data)) {
-                const value = newData[key];
+              // Lấy dữ liệu request dựa trên id
+              const selectedRequest = datasource.find(
+                (request) => request.id === id
+              );
+              if (selectedRequest) {
+                // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
+                const newData = {
+                  ...selectedRequest,
+                  deadline: dayjs(selectedRequest.deadline),
+                  documents: selectedRequest.documents || [],
+                  status: "Quoted",
+                };
 
-                const date: any = new Date(value);
-                // const time: any = date.getTime();
-                //|| isNaN(time)
-                if (typeof value === "number") {
-                } else {
-                  newData[key] = dayjs(value);
-                }
+                console.log("Dữ liệu được thiết lập:", newData);
+
+                // Thiết lập giá trị cho form
+                formUpdate.setFieldsValue(newData);
               }
-              console.log(newData);
-              formUpdate.setFieldsValue(newData);
             }}
           />
         </Space>
@@ -193,12 +204,13 @@ function RequestManager() {
   //     console.error("Error updating request:", error);
   //   }
   // }
+
   async function handleEditRequest() {
     const updateRequest = formUpdate.getFieldsValue();
 
     // Chuyển đổi các giá trị boolean của Switch cho pickUpRequest và shipRequest
-    updateRequest.pickUpRequest = updateRequest.pickUpRequest ? true : false;
-    updateRequest.shipRequest = updateRequest.shipRequest ? true : false;
+    // updateRequest.pickUpRequest = updateRequest.pickUpRequest ? true : false;
+    // updateRequest.shipRequest = updateRequest.shipRequest ? true : false;
 
     console.log(updateRequest);
     try {
@@ -218,7 +230,7 @@ function RequestManager() {
   }
 
   async function fetchRequest() {
-    const response = await api.get("Request/GetStatusWaitting");
+    const response = await api.get("Request/ToQuote");
     console.log("=============================");
     console.log(response.data.data);
     setDataSource(response.data.data);
@@ -227,16 +239,17 @@ function RequestManager() {
   useEffect(() => {
     fetchRequest();
   }, []);
+
   return (
     <div className="requestmanager">
       <Table columns={columns} dataSource={datasource} />
-
       <Modal
         open={isOpen}
         onCancel={() => {
           setIsOpen(false);
           formUpdate.resetFields();
         }}
+        width={1200}
         onOk={() => {
           formUpdate.submit();
         }}
@@ -254,66 +267,222 @@ function RequestManager() {
           >
             <DatePicker />
           </Form.Item>
-          <Form.Item
-            label="Giá ước tính"
-            name={"estimatedPrice"}
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập giá ước tính",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          {/* <Form.Item
-            label="Yêu cầu nhận hồ sơ"
-            name={"pickUpRequest"}
-            valuePropName="checked"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập Yêu cầu",
-              },
-            ]}
-          >
-            <Switch
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-              defaultChecked={false}
-            />
-          </Form.Item> */}
-          {/* <Form.Item
-            label="Yêu cầu giao hồ sơ"
-            name={"shipRequest"}
-            valuePropName="checked"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập Yêu cầu",
-              },
-            ]}
-          >
-            <Switch
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-              defaultChecked={false}
-            />
-          </Form.Item> */}
+          <div className="request-content">
+            <span>
+              Yêu cầu nhận tài liệu:&nbsp;
+              {formUpdate.getFieldValue("pickUpRequest") ? (
+                <CheckCircleFilled style={{ color: "green" }} />
+              ) : (
+                <CloseCircleFilled style={{ color: "red" }} />
+              )}
+            </span>
+            <span>
+              Yêu cầu giao hàng:&nbsp;
+              {formUpdate.getFieldValue("shipRequest") ? (
+                <CheckCircleFilled style={{ color: "green" }} />
+              ) : (
+                <CloseCircleFilled style={{ color: "red" }} />
+              )}
+            </span>
+          </div>
+          <Form.List name="documents">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, fieldKey, ...restField }, index) => (
+                  <div key={key}>
+                    <Divider
+                      orientation="left"
+                      style={{ borderColor: "black" }}
+                    >
+                      Tài liệu {index + 1}
+                    </Divider>
+                    <div className="document-content">
+                      <Form.Item
+                        {...restField}
+                        name={[name, "firstLanguageId"]}
+                        fieldKey={[fieldKey, "firstLanguageId"]}
+                        label="Ngôn ngữ gốc"
+                      >
+                        <span>
+                          {(() => {
+                            const firstLanguageId = formUpdate.getFieldValue([
+                              "documents",
+                              name,
+                              "firstLanguageId",
+                            ]);
+                            if (!language || language.length === 0) {
+                              return "Loading...";
+                            }
+                            const foundLanguage = language.find(
+                              (lang) => lang.value === firstLanguageId
+                            );
+                            return foundLanguage ? foundLanguage.label : null;
+                          })()}
+                        </span>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "secondLanguageId"]}
+                        fieldKey={[fieldKey, "secondLanguageId"]}
+                        label="Ngôn ngữ cần dịch"
+                      >
+                        <span>
+                          {(() => {
+                            const secondLanguageId = formUpdate.getFieldValue([
+                              "documents",
+                              name,
+                              "secondLanguageId",
+                            ]);
+                            if (!language || language.length === 0) {
+                              return "Loading...";
+                            }
+                            const foundLanguage = language.find(
+                              (lang) => lang.value === secondLanguageId
+                            );
+                            return foundLanguage ? foundLanguage.label : null;
+                          })()}
+                        </span>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "pageNumber"]}
+                        fieldKey={[fieldKey, "pageNumber"]}
+                        label="Số trang"
+                      >
+                        <InputNumber min={1} />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "numberOfCopies"]}
+                        fieldKey={[fieldKey, "numberOfCopies"]}
+                        label="Số bản cần dịch"
+                      >
+                        <span>
+                          {formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "numberOfCopies",
+                          ])}
+                        </span>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "documentTypeId"]}
+                        fieldKey={[fieldKey, "documentTypeId"]}
+                        rules={[
+                          {
+                            required: false,
+                            message: "* vui lòng chọn",
+                          },
+                        ]}
+                        label="Loại tài liệu"
+                      >
+                        <Select
+                          options={documentType}
+                          placeholder="Loại tài liệu"
+                          style={{ width: "100px" }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "urlPath"]}
+                        fieldKey={[fieldKey, "urlPath"]}
+                        label="Tệp đính kèm"
+                      >
+                        <span>
+                          {(() => {
+                            const urlPath = formUpdate.getFieldValue([
+                              "documents",
+                              name,
+                              "urlPath",
+                            ]);
+                            return urlPath ? (
+                              <a
+                                href={urlPath}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <CopyOutlined />
+                              </a>
+                            ) : null;
+                          })()}
+                        </span>
+                      </Form.Item>
+                    </div>
+                    <div className="document-content">
+                      <Form.Item
+                        {...restField}
+                        name={[name, "notarizationRequest"]}
+                        fieldKey={[fieldKey, "notarizationRequest"]}
+                        label="Yêu cầu công chứng"
+                      >
+                        <span>
+                          {(() => {
+                            const notarizationRequest =
+                              formUpdate.getFieldValue([
+                                "documents",
+                                name,
+                                "notarizationRequest",
+                              ]);
+                            return notarizationRequest ? (
+                              <CheckCircleFilled style={{ color: "green" }} />
+                            ) : (
+                              <CloseCircleFilled style={{ color: "red" }} />
+                            );
+                          })()}
+                        </span>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "notarizationId"]}
+                        fieldKey={[fieldKey, "notarizationId"]}
+                        rules={[
+                          {
+                            required: false,
+                            message: "* vui lòng chọn",
+                          },
+                        ]}
+                        label="Loại công chứng"
+                      >
+                        <Select
+                          options={notarizationType}
+                          placeholder="Loại công chứng"
+                          style={{ width: "400px" }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "numberOfNotarizedCopies"]}
+                        fieldKey={[fieldKey, "numberOfNotarizedCopies"]}
+                        label="Số bản công chứng"
+                      >
+                        <span>
+                          {formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "numberOfNotarizedCopies",
+                          ])}
+                        </span>
+                      </Form.Item>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </Form.List>
           <Form.Item
             label="Trạng thái"
             name={"status"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập trạng thái",
+                message: "* vui lòng chọn",
               },
             ]}
+            hidden
           >
             <Select placeholder="Trạng thái">
-              <Select.Option value="Waitting">Đang xử lí</Select.Option>
-              <Select.Option value="Quoted">Đã báo giá</Select.Option>
-              <Select.Option value="Cancel">Hủy</Select.Option>
+              <Select value="Quoted">Đã báo giá</Select>
             </Select>
           </Form.Item>
         </Form>

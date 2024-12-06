@@ -1,4 +1,8 @@
-import { UserOutlined } from "@ant-design/icons";
+import {
+  ArrowRightOutlined,
+  FileOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,17 +36,17 @@ function Header() {
     {
       label: "Đơn hàng của tôi",
       key: "HistoryOrder",
-      icon: <UserOutlined />,
+      icon: <FileOutlined />,
     },
     {
-      label: "Yêu cầu đã gửi",
+      label: "Yêu cầu của tôi",
       key: "MyRequest",
-      icon: <UserOutlined />,
+      icon: <FileOutlined />,
     },
     {
       label: "Đăng xuất",
       key: "logout",
-      icon: <UserOutlined />,
+      icon: <ArrowRightOutlined />,
     },
   ];
 
