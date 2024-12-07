@@ -40,7 +40,7 @@ function Notarization() {
             cancelText="No"
           >
             <Button type="primary" danger>
-              Delete
+              Ngưng Dịch
             </Button>
           </Popconfirm>
           <Button
@@ -52,7 +52,7 @@ function Notarization() {
               formVariable.setFieldsValue(data);
             }}
           >
-            Update
+            Cập nhập
           </Button>
         </Space>
       ),
@@ -125,18 +125,18 @@ function Notarization() {
           setIsOpen(true);
         }}
       >
-        Add New Notarization
+        Tạo Mới Loại Công Chứng
       </Button>
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}
-        title="Add New Notarization"
+        title="Thêm Loại Công Chứng"
         onCancel={handleHideModal}
         onOk={handleOk}
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
-            label="TypeNotarization"
+            label="Loại công chứng"
             name={"name"}
             rules={[
               {
@@ -148,7 +148,7 @@ function Notarization() {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Price"
+            label="Giá"
             name={"price"}
             rules={[
               {
