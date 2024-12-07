@@ -141,10 +141,6 @@ function App() {
           element: <Order />,
         },
         {
-          path: "createOrder",
-          element: <DynamicDocumentsForm />,
-        },
-        {
           path: "order/details/:id",
           element: <DocumentDetails />,
         },
@@ -221,7 +217,7 @@ function App() {
           element: <RequestManager />,
         },
         {
-          path: "document",
+          path: "createoderoffline",
           element: <DynamicDocumentsForm />,
         },
         {

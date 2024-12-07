@@ -39,7 +39,6 @@ const items: MenuItem[] = [
   getItem("Bảng giá", "quoteprice", <BookOutlined />),
   getItem("Loại công chứng", "notarization", <AuditOutlined />),
   getItem("Đơn hàng", "order", <ShoppingCartOutlined />),
-  getItem("Tạo đơn hàng", "createOrder", <FormOutlined />),
   getItem("Giao việc vận chuyển", "assignshipper", <FormOutlined />),
   getItem("Giao việc công chứng", "assignNotarization", <FormOutlined />),
   getItem("Giao đi nhận bản cứng", "assignhardcopy", <FormOutlined />),
