@@ -41,7 +41,7 @@ function Language() {
             cancelText="No"
           >
             <Button type="primary" danger>
-              Delete
+              Ngưng dịch
             </Button>
           </Popconfirm>
           <Button
@@ -53,7 +53,7 @@ function Language() {
               formVariable.setFieldsValue(data);
             }}
           >
-            Update
+            Cập Nhập
           </Button>
         </Space>
       ),
@@ -146,23 +146,23 @@ function Language() {
           setIsOpen(true);
         }}
       >
-        Add New Language
+        Tạo ngôn ngữ mới
       </Button>
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}
-        title="Add New Language"
+        title="Thêm Ngôn Ngữ Mới"
         onCancel={handleHideModal}
         onOk={handleOk}
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
-            label="Language Name"
+            label="Ngôn Ngữ"
             name={"name"}
             rules={[
               {
                 required: true,
-                message: "Please Input Language",
+                message: "Vui lòng nhập ngôn ngữ",
               },
             ]}
           >
@@ -173,7 +173,7 @@ function Language() {
 
       <Modal
         open={visibleEditModal}
-        title="Update Langauge"
+        title="Cập nhập ngôn ngữ"
         onCancel={() => {
           setVisibleEditModal(false);
         }}
@@ -184,12 +184,12 @@ function Language() {
       >
         <Form form={formUpdate} onFinish={handleSubmit}>
           <Form.Item
-            label="Langeuage Name"
+            label="Ngôn Ngữ"
             name={"name"}
             rules={[
               {
                 required: true,
-                message: "Please Input Language",
+                message: "Vui lòng nhập ngôn ngữ",
               },
             ]}
           >
