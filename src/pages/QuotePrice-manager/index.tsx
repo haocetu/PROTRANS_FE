@@ -105,7 +105,7 @@ function QuotePrice() {
             cancelText="No"
           >
             <Button type="primary" danger>
-              Delete
+              Ngưng dịch
             </Button>
           </Popconfirm>
           <Button
@@ -116,7 +116,7 @@ function QuotePrice() {
               formVariable.setFieldsValue(data);
             }}
           >
-            Update
+            Cập nhập
           </Button>
         </Space>
       ),
@@ -161,47 +161,47 @@ function QuotePrice() {
           setIsOpen(true);
         }}
       >
-        Add New QuotePrice
+        Tạo Mới Báo Giá
       </Button>
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
         open={isOpen}
-        title="Add New QuotePrice"
+        title="Tạo báo giá mới"
         onCancel={() => setIsOpen(false)}
         onOk={handleOk}
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
-            label="First Language"
+            label="Ngôn Ngữ Gốc"
             name={"firstLanguageId"}
             rules={[
               {
                 required: true,
-                message: "Please Input First Language",
+                message: "Vui lòng nhập ngôn ngữ gốc",
               },
             ]}
           >
             <Select options={language} />
           </Form.Item>
           <Form.Item
-            label="Second Language "
+            label="Ngôn Ngữ Dịch"
             name={"secondLanguageId"}
             rules={[
               {
                 required: true,
-                message: "Please Input Second Language",
+                message: "Vui lòng nhập ngôn ngữ dịch",
               },
             ]}
           >
             <Select options={language} />
           </Form.Item>
           <Form.Item
-            label="Price Page"
+            label="Giá"
             name={"pricePerPage"}
             rules={[
               {
                 required: true,
-                message: "Please Input Price Per Page",
+                message: "Vui lòng nhập giá",
               },
             ]}
           >
