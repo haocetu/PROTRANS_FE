@@ -6,6 +6,7 @@ import {
   Form,
   Input,
   Modal,
+  Popconfirm,
   Row,
   Select,
   Space,
@@ -19,9 +20,12 @@ import { useForm } from "antd/es/form/Form";
 import {
   CheckOutlined,
   CloseOutlined,
+  LockOutlined,
   MinusCircleOutlined,
   PlusOutlined,
+  UnlockOutlined,
 } from "@ant-design/icons";
+import "./index.css";
 
 function TranslatorAccount() {
   const [formVariable] = useForm();
@@ -78,19 +82,34 @@ function TranslatorAccount() {
     setRole(list);
   };
 
+  const handleToggleStatus = async (id, currentStatus) => {
+    try {
+      const response = await api.put(`Account/Toggle?id=${id}`);
+      toast.success(
+        `Tài khoản đã được ${!currentStatus ? "khóa" : "kích hoạt"} thành công.`
+      );
+
+      // Cập nhật lại danh sách sau khi trạng thái được thay đổi
+      fetchTranslatorAccount();
+    } catch (error) {
+      // Hiển thị thông báo lỗi
+      toast.error("Cập nhật trạng thái thất bại. Vui lòng thử lại.");
+    }
+  };
+
   const columns = [
     {
-      title: "Tên Người Dùng",
-      dataIndex: "userName",
-      key: "userName",
-    },
-    {
-      title: "Tên Đầy Đủ",
+      title: "Họ và tên",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Mã Nhân Viên",
+      title: "Số điện thoại",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+    },
+    {
+      title: "Mã nhân viên",
       dataIndex: "code",
       key: "code",
     },
@@ -98,24 +117,6 @@ function TranslatorAccount() {
       title: "Email",
       dataIndex: "email",
       key: "email",
-    },
-    {
-      title: "Địa Chỉ",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "Vai Trò",
-      dataIndex: "roleId",
-      key: "roleId",
-      render: (roleId) => {
-        // Check if category is available and initialized
-        if (!role || role.length === 0) return null;
-
-        // Find the category by ID and return its name
-        const foundrole = role.find((rol) => rol.value === roleId);
-        return foundrole ? foundrole.label : null;
-      },
     },
     {
       title: "Chi nhánh",
@@ -131,10 +132,58 @@ function TranslatorAccount() {
       },
     },
     {
-      title: "Trạng Thái",
+      title: "Trạng thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Stop" : "Active"),
+      render: (isDeleted) =>
+        isDeleted ? (
+          <div className="status-inactive">Ngưng hoạt động</div>
+        ) : (
+          <div className="status-active">Đang hoạt động</div>
+        ),
+    },
+    {
+      title: "Tác vụ",
+      dataIndex: "id",
+      key: "id",
+      render: (id, data) => (
+        <Popconfirm
+          title={`Bạn có chắc chắn muốn ${
+            !data.isDeleted
+              ? "khóa tài khoản này?"
+              : "kích hoạt lại tài khoản này?"
+          }`}
+          onConfirm={() => handleToggleStatus(id, data.isDeleted)}
+          onCancel={() => {}}
+          okText="Đồng ý"
+          cancelText="Hủy"
+        >
+          <button
+            style={{
+              color: "white",
+              backgroundColor: data.isDeleted ? "#23d783" : "#e03955",
+              padding: 5,
+              width: 80,
+              borderRadius: 8,
+              borderWidth: 0,
+              fontSize: 12,
+              textAlign: "center",
+            }}
+          >
+            {data.isDeleted ? (
+              <div>
+                <UnlockOutlined />
+                &nbsp; Mở
+              </div>
+            ) : (
+              <div>
+                <LockOutlined />
+                &nbsp; Khóa
+              </div>
+            )}
+          </button>
+        </Popconfirm>
+      ),
     },
   ];
 
@@ -144,9 +193,9 @@ function TranslatorAccount() {
       const response = await api.post("Account/Translator", values);
       setDataSource(response.data.data);
       formVariable.resetFields();
-      toast.success("Tạo thành công tài khoản cho dịch thuật viên");
+      toast.success("Tạo thành công tài khoản cho dịch thuật viên.");
     } catch (error) {
-      toast.error("tạo thất bại");
+      toast.error("Tạo thất bại.");
     }
   }
 
@@ -154,9 +203,8 @@ function TranslatorAccount() {
     try {
       const response = await api.get("Account/GetAllTranslator");
       setDataSource(response.data.data);
-      toast.success("Chào mừng đến trang Account");
     } catch (error) {
-      toast.error("Không có Account nào");
+      toast.error("Danh sách trống.");
     }
   }
 
@@ -168,12 +216,14 @@ function TranslatorAccount() {
   return (
     <div className="translator">
       <Button
+        className="button-add"
         type="primary"
         onClick={() => {
           setIsOpen(true);
         }}
       >
-        Thêm Dịch Thuật Viên Mới
+        <PlusOutlined />
+        Tạo tài khoản mới
       </Button>
       <Table columns={columns} dataSource={dataSource}></Table>
       <Modal
