@@ -113,9 +113,8 @@ function ShipperAcccount() {
     try {
       const response = await api.get("Account/GetAllShipper");
       setDataSource(response.data.data);
-      toast.success("Chào mừng đến trang Account");
     } catch (error) {
-      toast.error("Không có Account nào");
+      toast.error("Danh sách trống.");
     }
   }
 

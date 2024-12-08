@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowRightOutlined, UserOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Button, Dropdown, Layout, Menu, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -28,9 +28,9 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem("Nhân viên", "staffaccount", <UserOutlined />),
-  getItem("Tạo tài khoản nhân viên", "createstaffandshipper", <UserOutlined />),
   getItem("Nhân viên vận chuyển", "shipperaccount", <UserOutlined />),
   getItem("Dịch thuật viên", "translatorAccount", <UserOutlined />),
+  getItem("Tạo tài khoản mới", "createstaffandshipper", <PlusOutlined />),
 ];
 
 const DashboardAdmin: React.FC = () => {
@@ -67,6 +67,7 @@ const DashboardAdmin: React.FC = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
+        width={220}
       >
         <div className="demo-logo-vertical" />
         <Menu
