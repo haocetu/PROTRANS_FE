@@ -24,6 +24,7 @@ import DashboardAdmin from "./pages/dashboard-admin";
 import StaffAccount from "./pages/admin/staffAccount";
 import SendRequest from "./pages/staff/sendrequest/indes";
 import DashboardStaff from "./pages/dashboard-staff";
+import DashboardTranslator from "./pages/dashboard-translator";
 import RequestManager from "./pages/staff/request-manager";
 import MyRequest from "./pages/customer/myrequest";
 import CreateOrderOnline from "./pages/staff/createorderonline";
@@ -43,7 +44,7 @@ function App() {
     if (user?.role === role) {
       return children;
     } else {
-      toast.error(" Access Denied");
+      toast.error("Truy cập bị từ chối.");
       dispatch(logout());
       return <Navigate to="/login" />;
     }
@@ -227,6 +228,20 @@ function App() {
         {
           path: "order/details/:id",
           element: <DocumentDetails />,
+        },
+      ],
+    },
+    {
+      path: "dashboardtranslator",
+      element: (
+        <AdminRoute role="Translator">
+          <DashboardTranslator />
+        </AdminRoute>
+      ),
+      children: [
+        {
+          path: "assignment",
+          element: <Translator />,
         },
       ],
     },

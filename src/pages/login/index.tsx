@@ -65,12 +65,12 @@ function Login() {
           navigate("/dashboardadmin");
           break;
         case "Shipper":
-          toast.error("Shipper không được đăng nhập vào hệ thống");
+          toast.error("Nhân viên giao hàng không được đăng nhập vào hệ thống.");
           navigate("/login");
           break;
         case "Translator": // Corrected route
           toast.success("Đăng nhập thành công.");
-          navigate("/translator");
+          navigate("/dashboardtranslator");
           break;
         case "Manager":
           toast.success("Đăng nhập thành công.");
@@ -81,7 +81,7 @@ function Login() {
           navigate("/login");
       }
     } catch (error) {
-      toast.error("Tên đăng nhập hoặc mật khẩu không hợp lệ.");
+      toast.error("Email hoặc mật khẩu không hợp lệ.");
       setLoading(false);
     }
   };

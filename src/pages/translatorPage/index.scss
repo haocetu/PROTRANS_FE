@@ -1,40 +1,39 @@
 .translatorPage {
-  padding: 100px 100px;
-    .ant-select-selector {
-        display: flex;
-        align-items: center;
-        font-size: 14px; /* Adjust the font size if needed */
-      }
-      
-      .ant-select-selection-item {
-        color: rebeccapurple; /* Set the color of the selected item */
-        font-weight: normal;
-      }
-      
-      .ant-select-selection-item span {
-        color: rebeccapurple; /* Ensure the text inside the selected item is colored */
-      }
-      
-      .ant-select-item-option {
-        color: black; /* Color of the dropdown options */
-      }
-      
-      /* Adjust height and line-height */
-      .ant-select-selection-item {
-        line-height: 30px; /* Aligns the text vertically */
-        padding: 0;
-      }
-      
-      .ant-select-single.ant-select-show-arrow {
-        padding: 0;
-        height: 32px; /* Adjust height of the select box */
-      }
-      
-      .ant-select-arrow {
-        color: #1890ff; /* Arrow color */
-      }
+  .ant-select-selector {
+    display: flex;
+    align-items: center;
+    font-size: 14px; /* Adjust the font size if needed */
+  }
 
-      /* New styles for input fields */
+  .ant-select-selection-item {
+    color: rebeccapurple; /* Set the color of the selected item */
+    font-weight: normal;
+  }
+
+  .ant-select-selection-item span {
+    color: rebeccapurple; /* Ensure the text inside the selected item is colored */
+  }
+
+  .ant-select-item-option {
+    color: black; /* Color of the dropdown options */
+  }
+
+  /* Adjust height and line-height */
+  .ant-select-selection-item {
+    line-height: 30px; /* Aligns the text vertically */
+    padding: 0;
+  }
+
+  .ant-select-single.ant-select-show-arrow {
+    padding: 0;
+    height: 32px; /* Adjust height of the select box */
+  }
+
+  .ant-select-arrow {
+    color: #1890ff; /* Arrow color */
+  }
+
+  /* New styles for input fields */
   .ant-input {
     color: rebeccapurple; /* Change text color inside the input fields */
   }
@@ -43,4 +42,4 @@
   .ant-input::placeholder {
     color: #bfbfbf; /* Adjust placeholder color if necessary */
   }
-  }
+}
