@@ -1,5 +1,7 @@
 import {
   ArrowRightOutlined,
+  CopyFilled,
+  CopyOutlined,
   FileOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -36,12 +38,12 @@ function Header() {
     {
       label: "Đơn hàng của tôi",
       key: "HistoryOrder",
-      icon: <FileOutlined />,
+      icon: <CopyOutlined />,
     },
     {
       label: "Yêu cầu của tôi",
       key: "MyRequest",
-      icon: <FileOutlined />,
+      icon: <CopyOutlined />,
     },
     {
       label: "Đăng xuất",
