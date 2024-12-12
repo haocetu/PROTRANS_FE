@@ -26,32 +26,34 @@ function Header() {
   const [listNoti, setListNoti] = useState([]);
   const [countNoti, setCountNoti] = useState(0);
   useEffect(() => {
-    const getListNoti = async () => {
-      try {
-        const res = await api.get(`Notification/${account.Id}`);
-        if (res) {
-          const arrResponse = res.data.data;
+    if (account.Id) {
+      const getListNoti = async () => {
+        try {
+          const res = await api.get(`Notification/${account.Id}`);
+          if (res) {
+            const arrResponse = res.data.data;
 
-          setListNoti(arrResponse);
+            setListNoti(arrResponse);
+          }
+        } catch (error) {
+          console.log("Error", error);
         }
-      } catch (error) {
-        console.log("Error", error);
-      }
-    };
-    console.log("check");
-    getListNoti();
+      };
+      console.log("check");
+      getListNoti();
+    }
   }, []);
-  
+
   useEffect(() => {
-    if (listNoti.length > 0) {
-      const count = listNoti.filter((item) => item).length;
+    if (Array.isArray(listNoti) && listNoti.length > 0) {
+      const count = listNoti.filter((item) => item.id).length;
 
       setCountNoti(count);
     }
   }, [listNoti]);
 
   const renderItem: MenuProps["items"] = useMemo(() => {
-    if (listNoti.length > 0) {
+    if (Array.isArray(listNoti) && listNoti.length > 0) {
       const listRenderItem = listNoti?.map((item, index) => ({
         label: (
           <a
@@ -59,9 +61,9 @@ function Header() {
             href="https://www.antgroup.com"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => {
-              updateStatus(item.id);
-            }}
+            // onClick={() => {
+            //   updateStatus(item.id);
+            // }}
           >
             {item.id}
           </a>
@@ -73,23 +75,23 @@ function Header() {
     }
   }, [listNoti]);
 
-  const updateStatus = async (id: string) => {
-    try {
-      // update status ở đây, ví dụ em update id = 188
-      const updateStatusResponse = await api.post("/update", id);
-      // ví dụ nếu response trả ra phần tử 188 đã update isRead:true
-      if (updateStatusResponse?.data) {
-        const updatedList = listNoti.map((item) =>
-          item.id.toString() === updateStatusResponse.data.data.id.toString()
-            ? updateStatusResponse.data.data
-            : item
-        );
-        setListNoti(updatedList);
-      }
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
+  // const updateStatus = async (id: string) => {
+  //   try {
+  //     // update status ở đây, ví dụ em update id = 188
+  //     const updateStatusResponse = await api.post("/update", id);
+  //     // ví dụ nếu response trả ra phần tử 188 đã update isRead:true
+  //     if (updateStatusResponse?.data) {
+  //       const updatedList = listNoti.map((item) =>
+  //         item.id.toString() === updateStatusResponse.data.data.id.toString()
+  //           ? updateStatusResponse.data.data
+  //           : item
+  //       );
+  //       setListNoti(updatedList);
+  //     }
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // };
 
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     console.log("click left button", e);
