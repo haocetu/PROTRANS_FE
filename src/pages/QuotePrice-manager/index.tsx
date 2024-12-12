@@ -18,6 +18,7 @@ import { EditOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
 function QuotePrice() {
   const [formVariable] = useForm();
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [language, setLanguage] = useState([]);
 
@@ -239,6 +240,52 @@ function QuotePrice() {
               {
                 required: true,
                 message: "* vui lòng nhập",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={isOpenUpdate}
+        title="Cập nhập báo giá"
+        onCancel={() => setIsOpenUpdate(false)}
+        onOk={handleOk}
+      >
+        <Form form={formVariable} onFinish={handleSubmit}>
+          <Form.Item
+            label="Ngôn Ngữ Gốc"
+            name={"firstLanguageId"}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập ngôn ngữ gốc",
+              },
+            ]}
+          >
+            <Select options={language} />
+          </Form.Item>
+          <Form.Item
+            label="Ngôn Ngữ Dịch"
+            name={"secondLanguageId"}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập ngôn ngữ dịch",
+              },
+            ]}
+          >
+            <Select options={language} />
+          </Form.Item>
+          <Form.Item
+            label="Giá"
+            name={"pricePerPage"}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập giá",
               },
             ]}
           >
