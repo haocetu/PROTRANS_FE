@@ -1,7 +1,7 @@
 import { Button, DatePicker, Form, Input, Modal, Select, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
-import { TruckOutlined } from "@ant-design/icons";
+import { CheckOutlined, FormOutlined, TruckOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 
@@ -29,6 +29,16 @@ function AssignShipper() {
   };
 
   const columns = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
     {
       title: "Tên khách hàng",
       dataIndex: "fullName",
@@ -58,17 +68,33 @@ function AssignShipper() {
       },
     },
     {
-      title: "Tổng giá",
+      title: "Tổng giá (VNĐ)",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     {
-      title: "Trạng thái",
+      title: "Trạng thái đơn hàng",
       dataIndex: "status",
       key: "status",
+      render: (status) => {
+        switch (status) {
+          case "Completed":
+            return (
+              <div className="status-completed">
+                <FormOutlined />
+                &nbsp; Đã hoàn thành
+              </div>
+            );
+          default:
+            return status;
+        }
+      },
     },
     {
-      title: "",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -85,6 +111,15 @@ function AssignShipper() {
       ),
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   async function handleSubmit(values) {
     const payload = {
@@ -147,13 +182,20 @@ function AssignShipper() {
 
   return (
     <div className="AssignShipper">
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
       <Modal
         open={isOpen}
         onCancel={() => {
           setIsOpen(false);
         }}
         onOk={() => formVariable.submit()}
+        cancelText="Đóng"
+        okText="Giao việc"
         title="Giao việc vận chuyển"
       >
         <Form form={formVariable} onFinish={handleSubmit}>

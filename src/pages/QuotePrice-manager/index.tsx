@@ -7,11 +7,13 @@ import {
   Select,
   Space,
   Table,
+  Tooltip,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
+import { EditOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
 
 function QuotePrice() {
   const [formVariable] = useForm();
@@ -58,7 +60,17 @@ function QuotePrice() {
 
   const columns = [
     {
-      title: "Ngôn Ngữ Gốc",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
+    {
+      title: "Ngôn ngữ gốc",
       dataIndex: "firstLanguageId", // Use firstLanguageId from QuotePrice data
       key: "firstLanguageId",
       render: (firstLanguageId) => {
@@ -73,7 +85,7 @@ function QuotePrice() {
       },
     },
     {
-      title: "Ngôn Ngữ Dịch",
+      title: "Ngôn ngữ cần dịch",
       dataIndex: "secondLanguageId", // Use secondLanguageId from QuotePrice data
       key: "secondLanguageId",
       render: (secondLanguageId) => {
@@ -88,12 +100,15 @@ function QuotePrice() {
       },
     },
     {
-      title: "Giá",
+      title: "Giá (VNĐ/trang)",
       dataIndex: "pricePerPage",
       key: "pricePerPage",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     {
-      title: "",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -105,25 +120,37 @@ function QuotePrice() {
             okText="Yes"
             cancelText="No"
           >
-            <Button type="primary" danger>
-              Ngưng dịch
-            </Button>
+            <Tooltip title="Ngưng dịch">
+              <Button type="primary" danger>
+                <StopOutlined />
+              </Button>
+            </Tooltip>
           </Popconfirm>
-          <Button
-            type="primary"
-            style={{ background: "orange" }}
-            onClick={() => {
-              // setVisibleEditModal(true);
-              setIsOpenUpdate(true);
-              formVariable.setFieldsValue(data);
-            }}
-          >
-            Cập nhập
-          </Button>
+          <Tooltip title="Cập nhật">
+            <Button
+              type="primary"
+              style={{ background: "orange" }}
+              onClick={() => {
+                // setVisibleEditModal(true);
+                formVariable.setFieldsValue(data);
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </Tooltip>
         </Space>
       ),
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   async function fetchQuotePrice() {
     const response = await api.get("QuotePrice");
@@ -162,36 +189,45 @@ function QuotePrice() {
           formVariable.resetFields();
           setIsOpen(true);
         }}
+        style={{ marginBottom: "10px" }}
       >
-        Tạo Mới Báo Giá
+        <PlusOutlined />
+        Tạo báo giá mới
       </Button>
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
       <Modal
         open={isOpen}
         title="Tạo báo giá mới"
         onCancel={() => setIsOpen(false)}
         onOk={handleOk}
+        cancelText="Đóng"
+        okText="Tạo"
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
-            label="Ngôn Ngữ Gốc"
+            label="Ngôn ngữ gốc"
             name={"firstLanguageId"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập ngôn ngữ gốc",
+                message: "* vui lòng chọn",
               },
             ]}
           >
             <Select options={language} />
           </Form.Item>
           <Form.Item
-            label="Ngôn Ngữ Dịch"
+            label="Ngôn ngữ cần dịch"
             name={"secondLanguageId"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập ngôn ngữ dịch",
+                message: "* vui lòng chọn",
               },
             ]}
           >
@@ -203,7 +239,7 @@ function QuotePrice() {
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập giá",
+                message: "* vui lòng nhập",
               },
             ]}
           >

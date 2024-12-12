@@ -80,6 +80,7 @@ const DashboardManager: React.FC = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
+        width={220}
       >
         <div className="demo-logo-vertical" />
         <Menu

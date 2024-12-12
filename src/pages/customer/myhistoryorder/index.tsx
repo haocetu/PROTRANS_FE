@@ -11,7 +11,9 @@ import {
   CheckOutlined,
   ClockCircleOutlined,
   CloseOutlined,
+  EyeTwoTone,
   FormOutlined,
+  InfoCircleOutlined,
   TruckFilled,
   TruckOutlined,
 } from "@ant-design/icons";
@@ -76,26 +78,30 @@ function HistoryOrder() {
 
   const columns = [
     {
-      title: "Tên khách hàng",
-      dataIndex: "fullName",
-      key: "fullName",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
     },
-    {
-      title: "Số điện thoại",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-    },
-    {
-      title: "Địa chỉ",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "Yêu cầu giao hàng",
-      dataIndex: "shipRequest",
-      key: "shipRequest",
-      render: (shipRequest) => (shipRequest ? "Có" : "Không"),
-    },
+    // {
+    //   title: "Tên khách hàng",
+    //   dataIndex: "fullName",
+    //   key: "fullName",
+    // },
+    // {
+    //   title: "Số điện thoại",
+    //   dataIndex: "phoneNumber",
+    //   key: "phoneNumber",
+    // },
+    // {
+    //   title: "Địa chỉ",
+    //   dataIndex: "address",
+    //   key: "address",
+    // },
     {
       title: "Thời hạn",
       dataIndex: "deadline",
@@ -103,9 +109,34 @@ function HistoryOrder() {
       render: (deadline) => dayjs(deadline).format("DD/MM/YYYY HH:mm"),
     },
     {
-      title: "Tổng giá",
+      title: "Tổng giá (VNĐ)",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
+    },
+    {
+      title: "Yêu cầu nhận tài liệu",
+      dataIndex: "pickUpRequest",
+      key: "pickUpRequest",
+      render: (pickUpRequest) =>
+        pickUpRequest ? (
+          <CheckOutlined style={{ color: "green" }} />
+        ) : (
+          <CloseOutlined style={{ color: "red" }} />
+        ),
+    },
+    {
+      title: "Yêu cầu giao hàng",
+      dataIndex: "shipRequest",
+      key: "shipRequest",
+      render: (shipRequest) =>
+        shipRequest ? (
+          <CheckOutlined style={{ color: "green" }} />
+        ) : (
+          <CloseOutlined style={{ color: "red" }} />
+        ),
     },
     {
       title: "Chi nhánh",
@@ -163,7 +194,22 @@ function HistoryOrder() {
         }
       },
     },
+    {
+      title: "Tác vụ",
+      dataIndex: "id",
+      key: "id",
+      render: () => <EyeTwoTone style={{ fontSize: "18px" }} />,
+    },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   return (
     <div className="historyorderpage">
@@ -230,6 +276,8 @@ function HistoryOrder() {
           spinning: loading,
           indicator: <Spin />,
         }}
+        pagination={pagination}
+        onChange={handleTableChange}
       />
     </div>
   );

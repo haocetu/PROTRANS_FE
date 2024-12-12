@@ -1,9 +1,20 @@
-import { Button, Form, Input, Modal, Popconfirm, Space, Table } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Space,
+  Table,
+  Tooltip,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Value } from "sass";
 import api from "../../config/api";
+import { PlusOutlined, StopOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 function Language() {
   const [formVariable] = useForm();
@@ -11,54 +22,79 @@ function Language() {
   const [isOpen, setIsOpen] = useState(false);
   const [visibleEditModal, setVisibleEditModal] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const [idLanguage, SetidLanguage] = useState("");
+  const [idLanguage, setIdLanguage] = useState("");
   const token = localStorage.getItem("token");
 
-  console.log("day la token", token);
+  console.log("TOKEN: ", token);
   const columns = [
     {
-      title: "Ngôn Ngữ",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
+    {
+      title: "Ngôn ngữ",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Trạng Thái",
+      title: "Trạng thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Yes" : "No"),
+      render: (isDeleted) =>
+        isDeleted ? (
+          <div className="status-inactive">Vô hiệu hóa</div>
+        ) : (
+          <div className="status-active">Hoạt động</div>
+        ),
     },
     {
-      title: "Action",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
         <Space>
           <Popconfirm
-            title="Delete Category"
-            description="Are you sure to delete this language?"
+            title={data.name}
+            description="Bạn có chắc chắn muốn vô hiệu hóa ngôn ngữ này?"
             onConfirm={() => handleDeleteLanguage(id)}
-            okText="Yes"
-            cancelText="No"
+            okText="Có"
+            cancelText="Đóng"
           >
-            <Button type="primary" danger>
-              Ngưng dịch
-            </Button>
+            <Tooltip title="Vô hiệu hóa">
+              <Button type="primary" danger>
+                <StopOutlined />
+              </Button>
+            </Tooltip>
           </Popconfirm>
-          <Button
+          {/* <Button
             type="primary"
             style={{ background: "orange" }}
             onClick={() => {
               setVisibleEditModal(true);
-              //SetidCategory(id);
               formVariable.setFieldsValue(data);
             }}
           >
-            Cập Nhập
-          </Button>
+            Cập nhật
+          </Button> */}
         </Space>
       ),
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   async function fetchLanguage() {
     console.log("token", token);
@@ -71,6 +107,7 @@ function Language() {
     console.log(values);
 
     const response = await api.post("Language", values);
+    toast.success("Thêm ngôn ngữ mới thành công.");
     setDataSource([...dataSource, values]);
     formVariable.resetFields();
     handleHideModal();
@@ -116,6 +153,7 @@ function Language() {
     console.log(id);
 
     await api.delete(`Language/${id}`);
+    toast.success("Vô hiệu hóa ngôn ngữ thành công.");
 
     const listAfterDelete = dataSource.filter((language) => language.id != id);
 
@@ -145,24 +183,34 @@ function Language() {
           formVariable.resetFields();
           setIsOpen(true);
         }}
+        style={{ marginBottom: "10px" }}
       >
-        Tạo ngôn ngữ mới
+        <PlusOutlined />
+        Thêm ngôn ngữ mới
       </Button>
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table
+        style={{ width: "1200px" }}
+        columns={columns}
+        dataSource={dataSource}
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
       <Modal
         open={isOpen}
-        title="Thêm Ngôn Ngữ Mới"
+        title="Thêm ngôn ngữ mới"
         onCancel={handleHideModal}
         onOk={handleOk}
+        cancelText="Đóng"
+        okText="Thêm"
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
-            label="Ngôn Ngữ"
+            label="Ngôn ngữ"
             name={"name"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập ngôn ngữ",
+                message: "* vui lòng nhập",
               },
             ]}
           >
@@ -173,7 +221,7 @@ function Language() {
 
       <Modal
         open={visibleEditModal}
-        title="Cập nhập ngôn ngữ"
+        title="Cập nhật ngôn ngữ"
         onCancel={() => {
           setVisibleEditModal(false);
         }}
@@ -184,12 +232,12 @@ function Language() {
       >
         <Form form={formUpdate} onFinish={handleSubmit}>
           <Form.Item
-            label="Ngôn Ngữ"
+            label="Ngôn ngữ"
             name={"name"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập ngôn ngữ",
+                message: "*vui lòng nhập",
               },
             ]}
           >
