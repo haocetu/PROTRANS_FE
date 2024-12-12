@@ -4,6 +4,15 @@ import api from "../../config/api";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import {
+  CheckOutlined,
+  ClockCircleOutlined,
+  CloseOutlined,
+  EyeOutlined,
+  FormOutlined,
+  PauseOutlined,
+} from "@ant-design/icons";
+import "./index.css";
 
 function Order() {
   const [formVariable] = useForm();
@@ -73,32 +82,93 @@ function Order() {
 
   const columns = [
     {
-      title: "Khách Hàng",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
+    {
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
     {
-      title: "Địa Chỉ",
+      title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "Tổng Giá",
+      title: "Tổng giá (VNĐ)",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     {
-      title: "Trạng Thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (status) => {
+        switch (status) {
+          case "Processing":
+            return (
+              <div className="status-processing">
+                <ClockCircleOutlined />
+                &nbsp; Chờ xử lý
+              </div>
+            );
+          case "Completed":
+            return (
+              <div className="status-completed">
+                <FormOutlined />
+                &nbsp; Đã hoàn thành
+              </div>
+            );
+          case "Delivering":
+            return (
+              <div className="status-delivering">
+                <CheckOutlined />
+                &nbsp; Đang giao
+              </div>
+            );
+          case "Delivered":
+            return (
+              <div className="status-delivered">
+                <CheckOutlined />
+                &nbsp; Đã giao
+              </div>
+            );
+          case "Implementing":
+            return (
+              <div className="status-implementing">
+                <CheckOutlined />
+                &nbsp; Đang thực hiện
+              </div>
+            );
+          case "Canceled":
+            return (
+              <div className="status-canceled">
+                <PauseOutlined />
+                &nbsp; Đã hủy
+              </div>
+            );
+          default:
+            return status;
+        }
+      },
     },
     {
-      title: "",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -107,11 +177,20 @@ function Order() {
           style={{ background: "orange" }}
           onClick={() => navigate(`details/${id}`)}
         >
-          Details
+          <EyeOutlined />
         </Button>
       ),
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   // async function handleSubmit(values) {
   //   try {
@@ -145,7 +224,12 @@ function Order() {
       >
         Add New Order
       </Button> */}
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
       {/* <Modal
         open={isOpen}
         title="Add New Order"
