@@ -16,6 +16,7 @@ import api from "../../config/api";
 function QuotePrice() {
   const [formVariable] = useForm();
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [language, setLanguage] = useState([]);
 
@@ -113,6 +114,7 @@ function QuotePrice() {
             style={{ background: "orange" }}
             onClick={() => {
               // setVisibleEditModal(true);
+              setIsOpenUpdate(true);
               formVariable.setFieldsValue(data);
             }}
           >
@@ -168,6 +170,52 @@ function QuotePrice() {
         open={isOpen}
         title="Tạo báo giá mới"
         onCancel={() => setIsOpen(false)}
+        onOk={handleOk}
+      >
+        <Form form={formVariable} onFinish={handleSubmit}>
+          <Form.Item
+            label="Ngôn Ngữ Gốc"
+            name={"firstLanguageId"}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập ngôn ngữ gốc",
+              },
+            ]}
+          >
+            <Select options={language} />
+          </Form.Item>
+          <Form.Item
+            label="Ngôn Ngữ Dịch"
+            name={"secondLanguageId"}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập ngôn ngữ dịch",
+              },
+            ]}
+          >
+            <Select options={language} />
+          </Form.Item>
+          <Form.Item
+            label="Giá"
+            name={"pricePerPage"}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập giá",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={isOpenUpdate}
+        title="Cập nhập báo giá"
+        onCancel={() => setIsOpenUpdate(false)}
         onOk={handleOk}
       >
         <Form form={formVariable} onFinish={handleSubmit}>
