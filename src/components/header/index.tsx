@@ -1,8 +1,12 @@
 import {
   ArrowRightOutlined,
+  ContainerFilled,
+  ContainerOutlined,
+  ContainerTwoTone,
   CopyFilled,
   CopyOutlined,
   FileOutlined,
+  HistoryOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import "./index.scss";
@@ -38,12 +42,12 @@ function Header() {
     {
       label: "Đơn hàng của tôi",
       key: "HistoryOrder",
-      icon: <CopyOutlined />,
+      icon: <HistoryOutlined />,
     },
     {
       label: "Yêu cầu của tôi",
       key: "MyRequest",
-      icon: <CopyOutlined />,
+      icon: <HistoryOutlined />,
     },
     {
       label: "Đăng xuất",
