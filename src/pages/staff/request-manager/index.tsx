@@ -287,14 +287,25 @@ function RequestManager() {
     // updateRequest.pickUpRequest = updateRequest.pickUpRequest ? true : false;
     // updateRequest.shipRequest = updateRequest.shipRequest ? true : false;
 
-    console.log(updateRequest);
     try {
       // Gửi yêu cầu PUT với requestId và payload updateRequest
       const response = await api.put(
         `Request/StaffUpdate?requestId=${idRequest}`,
         updateRequest
       );
+      console.log("log param,", updateRequest);
 
+      //Gọi hàm đẩy noti
+      if (response) {
+        const paramPushNoti = {
+          specId: "081ccdd8-d17f-477b-a92a-1a89c3781ec2",
+          title: "Báo giá dịch thuật",
+          message: `Đơn hàng của bạn với giá ${updateRequest.estimatedPrice}`,
+          author: "string",
+        };
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
       fetchRequest();
       formUpdate.resetFields();
       toast.success("Gửi báo giá thành công.");

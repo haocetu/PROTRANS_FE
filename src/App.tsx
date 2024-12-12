@@ -36,8 +36,51 @@ import { toast } from "react-toastify";
 import { logout } from "./redux/features/userSlice";
 import { RootState } from "./redux/rootReducer";
 import HistoryOrder from "./pages/customer/myhistoryorder";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [connection, setConnection] = useState(null);
+  const account = useSelector((state: RootState) => state.accountmanage);
+  const [title, settitle] = useState(null);
+  useEffect(() => {
+    const hubConnection = new HubConnectionBuilder()
+      .withUrl("https://protrans.azurewebsites.net/notificationHub")
+      .withAutomaticReconnect()
+      .build();
+    setConnection(hubConnection);
+  }, []);
+
+  useEffect(() => {
+    if (connection) {
+      const startConnection = async () => {
+        try {
+          connection.on(`${account.Id}`, async (title, message, author) => {
+            console.log("title", title);
+            console.log("message", message);
+            console.log("author", author);
+            toast.success(`title: ${title}`);
+            // Handle the notification here, e.g., display a notification, update UI, etc.
+          });
+          connection
+            .start()
+            .then(() => console.log("Connected"))
+            .catch((error) => console.error(error));
+
+          // Subscribe to a specific method
+        } catch (error) {
+          console.error("Error connecting to SignalR Hub:", error);
+        }
+      };
+
+      startConnection();
+      return () => {
+        console.log("Stopped");
+        connection.stop();
+      };
+    }
+  }, [connection]);
+
   const AdminRoute = ({ children, role }) => {
     const user = useSelector((store: RootState) => store.accountmanage);
     const dispatch = useDispatch();

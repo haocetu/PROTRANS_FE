@@ -1,9 +1,19 @@
-import { Button, Form, Input, Modal, Popconfirm, Space, Table } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Space,
+  Switch,
+  Table,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Value } from "sass";
 import api from "../../config/api";
+import { toast } from "react-toastify";
 
 function Language() {
   const [formVariable] = useForm();
@@ -21,11 +31,34 @@ function Language() {
       dataIndex: "name",
       key: "name",
     },
+    // {
+    //   title: "Trạng Thái",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
+    //   render: (isDeleted) => (isDeleted ? "Yes" : "No"),
+    // },
     {
       title: "Trạng Thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Yes" : "No"),
+      render: (isDeleted, record) => (
+        <Switch
+          checked={record.isDeleted}
+          onChange={async (checked) => {
+            try {
+              await api.delete(`Language/${record.id}`, {
+                ...record,
+                isDeleted: checked ? false : true,
+              });
+              toast.success("Updated language status successfully!");
+              fetchLanguage();
+            } catch (error) {
+              toast.error("Failed to update language status.");
+              console.error("Error updating language status:", error);
+            }
+          }}
+        />
+      ),
     },
     {
       title: "Action",
