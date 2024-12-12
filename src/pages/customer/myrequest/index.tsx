@@ -21,6 +21,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  Popconfirm,
   Select,
   Space,
   Spin,
@@ -293,24 +294,31 @@ function MyRequest() {
     setPagination(newPagination);
   };
 
-  async function handleEditRequest(values) {
-    console.log(values);
-    // const updateRequest = formUpdate.getFieldsValue();
-    // updateRequest.pickUpRequest = updateRequest.pickUpRequest ? true : false;
-    // updateRequest.shipRequest = updateRequest.shipRequest ? true : false;
+  async function handleEditRequest(status) {
+    // console.log(values);
+    // const filteredValues = { status: values.status };
 
     try {
       const response = await api.put(
         `Request/CustomerUpdate?requestId=${idRequest}`,
-        values
+        { status }
       );
       console.log(response.data.data);
       formUpdate.resetFields();
       setIsOpen(false);
       fetchMyRequest();
-      toast.success("Xác nhận đơn hàng thành công.");
+      if (status === "Accept") {
+        toast.success(
+          "Bạn đã chấp nhận báo giá. Đơn hàng sẽ được tạo trong thời gian sớm nhất!"
+        );
+      } else if (status === "Refuse") {
+        toast.info(
+          "Bạn đã từ chối thành công. Yêu cầu này sẽ không còn hiệu lực nữa."
+        );
+      }
     } catch (error) {
-      console.error("Error updating request:", error);
+      console.error("Đã xảy ra lỗi: ", error);
+      toast.error("Có lỗi xảy ra.");
     }
   }
 
@@ -400,12 +408,35 @@ function MyRequest() {
         open={isOpen}
         onCancel={() => {
           setIsOpen(false);
-          formUpdate.resetFields();
         }}
-        onOk={() => {
-          formUpdate.submit();
-        }}
-        closable={false}
+        footer={[
+          <Popconfirm
+            key="refuse-popconfirm"
+            title="Bạn có chắc chắn muốn từ chối không?"
+            onConfirm={() => {
+              handleEditRequest("Refuse");
+              setIsOpen(false);
+            }}
+            okText="Đồng ý"
+            cancelText="Hủy"
+          >
+            <Button type="primary" danger>
+              Từ chối
+            </Button>
+          </Popconfirm>,
+          <Popconfirm
+            key="accept-popconfirm"
+            title="Bạn có chắc chắn muốn chấp nhận không?"
+            onConfirm={() => {
+              handleEditRequest("Accept");
+              setIsOpen(false);
+            }}
+            okText="Đồng ý"
+            cancelText="Hủy"
+          >
+            <Button type="primary">Chấp nhận</Button>
+          </Popconfirm>,
+        ]}
         width={1200}
       >
         <Form form={formUpdate} onFinish={handleEditRequest}>
@@ -421,218 +452,143 @@ function MyRequest() {
                       Tài liệu {index + 1}
                     </Divider>
                     <div className="document-content">
-                      <Form.Item
-                        {...restField}
-                        name={[name, "firstLanguageId"]}
-                        fieldKey={[fieldKey, "firstLanguageId"]}
-                        label="Ngôn ngữ gốc"
-                      >
-                        <span>
-                          {(() => {
-                            const firstLanguageId = formUpdate.getFieldValue([
-                              "documents",
-                              name,
-                              "firstLanguageId",
-                            ]);
-                            if (!language || language.length === 0) {
-                              return "Loading...";
-                            }
-                            const foundLanguage = language.find(
-                              (lang) => lang.value === firstLanguageId
-                            );
-                            return foundLanguage ? foundLanguage.label : null;
-                          })()}
-                        </span>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "secondLanguageId"]}
-                        fieldKey={[fieldKey, "secondLanguageId"]}
-                        label="Ngôn ngữ cần dịch"
-                      >
-                        <span>
-                          {(() => {
-                            const secondLanguageId = formUpdate.getFieldValue([
-                              "documents",
-                              name,
-                              "secondLanguageId",
-                            ]);
-                            if (!language || language.length === 0) {
-                              return "Loading...";
-                            }
-                            const foundLanguage = language.find(
-                              (lang) => lang.value === secondLanguageId
-                            );
-                            return foundLanguage ? foundLanguage.label : null;
-                          })()}
-                        </span>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "pageNumber"]}
-                        fieldKey={[fieldKey, "pageNumber"]}
-                        label="Số trang"
-                      >
-                        <span>
-                          {formUpdate.getFieldValue([
+                      <span>
+                        <label>Ngôn ngữ gốc: </label>
+                        {(() => {
+                          const firstLanguageId = formUpdate.getFieldValue([
                             "documents",
                             name,
-                            "pageNumber",
-                          ])}
-                        </span>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "numberOfCopies"]}
-                        fieldKey={[fieldKey, "numberOfCopies"]}
-                        label="Số bản cần dịch"
-                      >
-                        <span>
-                          {formUpdate.getFieldValue([
+                            "firstLanguageId",
+                          ]);
+                          if (!language || language.length === 0) {
+                            return "Loading...";
+                          }
+                          const foundLanguage = language.find(
+                            (lang) => lang.value === firstLanguageId
+                          );
+                          return foundLanguage ? foundLanguage.label : null;
+                        })()}
+                      </span>
+                      <span>
+                        <label>Ngôn ngữ cần dịch: </label>
+                        {(() => {
+                          const secondLanguageId = formUpdate.getFieldValue([
                             "documents",
                             name,
-                            "numberOfCopies",
-                          ])}
-                        </span>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "documentTypeId"]}
-                        fieldKey={[fieldKey, "documentTypeId"]}
-                        rules={[
-                          {
-                            required: false,
-                            message: "* vui lòng chọn",
-                          },
-                        ]}
-                        label="Loại tài liệu"
-                      >
-                        <span>
-                          {(() => {
-                            const documentTypeId = formUpdate.getFieldValue([
-                              "documents",
-                              name,
-                              "documentTypeId",
-                            ]);
-                            if (!documentType || documentType.length === 0) {
-                              return "Loading...";
-                            }
-                            const foundLanguage = documentType.find(
-                              (lang) => lang.value === documentTypeId
-                            );
-                            return foundLanguage ? foundLanguage.label : null;
-                          })()}
-                        </span>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "urlPath"]}
-                        fieldKey={[fieldKey, "urlPath"]}
-                        label="Tệp đính kèm"
-                      >
-                        <span>
-                          {(() => {
-                            const urlPath = formUpdate.getFieldValue([
-                              "documents",
-                              name,
-                              "urlPath",
-                            ]);
-                            return urlPath ? (
-                              <a
-                                href={urlPath}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <CopyOutlined />
-                              </a>
-                            ) : null;
-                          })()}
-                        </span>
-                      </Form.Item>
+                            "secondLanguageId",
+                          ]);
+                          if (!language || language.length === 0) {
+                            return "Loading...";
+                          }
+                          const foundLanguage = language.find(
+                            (lang) => lang.value === secondLanguageId
+                          );
+                          return foundLanguage ? foundLanguage.label : null;
+                        })()}
+                      </span>
+                      <span>
+                        <label>Số trang: </label>
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "pageNumber",
+                        ])}
+                      </span>
+                      <span>
+                        <label>Số bản cần dịch: </label>
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "numberOfCopies",
+                        ])}
+                      </span>
+                      <span>
+                        <label>Loại tài liệu: </label>
+                        {(() => {
+                          const documentTypeId = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "documentTypeId",
+                          ]);
+                          if (!documentType || documentType.length === 0) {
+                            return "Loading...";
+                          }
+                          const found = documentType.find(
+                            (lang) => lang.value === documentTypeId
+                          );
+                          return found ? found.label : null;
+                        })()}
+                      </span>
+                      <span>
+                        <label>Tệp đính kèm: </label>
+                        {(() => {
+                          const urlPath = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "urlPath",
+                          ]);
+                          return urlPath ? (
+                            <a
+                              href={urlPath}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <CopyOutlined />
+                            </a>
+                          ) : null;
+                        })()}
+                      </span>
                     </div>
                     <div className="document-content">
-                      <Form.Item
-                        {...restField}
-                        name={[name, "notarizationRequest"]}
-                        fieldKey={[fieldKey, "notarizationRequest"]}
-                        label="Yêu cầu công chứng"
-                      >
-                        <span>
-                          {(() => {
-                            const notarizationRequest =
-                              formUpdate.getFieldValue([
-                                "documents",
-                                name,
-                                "notarizationRequest",
-                              ]);
-                            return notarizationRequest ? (
-                              <CheckCircleFilled style={{ color: "green" }} />
-                            ) : (
-                              <CloseCircleFilled style={{ color: "red" }} />
-                            );
-                          })()}
-                        </span>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "notarizationId"]}
-                        fieldKey={[fieldKey, "notarizationId"]}
-                        rules={[
-                          {
-                            required: false,
-                            message: "* vui lòng chọn",
-                          },
-                        ]}
-                        label="Loại công chứng"
-                      >
-                        <Select
-                          options={notarizationType}
-                          placeholder="Loại công chứng"
-                          style={{ width: "400px" }}
-                          disabled={
-                            !formUpdate.getFieldValue([
-                              "documents",
-                              name,
-                              "notarizationRequest",
-                            ])
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "numberOfNotarizedCopies"]}
-                        fieldKey={[fieldKey, "numberOfNotarizedCopies"]}
-                        label="Số bản công chứng"
-                      >
-                        <span>
-                          {formUpdate.getFieldValue([
+                      <span>
+                        <label>Yêu cầu công chứng: </label>
+                        {(() => {
+                          const notarizationRequest = formUpdate.getFieldValue([
                             "documents",
                             name,
-                            "numberOfNotarizedCopies",
-                          ])}
-                        </span>
-                      </Form.Item>
+                            "notarizationRequest",
+                          ]);
+                          return notarizationRequest ? (
+                            <CheckCircleFilled style={{ color: "green" }} />
+                          ) : (
+                            <CloseCircleFilled style={{ color: "red" }} />
+                          );
+                        })()}
+                      </span>
+                      <span>
+                        <label>Loại công chứng: </label>
+                        {(() => {
+                          const notarizationId = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "notarizationId",
+                          ]);
+                          if (
+                            !notarizationType ||
+                            notarizationType.length === 0
+                          ) {
+                            return "Loading...";
+                          }
+                          const found = notarizationType.find(
+                            (lang) => lang.value === notarizationId
+                          );
+                          return found ? found.label : "Không có";
+                        })()}
+                      </span>
+                      <span>
+                        <label>Số bản công chứng: </label>
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "numberOfNotarizedCopies",
+                        ])}
+                      </span>
                     </div>
                   </div>
                 ))}
               </>
             )}
           </Form.List>
-          <Form.Item
-            label="Trạng thái"
-            name={"status"}
-            rules={[
-              {
-                required: true,
-                message: "* vui lòng chọn",
-              },
-            ]}
-          >
-            <Select placeholder="Trạng thái">
-              <Select.Option value="Accept">Chấp nhận</Select.Option>
-              <Select.Option value="Refuse">Từ chối</Select.Option>
-            </Select>
-          </Form.Item>
         </Form>
       </Modal>
     </div>

@@ -61,6 +61,7 @@ function RequestManager() {
         datasource?.filter((order) => order.status === statusFilter) || []; // Kiểm tra datasource không null
       setFilteredData(filtered);
     }
+    setPagination((prev) => ({ ...prev, current: 1 }));
   }, [statusFilter, datasource]);
 
   // const props: UploadProps = {
@@ -133,6 +134,16 @@ function RequestManager() {
   }, []);
 
   const columns = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
     {
       title: "Tên khách hàng",
       dataIndex: "fullName",
@@ -222,7 +233,7 @@ function RequestManager() {
       },
     },
     {
-      title: "",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => {
@@ -230,6 +241,7 @@ function RequestManager() {
           return (
             <Space>
               <FormOutlined
+                style={{ fontSize: "14px", color: "orange" }}
                 onClick={() => {
                   setIsOpen(true);
                   setIdRequest(id);
@@ -262,6 +274,15 @@ function RequestManager() {
       },
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   // async function handleEditRequest(value) {
   //   const updateRequest = formUpdate.getFieldsValue();
@@ -391,6 +412,8 @@ function RequestManager() {
           spinning: loading,
           indicator: <Spin />,
         }}
+        pagination={pagination}
+        onChange={handleTableChange}
       />
       <Modal
         open={isOpen}

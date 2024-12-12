@@ -14,3 +14,12 @@
   color: white;
   border-color: #1890ff;
 }
+
+.document-content {
+  display: flex;
+  gap: 20px;
+}
+
+.document-content label {
+  font-weight: bold;
+}
