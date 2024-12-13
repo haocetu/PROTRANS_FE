@@ -47,6 +47,7 @@ function RequestManager() {
   const [statusFilter, setStatusFilter] = useState<string>("Waitting");
   const [activeButton, setActiveButton] = useState<string>("Waitting");
   const [loading, setLoading] = useState(false);
+  const [selectcustomerid, setselectcustomerid] = useState(null);
 
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
@@ -143,6 +144,12 @@ function RequestManager() {
         const pageSize = pagination.pageSize || 10;
         return (currentPage - 1) * pageSize + index + 1;
       },
+    },
+    {
+      title: "CustomerId",
+      dataIndex: "customerId",
+      key: "customerId",
+      hidden: true,
     },
     {
       title: "Tên khách hàng",
@@ -243,6 +250,7 @@ function RequestManager() {
               <FormOutlined
                 style={{ fontSize: "14px", color: "orange" }}
                 onClick={() => {
+                  setselectcustomerid(data.customerId);
                   setIsOpen(true);
                   setIdRequest(id);
                   const newData = { ...data };
@@ -316,14 +324,22 @@ function RequestManager() {
       );
       console.log("log param,", updateRequest);
 
+      console.log("gia uoc tinh: ", response.data.data.estimatedPrice);
+
+      console.log("Ngày: ", response.data.data.deadline);
+
+      console.log(selectcustomerid);
+      console.log(response.data.data);
+
       //Gọi hàm đẩy noti
       if (response) {
         const paramPushNoti = {
-          specId: "081ccdd8-d17f-477b-a92a-1a89c3781ec2",
+          specId: selectcustomerid,
           title: "Báo giá dịch thuật",
-          message: `Đơn hàng của bạn với giá ${updateRequest.estimatedPrice}`,
+          message: `Yêu cầu của bạn có giá ${response.data.data.estimatedPrice}`,
           author: "string",
         };
+
         const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
         console.log("resPushNoti", resPushNoti);
       }

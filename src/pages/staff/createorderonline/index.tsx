@@ -109,6 +109,14 @@ function CreateOrderOnline() {
         },
       });
 
+      // if (response) {
+      //   const paramPushNoti = {
+      //     specId: selectcustomerid,
+      //     title: "Báo giá dịch thuật",
+      //     message: `Yêu cầu của bạn có giá ${response.data.data.estimatedPrice}`,
+      //     author: "string",
+      //   };
+
       console.log(response.data.data);
       fetchMyRequest();
       toast.success("Tạo đơn hàng thành công.");
