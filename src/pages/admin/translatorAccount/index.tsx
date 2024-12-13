@@ -114,7 +114,7 @@ function TranslatorAccount() {
       key: "phoneNumber",
     },
     {
-      title: "Mã nhân viên",
+      title: "Mã",
       dataIndex: "code",
       key: "code",
     },
@@ -159,7 +159,6 @@ function TranslatorAccount() {
               : "kích hoạt lại tài khoản này?"
           }`}
           onConfirm={() => handleToggleStatus(id, data.isDeleted)}
-          onCancel={() => {}}
           okText="Đồng ý"
           cancelText="Hủy"
         >
