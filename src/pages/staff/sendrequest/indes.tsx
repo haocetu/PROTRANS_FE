@@ -1,6 +1,7 @@
 import {
   CheckOutlined,
   CloseOutlined,
+  LoadingOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   UploadOutlined,
@@ -32,6 +33,7 @@ function SendRequest() {
   const [language, setLanguage] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   //--------------------------------
   const props: UploadProps = {
@@ -107,6 +109,7 @@ function SendRequest() {
   }, []);
 
   async function handleSubmit(values) {
+    setLoading(true);
     console.log(values);
 
     // const originFileObj =
@@ -130,9 +133,11 @@ function SendRequest() {
       const response = await api.post("Request", values);
       console.log(response.data.data);
       toast.success("Gửi yêu cầu thành công.");
+      setLoading(false);
       formVariable.resetFields();
     } catch (error) {
       toast.error("Gửi yêu cầu thất bại. " + error.response.data.message);
+      setLoading(false);
     }
   }
 
@@ -151,7 +156,7 @@ function SendRequest() {
 
   return (
     <div className="sendrequest">
-      <div className="sendrequesttop">Gửi yêu cầu dịch thuật</div>
+      <h1>GỬI YÊU CẦU DỊCH THUẬT</h1>
       <div className="sendrequestmiddle">
         <Form
           form={formVariable}
@@ -495,7 +500,7 @@ function SendRequest() {
 
           <Form.Item style={{ display: "flex", justifyContent: "center" }}>
             <Button type="primary" htmlType="submit" style={{ width: "160px" }}>
-              Gửi yêu cầu
+              {loading ? <LoadingOutlined /> : "Gửi yêu cầu"}
             </Button>
           </Form.Item>
         </Form>

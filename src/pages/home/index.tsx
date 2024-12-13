@@ -144,12 +144,7 @@ const Home = () => {
               <Card hoverable className="choose-us-card">
                 <Title
                   className="choose-us-title"
-                  style={{
-                    color: "white",
-                    marginBottom: "50px",
-                    backgroundColor: "red",
-                    borderRadius: "18.5px",
-                  }}
+                  style={{ color: "red", marginBottom: "50px" }}
                 >
                   Tại sao nên chọn ProTrans?
                 </Title>

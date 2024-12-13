@@ -52,6 +52,12 @@ function MyRequest() {
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
 
+  const nameMapping = {
+    PageNumber: "Số trang",
+    DocumentTypeId: "Loại tài liệu",
+    NotarizationId: "Loại công chứng",
+  };
+
   console.log(account.Id);
 
   const handleStatusFilter = (status: string) => {
@@ -584,11 +590,88 @@ function MyRequest() {
                         ])}
                       </span>
                     </div>
+                    <div className="document-price">
+                      {formUpdate
+                        .getFieldValue(["documents", name, "documentHistory"])
+                        ?.map((history, idx) => (
+                          <div key={idx} className="document-history">
+                            <span>
+                              {nameMapping[history.name] + " cũ: " ||
+                                history.name + " cũ: " ||
+                                "Không có"}
+                            </span>
+                            <span>
+                              {(() => {
+                                const found =
+                                  documentType.find(
+                                    (lang) => lang.value === history.oldValue
+                                  ) ||
+                                  notarizationType.find(
+                                    (lang) => lang.value === history.oldValue
+                                  );
+                                return found ? found.label : history.oldValue;
+                              })()}{" "}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                    <div className="document-price">
+                      <span>
+                        <label>Giá dịch thuật: </label>
+                        {formUpdate
+                          .getFieldValue([
+                            "documents",
+                            name,
+                            "documentPrice",
+                            "translationPrice",
+                          ])
+                          ?.toLocaleString("vi-VN") || "N/A"}{" "}
+                        VNĐ
+                      </span>
+                      <span>
+                        <label>Giá công chứng: </label>
+                        {formUpdate
+                          .getFieldValue([
+                            "documents",
+                            name,
+                            "documentPrice",
+                            "notarizationPrice",
+                          ])
+                          ?.toLocaleString("vi-VN") || "N/A"}{" "}
+                        VNĐ
+                      </span>
+                    </div>
                   </div>
                 ))}
               </>
             )}
           </Form.List>
+          <Divider style={{ borderColor: "black" }} />
+          {formUpdate.getFieldValue("pickUpRequest") ? (
+            <div className="request-price">
+              <label>
+                <strong>Phí nhận tài liệu tại nhà:</strong> 40.000 VNĐ
+              </label>
+            </div>
+          ) : null}
+          {formUpdate.getFieldValue("shipRequest") ? (
+            <div className="request-price">
+              <label>
+                <strong>Phí giao hàng:</strong> 40.000 VNĐ
+              </label>
+            </div>
+          ) : null}
+          <div className="request-price">
+            <label>
+              <strong>Tổng giá: </strong>
+              <span>
+                {formUpdate
+                  .getFieldValue("estimatedPrice")
+                  ?.toLocaleString("vi-VN") || "N/A"}{" "}
+                VNĐ
+              </span>
+            </label>
+          </div>
         </Form>
       </Modal>
     </div>

@@ -20,6 +20,26 @@
   gap: 20px;
 }
 
+.document-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .document-content label {
   font-weight: bold;
 }
+
+.document-price label {
+  font-weight: bold;
+}
+
+.request-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* .request-price label {
+  font-weight: bold;
+} */
