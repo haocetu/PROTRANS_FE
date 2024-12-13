@@ -6,6 +6,7 @@ import {
   CloseCircleFilled,
   CloseOutlined,
   CopyOutlined,
+  EyeOutlined,
   EyeTwoTone,
   FormOutlined,
   InfoCircleFilled,
@@ -252,9 +253,10 @@ function MyRequest() {
       dataIndex: "id",
       key: "id",
       render: (id, data) => {
-        if (data.status === "Quoted") {
-          return (
-            <Space>
+        // if (data.status === "Quoted") {
+        return (
+          <Space>
+            {data.status === "Quoted" ? (
               <EyeTwoTone
                 style={{ fontSize: "18px" }}
                 onClick={() => {
@@ -281,12 +283,35 @@ function MyRequest() {
                   }
                 }}
               />
-            </Space>
-          );
-        } else {
-          // Nếu status không phải "Quoted", không render cột này
-          return null;
-        }
+            ) : (
+              <EyeOutlined
+                style={{ fontSize: "18px" }}
+                onClick={() => {
+                  setIsOpen(true);
+                  setIdRequest(id);
+                  const selectedRequest = datasource.find(
+                    (request) => request.id === id
+                  );
+                  if (selectedRequest) {
+                    const newData = {
+                      ...selectedRequest,
+                      deadline: dayjs(selectedRequest.deadline),
+                      documents: selectedRequest.documents || [],
+                    };
+
+                    console.log("Dữ liệu được thiết lập:", newData);
+
+                    // Thiết lập giá trị cho form
+                    formUpdate.setFieldsValue(newData);
+                  }
+                }}
+              />
+            )}
+          </Space>
+        );
+        // } else {
+        //   return null;
+        // }
       },
     },
   ];
@@ -415,37 +440,52 @@ function MyRequest() {
         onCancel={() => {
           setIsOpen(false);
         }}
-        footer={[
-          <Popconfirm
-            key="refuse-popconfirm"
-            title="Bạn có chắc chắn muốn từ chối không?"
-            onConfirm={() => {
-              handleEditRequest("Refuse");
-              setIsOpen(false);
-            }}
-            okText="Đồng ý"
-            cancelText="Hủy"
-          >
-            <Button type="primary" danger>
-              Từ chối
+        footer={
+          formUpdate.getFieldValue("status") === "Quoted" ? (
+            [
+              <Popconfirm
+                key="refuse-popconfirm"
+                title="Bạn có chắc chắn muốn từ chối không?"
+                onConfirm={() => {
+                  handleEditRequest("Refuse");
+                  setIsOpen(false);
+                }}
+                okText="Đồng ý"
+                cancelText="Hủy"
+              >
+                <Button type="primary" danger>
+                  Từ chối
+                </Button>
+              </Popconfirm>,
+              <Popconfirm
+                key="accept-popconfirm"
+                title="Bạn có chắc chắn muốn chấp nhận không?"
+                onConfirm={() => {
+                  handleEditRequest("Accept");
+                  setIsOpen(false);
+                }}
+                okText="Đồng ý"
+                cancelText="Hủy"
+              >
+                <Button type="primary">Chấp nhận</Button>
+              </Popconfirm>,
+            ]
+          ) : (
+            <Button key="cancel" onClick={() => setIsOpen(false)}>
+              Đóng
             </Button>
-          </Popconfirm>,
-          <Popconfirm
-            key="accept-popconfirm"
-            title="Bạn có chắc chắn muốn chấp nhận không?"
-            onConfirm={() => {
-              handleEditRequest("Accept");
-              setIsOpen(false);
-            }}
-            okText="Đồng ý"
-            cancelText="Hủy"
-          >
-            <Button type="primary">Chấp nhận</Button>
-          </Popconfirm>,
-        ]}
+          )
+        }
         width={1200}
       >
         <Form form={formUpdate} onFinish={handleEditRequest}>
+          <p style={{ color: "#f07575" }}>
+            <em>
+              * Lưu ý: Nếu có thông tin tài liệu được nhân viên của chúng tôi
+              cập nhật lại, thông tin cũ bạn đã nhập sẽ được hiển thị trong dấu
+              ngoặc đơn.
+            </em>
+          </p>
           <Form.List name="documents">
             {(fields, { add, remove }) => (
               <>
@@ -499,6 +539,26 @@ function MyRequest() {
                           name,
                           "pageNumber",
                         ])}
+                        &nbsp;
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "changedDocument",
+                          "oldPageNumber",
+                        ]) && (
+                          <>
+                            (
+                            <span style={{ color: "#f07575" }}>
+                              {formUpdate.getFieldValue([
+                                "documents",
+                                name,
+                                "changedDocument",
+                                "oldPageNumber",
+                              ])}
+                            </span>
+                            )
+                          </>
+                        )}
                       </span>
                       <span>
                         <label>Số bản cần dịch: </label>
@@ -524,6 +584,40 @@ function MyRequest() {
                           );
                           return found ? found.label : null;
                         })()}
+                        &nbsp;
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "changedDocument",
+                          "oldDocumentTypeId",
+                        ]) && (
+                          <>
+                            (
+                            <span style={{ color: "#f07575" }}>
+                              {(() => {
+                                const documentTypeId = formUpdate.getFieldValue(
+                                  [
+                                    "documents",
+                                    name,
+                                    "changedDocument",
+                                    "oldDocumentTypeId",
+                                  ]
+                                );
+                                if (
+                                  !documentType ||
+                                  documentType.length === 0
+                                ) {
+                                  return "Loading...";
+                                }
+                                const found = documentType.find(
+                                  (lang) => lang.value === documentTypeId
+                                );
+                                return found ? found.label : null;
+                              })()}
+                            </span>
+                            )
+                          </>
+                        )}
                       </span>
                       <span>
                         <label>Tệp đính kèm: </label>
@@ -545,7 +639,7 @@ function MyRequest() {
                         })()}
                       </span>
                     </div>
-                    <div className="document-content">
+                    <div className="document-content-bottom">
                       <span>
                         <label>Yêu cầu công chứng: </label>
                         {(() => {
@@ -580,6 +674,40 @@ function MyRequest() {
                           );
                           return found ? found.label : "Không có";
                         })()}
+                        &nbsp;
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "changedDocument",
+                          "oldNotarizationId",
+                        ]) && (
+                          <>
+                            (
+                            <span style={{ color: "#f07575" }}>
+                              {(() => {
+                                const notarizationId = formUpdate.getFieldValue(
+                                  [
+                                    "documents",
+                                    name,
+                                    "changedDocument",
+                                    "oldNotarizationId",
+                                  ]
+                                );
+                                if (
+                                  !notarizationType ||
+                                  notarizationType.length === 0
+                                ) {
+                                  return "Loading...";
+                                }
+                                const found = notarizationType.find(
+                                  (lang) => lang.value === notarizationId
+                                );
+                                return found ? found.label : "Không có";
+                              })()}
+                            </span>
+                            )
+                          </>
+                        )}
                       </span>
                       <span>
                         <label>Số bản công chứng: </label>
@@ -590,7 +718,7 @@ function MyRequest() {
                         ])}
                       </span>
                     </div>
-                    <div className="document-price">
+                    {/* <div className="document-price">
                       {formUpdate
                         .getFieldValue(["documents", name, "documentHistory"])
                         ?.map((history, idx) => (
@@ -614,7 +742,7 @@ function MyRequest() {
                             </span>
                           </div>
                         ))}
-                    </div>
+                    </div> */}
                     <div className="document-price">
                       <span>
                         <label>Giá dịch thuật: </label>
@@ -646,7 +774,9 @@ function MyRequest() {
               </>
             )}
           </Form.List>
-          <Divider style={{ borderColor: "black" }} />
+          <Divider orientation="left" style={{ borderColor: "black" }}>
+            Giá
+          </Divider>
           {formUpdate.getFieldValue("pickUpRequest") ? (
             <div className="request-price">
               <label>
@@ -661,10 +791,10 @@ function MyRequest() {
               </label>
             </div>
           ) : null}
-          <div className="request-price">
-            <label>
-              <strong>Tổng giá: </strong>
-              <span>
+          <div className="request-price-total">
+            <label style={{ fontSize: "18px" }}>
+              <strong>TỔNG GIÁ: </strong>
+              <span style={{ color: "green" }}>
                 {formUpdate
                   .getFieldValue("estimatedPrice")
                   ?.toLocaleString("vi-VN") || "N/A"}{" "}

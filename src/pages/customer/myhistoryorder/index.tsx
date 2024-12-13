@@ -1,4 +1,4 @@
-import { Table, Button, Spin } from "antd";
+import { Table, Button, Spin, Divider, Form, Modal, Popconfirm } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -7,18 +7,25 @@ import api from "../../../config/api";
 import "./index.css";
 import {
   AlignRightOutlined,
+  CheckCircleFilled,
   CheckCircleOutlined,
   CheckOutlined,
   ClockCircleOutlined,
+  CloseCircleFilled,
   CloseOutlined,
+  CopyOutlined,
   EyeTwoTone,
   FormOutlined,
   InfoCircleOutlined,
   TruckFilled,
   TruckOutlined,
 } from "@ant-design/icons";
+import { useForm } from "antd/es/form/Form";
 
 function HistoryOrder() {
+  const [formUpdate] = useForm();
+  const [isOpen, setIsOpen] = useState(false);
+  const [idRequest, setIdRequest] = useState("");
   const [datasource, setDataSource] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const account = useSelector((store: RootState) => store.accountmanage);
@@ -26,6 +33,9 @@ function HistoryOrder() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [activeButton, setActiveButton] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [language, setLanguage] = useState([]);
+  const [documentType, setDocumentType] = useState([]);
+  const [notarizationType, setNotarizationType] = useState([]);
 
   // Lấy thông tin các agency
   const fetchAgency = async () => {
@@ -75,6 +85,57 @@ function HistoryOrder() {
       setFilteredData(filtered);
     }
   }, [statusFilter, datasource]);
+
+  const fetchNotarizationType = async () => {
+    const response = await api.get("Notarization");
+    const data = response.data.data;
+    console.log({ data });
+
+    const list = data.map((notarization) => ({
+      value: notarization.id,
+      label: <span>{notarization.name}</span>,
+    }));
+
+    setNotarizationType(list);
+  };
+
+  useEffect(() => {
+    fetchNotarizationType();
+  }, []);
+
+  const fetchDocumentType = async () => {
+    const response = await api.get("DocumentType");
+    const data = response.data.data;
+    console.log({ data });
+
+    const list = data.map((Document) => ({
+      value: Document.id,
+      label: <span>{Document.name}</span>,
+    }));
+
+    setDocumentType(list);
+  };
+
+  useEffect(() => {
+    fetchDocumentType();
+  }, []);
+
+  const fetchLanguages = async () => {
+    const response = await api.get("Language");
+    const data = response.data.data;
+    console.log({ data });
+
+    const list = data.map((language) => ({
+      value: language.id,
+      label: <span>{language.name}</span>,
+    }));
+
+    setLanguage(list);
+  };
+
+  useEffect(() => {
+    fetchLanguages();
+  }, []);
 
   const columns = [
     {
@@ -198,7 +259,34 @@ function HistoryOrder() {
       title: "Tác vụ",
       dataIndex: "id",
       key: "id",
-      render: () => <EyeTwoTone style={{ fontSize: "18px" }} />,
+      render: (id, data) => (
+        <EyeTwoTone
+          style={{ fontSize: "18px" }}
+          onClick={() => {
+            setIsOpen(true);
+            setIdRequest(id);
+            const newData = { ...data };
+            console.log(newData);
+
+            const selectedOrder = datasource.find(
+              (request) => request.id === id
+            );
+            if (selectedOrder) {
+              // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
+              const newData = {
+                ...selectedOrder,
+                deadline: dayjs(selectedOrder.deadline),
+                documents: selectedOrder.documents || [],
+              };
+
+              console.log("Dữ liệu được thiết lập:", newData);
+
+              // Thiết lập giá trị cho form
+              formUpdate.setFieldsValue(newData);
+            }
+          }}
+        />
+      ),
     },
   ];
 
@@ -279,6 +367,224 @@ function HistoryOrder() {
         pagination={pagination}
         onChange={handleTableChange}
       />
+      <Modal
+        open={isOpen}
+        onCancel={() => {
+          setIsOpen(false);
+        }}
+        footer={[
+          <Button key="cancel" onClick={() => setIsOpen(false)}>
+            Đóng
+          </Button>,
+        ]}
+        width={1200}
+      >
+        <Form form={formUpdate}>
+          <Form.List name="documents">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, fieldKey, ...restField }, index) => (
+                  <div key={key}>
+                    <Divider
+                      orientation="left"
+                      style={{ borderColor: "black" }}
+                    >
+                      Tài liệu {index + 1}
+                    </Divider>
+                    <div className="document-content">
+                      <span>
+                        <label>Ngôn ngữ gốc: </label>
+                        {(() => {
+                          const firstLanguageId = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "firstLanguageId",
+                          ]);
+                          if (!language || language.length === 0) {
+                            return "Loading...";
+                          }
+                          const foundLanguage = language.find(
+                            (lang) => lang.value === firstLanguageId
+                          );
+                          return foundLanguage ? foundLanguage.label : null;
+                        })()}
+                      </span>
+                      <span>
+                        <label>Ngôn ngữ cần dịch: </label>
+                        {(() => {
+                          const secondLanguageId = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "secondLanguageId",
+                          ]);
+                          if (!language || language.length === 0) {
+                            return "Loading...";
+                          }
+                          const foundLanguage = language.find(
+                            (lang) => lang.value === secondLanguageId
+                          );
+                          return foundLanguage ? foundLanguage.label : null;
+                        })()}
+                      </span>
+                      <span>
+                        <label>Số trang: </label>
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "pageNumber",
+                        ])}
+                      </span>
+                      <span>
+                        <label>Số bản cần dịch: </label>
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "numberOfCopies",
+                        ])}
+                      </span>
+                      <span>
+                        <label>Loại tài liệu: </label>
+                        {(() => {
+                          const documentTypeId = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "documentTypeId",
+                          ]);
+                          if (!documentType || documentType.length === 0) {
+                            return "Loading...";
+                          }
+                          const found = documentType.find(
+                            (lang) => lang.value === documentTypeId
+                          );
+                          return found ? found.label : null;
+                        })()}
+                      </span>
+                      <span>
+                        <label>Tệp đính kèm: </label>
+                        {(() => {
+                          const urlPath = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "urlPath",
+                          ]);
+                          return urlPath ? (
+                            <a
+                              href={urlPath}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <CopyOutlined />
+                            </a>
+                          ) : null;
+                        })()}
+                      </span>
+                    </div>
+                    <div className="document-content">
+                      <span>
+                        <label>Yêu cầu công chứng: </label>
+                        {(() => {
+                          const notarizationRequest = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "notarizationRequest",
+                          ]);
+                          return notarizationRequest ? (
+                            <CheckCircleFilled style={{ color: "green" }} />
+                          ) : (
+                            <CloseCircleFilled style={{ color: "red" }} />
+                          );
+                        })()}
+                      </span>
+                      <span>
+                        <label>Loại công chứng: </label>
+                        {(() => {
+                          const notarizationId = formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "notarizationId",
+                          ]);
+                          if (
+                            !notarizationType ||
+                            notarizationType.length === 0
+                          ) {
+                            return "Loading...";
+                          }
+                          const found = notarizationType.find(
+                            (lang) => lang.value === notarizationId
+                          );
+                          return found ? found.label : "Không có";
+                        })()}
+                      </span>
+                      <span>
+                        <label>Số bản công chứng: </label>
+                        {formUpdate.getFieldValue([
+                          "documents",
+                          name,
+                          "numberOfNotarizedCopies",
+                        ])}
+                      </span>
+                    </div>
+                    <div className="document-price">
+                      <span>
+                        <label>Giá dịch thuật: </label>
+                        {formUpdate
+                          .getFieldValue([
+                            "documents",
+                            name,
+                            "documentPrice",
+                            "translationPrice",
+                          ])
+                          ?.toLocaleString("vi-VN") || "N/A"}{" "}
+                        VNĐ
+                      </span>
+                      <span>
+                        <label>Giá công chứng: </label>
+                        {formUpdate
+                          .getFieldValue([
+                            "documents",
+                            name,
+                            "documentPrice",
+                            "notarizationPrice",
+                          ])
+                          ?.toLocaleString("vi-VN") || "N/A"}{" "}
+                        VNĐ
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </Form.List>
+          <Divider orientation="left" style={{ borderColor: "black" }}>
+            Giá
+          </Divider>
+          {formUpdate.getFieldValue("pickUpRequest") ? (
+            <div className="request-price">
+              <label>
+                <strong>Phí nhận tài liệu tại nhà:</strong> 40.000 VNĐ
+              </label>
+            </div>
+          ) : null}
+          {formUpdate.getFieldValue("shipRequest") ? (
+            <div className="request-price">
+              <label>
+                <strong>Phí giao hàng:</strong> 40.000 VNĐ
+              </label>
+            </div>
+          ) : null}
+          <div className="request-price">
+            <label>
+              <strong>Tổng giá: </strong>
+              <span>
+                {formUpdate
+                  .getFieldValue("totalPrice")
+                  ?.toLocaleString("vi-VN") || "N/A"}{" "}
+                VNĐ
+              </span>
+            </label>
+          </div>
+        </Form>
+      </Modal>
     </div>
   );
 }
