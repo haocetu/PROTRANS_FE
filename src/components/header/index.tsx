@@ -13,7 +13,7 @@ import {
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown, MenuProps, message, Space } from "antd";
+import { Badge, Button, Dropdown, MenuProps, message, Space } from "antd";
 import { logout } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/rootReducer";
 import { useEffect, useMemo, useState } from "react";
@@ -179,8 +179,8 @@ function Header() {
         />
       </div>
       <ul className="header__navigation">
-        <li>Giới Thiệu</li>
-        <li>Dịch Thuật</li>
+        <li onClick={() => navigate("/")}>Giới Thiệu</li>
+        {/* <li>Dịch Thuật</li> */}
         <li
           onClick={() => {
             if (account) {
@@ -193,30 +193,31 @@ function Header() {
         >
           Gửi yêu cầu
         </li>
-        <li>Chuyên Ngành</li>
+        {/* <li>Chuyên Ngành</li> */}
         <li onClick={() => navigate("/quotePageDesign")}>Bảng Giá</li>
       </ul>
       <div className="header__right">
         <div className="header__account">
           {account ? (
-            <Dropdown.Button menu={menuProps} onClick={handleButtonClick}>
-              <UserOutlined />
-              {account.Username}
-            </Dropdown.Button>
+            <>
+              <Dropdown menu={{ items: renderItem }} trigger={["click"]}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Space>
+                    <Badge count={countNoti} showZero>
+                      <BellOutlined style={{ fontSize: "x-large" }} />
+                    </Badge>
+                  </Space>
+                </a>
+              </Dropdown>
+
+              <Dropdown.Button menu={menuProps} onClick={handleButtonClick}>
+                <UserOutlined />
+                {account.Username}
+              </Dropdown.Button>
+            </>
           ) : (
             <Button onClick={() => navigate("/login")}>Đăng nhập</Button>
           )}
-        </div>
-
-        <div className="header__Noti">
-          <Dropdown menu={{ items: renderItem }} trigger={["click"]}>
-            <a onClick={(e) => e.preventDefault()}>
-              <Space>
-                <BellOutlined />
-                <p>{countNoti}</p>
-              </Space>
-            </a>
-          </Dropdown>
         </div>
       </div>
     </div>
