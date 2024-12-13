@@ -42,7 +42,6 @@ import { useEffect, useState } from "react";
 function App() {
   const [connection, setConnection] = useState(null);
   const account = useSelector((state: RootState) => state.accountmanage);
-  const [title, settitle] = useState(null);
   useEffect(() => {
     const hubConnection = new HubConnectionBuilder()
       .withUrl("https://protrans.azurewebsites.net/notificationHub")
