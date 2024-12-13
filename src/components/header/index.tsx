@@ -65,7 +65,7 @@ function Header() {
             //   updateStatus(item.id);
             // }}
           >
-            {item.id}
+            {item.message}
           </a>
         ),
         key: item.id.toString(),
