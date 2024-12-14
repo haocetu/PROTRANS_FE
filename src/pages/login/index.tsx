@@ -70,7 +70,7 @@ function Login() {
           break;
         case "Translator": // Corrected route
           toast.success("Đăng nhập thành công.");
-          navigate("/dashboardtranslator");
+          navigate("/dashboardtranslator/assignment");
           break;
         case "Manager":
           toast.success("Đăng nhập thành công.");
@@ -81,7 +81,7 @@ function Login() {
           navigate("/login");
       }
     } catch (error) {
-      toast.error("Email hoặc mật khẩu không hợp lệ.");
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };
