@@ -42,6 +42,7 @@ const items: MenuItem[] = [
   getItem("Giao việc vận chuyển", "assignshipper", <FormOutlined />),
   getItem("Giao việc công chứng", "assignNotarization", <FormOutlined />),
   getItem("Giao đi nhận bản cứng", "assignhardcopy", <FormOutlined />),
+  getItem("Loại tài liệu", "documenttype", <FormOutlined />),
   // getItem("Task Notarization List", "tasknotarizationlist", <FormOutlined />),
 ];
 

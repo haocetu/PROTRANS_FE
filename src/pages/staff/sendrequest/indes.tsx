@@ -34,6 +34,7 @@ function SendRequest() {
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isPickUpEnabled, setIsPickUpEnabled] = useState(false);
 
   //--------------------------------
   const props: UploadProps = {
@@ -66,6 +67,23 @@ function SendRequest() {
     }));
 
     setDocumentType(list);
+  };
+
+  const checkPickUpRequestState = (documents) => {
+    const hasNotarizationRequest = documents.some(
+      (doc) => doc.notarizationRequest
+    );
+    setIsPickUpEnabled(hasNotarizationRequest);
+
+    if (!hasNotarizationRequest) {
+      formVariable.setFieldValue("pickUpRequest", false);
+    }
+  };
+
+  const handleFormChange = (changedValues, allValues) => {
+    if (changedValues.documents) {
+      checkPickUpRequestState(allValues.documents);
+    }
   };
 
   useEffect(() => {
@@ -152,6 +170,7 @@ function SendRequest() {
       newDocuments[index].numberOfNotarizedCopies = 1;
     }
     formVariable.setFieldsValue({ documents: newDocuments });
+    checkPickUpRequestState(newDocuments);
   };
 
   return (
@@ -161,6 +180,7 @@ function SendRequest() {
         <Form
           form={formVariable}
           onFinish={handleSubmit}
+          onValuesChange={handleFormChange}
           layout="vertical"
           initialValues={{
             deadline: "",
@@ -220,6 +240,7 @@ function SendRequest() {
                   checkedChildren={<CheckOutlined />}
                   unCheckedChildren={<CloseOutlined />}
                   defaultChecked={false}
+                  disabled={!isPickUpEnabled}
                 />
               </Form.Item>
             </Col>
@@ -255,7 +276,7 @@ function SendRequest() {
                       Tài liệu
                     </Divider>
                     <Row gutter={16}>
-                      <Col span={6}>
+                      <Col span={8}>
                         <Form.Item
                           {...restField}
                           name={[name, "firstLanguageId"]}
@@ -275,7 +296,7 @@ function SendRequest() {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col span={8}>
                         <Form.Item
                           {...restField}
                           name={[name, "secondLanguageId"]}
@@ -294,7 +315,7 @@ function SendRequest() {
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={4}>
+                      <Col span={5}>
                         <Form.Item
                           {...restField}
                           name={[name, "documentTypeId"]}
@@ -438,7 +459,7 @@ function SendRequest() {
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={5}>
+                      <Col span={10}>
                         <Form.Item
                           {...restField}
                           name={[name, "notarizationId"]}

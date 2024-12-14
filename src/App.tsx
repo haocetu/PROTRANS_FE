@@ -31,6 +31,7 @@ import CreateOrderOnline from "./pages/staff/createorderonline";
 import QuotePageDesign from "./pages/design/quotePaged";
 import OrderOnlineManage from "./pages/admin/orderOnline-manage";
 import AssignHardCopy from "./pages/assignmentHardCopy";
+import DocumentType from "./pages/documentTypeManagement";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { logout } from "./redux/features/userSlice";
@@ -162,6 +163,10 @@ function App() {
         {
           path: "assignhardcopy",
           element: <AssignHardCopy />,
+        },
+        {
+          path: "documenttype",
+          element: <DocumentType />,
         },
         {
           path: "language",
