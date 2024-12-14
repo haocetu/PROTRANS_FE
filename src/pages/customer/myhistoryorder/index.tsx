@@ -1,4 +1,13 @@
-import { Table, Button, Spin, Divider, Form, Modal, Popconfirm } from "antd";
+import {
+  Table,
+  Button,
+  Spin,
+  Divider,
+  Form,
+  Modal,
+  Popconfirm,
+  Steps,
+} from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -17,6 +26,7 @@ import {
   EyeTwoTone,
   FormOutlined,
   InfoCircleOutlined,
+  LikeOutlined,
   TruckFilled,
   TruckOutlined,
 } from "@ant-design/icons";
@@ -75,6 +85,8 @@ function HistoryOrder() {
     setStatusFilter(status);
     setActiveButton(status);
   };
+
+  const description = "This is a description.";
 
   useEffect(() => {
     if (statusFilter === "") {
@@ -206,7 +218,7 @@ function HistoryOrder() {
       render: (agencyId) => {
         if (!agency || agency.length === 0) return "Loading...";
         const foundAgency = agency.find((agen) => agen.value === agencyId);
-        return foundAgency ? foundAgency.label : "Unknown";
+        return foundAgency ? foundAgency.label : "Không";
       },
     },
     {
@@ -229,6 +241,13 @@ function HistoryOrder() {
                 &nbsp; Đang thực hiện
               </div>
             );
+          case "Completed":
+            return (
+              <div className="status-completed">
+                <LikeOutlined />
+                &nbsp; Đã hoàn thành
+              </div>
+            );
           case "Delivering":
             return (
               <div className="status-delivering">
@@ -240,7 +259,7 @@ function HistoryOrder() {
             return (
               <div className="status-delivered">
                 <CheckOutlined />
-                &nbsp; Đã hoàn thành
+                &nbsp; Đã giao
               </div>
             );
           case "Canceled":
@@ -330,6 +349,15 @@ function HistoryOrder() {
         </Button>
         <Button
           className={`filter-button ${
+            activeButton === "Completed" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Completed")}
+        >
+          <LikeOutlined />
+          Đã hoàn thành
+        </Button>
+        <Button
+          className={`filter-button ${
             activeButton === "Delivering" ? "active" : ""
           }`}
           onClick={() => handleStatusFilter("Delivering")}
@@ -344,7 +372,7 @@ function HistoryOrder() {
           onClick={() => handleStatusFilter("Delivered")}
         >
           <CheckOutlined />
-          Đã hoàn thành
+          Đã giao
         </Button>
         <Button
           className={`filter-button ${
@@ -524,6 +552,48 @@ function HistoryOrder() {
                         ])}
                       </span>
                     </div>
+                    {/* <div className="document-status">
+                      <Steps
+                        direction="horizontal"
+                        size="small"
+                        current={0}
+                        items={[
+                          { title: "Finished", description: "F" },
+                          { title: "Finished", description },
+                          { title: "Finished", description },
+                          { title: "Finished", description },
+                          {
+                            title: "In Progress",
+                            description,
+                          },
+                          {
+                            title: "Waiting",
+                            description,
+                          },
+                        ]}
+                      />
+                    </div>
+                    <div className="document-status">
+                      <Steps
+                        direction="horizontal"
+                        size="small"
+                        current={0}
+                        items={[
+                          { title: "Finished", description },
+                          { title: "Finished", description },
+                          { title: "Finished", description },
+                          { title: "Finished", description },
+                          {
+                            title: "In Progress",
+                            description,
+                          },
+                          {
+                            title: "Waiting",
+                            description,
+                          },
+                        ]}
+                      />
+                    </div> */}
                     <div className="document-price">
                       <span>
                         <label>Giá dịch thuật: </label>
@@ -572,10 +642,10 @@ function HistoryOrder() {
               </label>
             </div>
           ) : null}
-          <div className="request-price">
-            <label>
-              <strong>Tổng giá: </strong>
-              <span>
+          <div className="request-price-total">
+            <label style={{ fontSize: "18px" }}>
+              <strong>TỔNG GIÁ: </strong>
+              <span style={{ color: "green" }}>
                 {formUpdate
                   .getFieldValue("totalPrice")
                   ?.toLocaleString("vi-VN") || "N/A"}{" "}

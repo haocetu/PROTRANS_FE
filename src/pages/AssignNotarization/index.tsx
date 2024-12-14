@@ -7,11 +7,13 @@ import {
   Select,
   Table,
   Button,
+  Spin,
+  Badge,
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { toast } from "react-toastify";
-import { AuditOutlined } from "@ant-design/icons";
+import { AuditOutlined, SignatureOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 
 function AssignNotarization() {
@@ -20,17 +22,30 @@ function AssignNotarization() {
   const [isOpen, setIsOpen] = useState(false);
   const [shipper, setShipper] = useState([]);
   const [selectedDocumentIds, setSelectedDocumentIds] = useState([]);
+  const [agencyList, setAgencyList] = useState([]);
+  const [selectedAgencyId, setSelectedAgencyId] = useState(null);
   const [language, setLanguage] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   useEffect(() => {
+    fetchAgency();
     fetchDocumentType();
     fetchNotarizationType();
     fetchLanguages();
     fetchShipper();
     fetchDocument();
-  }, []);
+    setSelectedDocumentIds([]);
+  }, [selectedAgencyId]);
 
   const fetchDocumentType = async () => {
     const response = await api.get("DocumentType");
@@ -52,6 +67,19 @@ function AssignNotarization() {
     setNotarizationType(list);
   };
 
+  const fetchAgency = async () => {
+    const response = await api.get("Agency");
+    const data = response.data.data;
+    const list = data.map((agency) => ({
+      value: agency.id,
+      label: <span>{agency.name}</span>,
+    }));
+    setAgencyList(list);
+    if (list.length > 0 && !selectedAgencyId) {
+      setSelectedAgencyId(list[0].value);
+    }
+  };
+
   const fetchLanguages = async () => {
     const response = await api.get("Language");
     const data = response.data.data;
@@ -63,21 +91,33 @@ function AssignNotarization() {
   };
 
   const fetchShipper = async () => {
-    const response = await api.get("Account/GetAllShipper");
-    const data = response.data.data;
-    const list = data.map((ship) => ({
-      value: ship.id,
-      label: <span>{ship.fullName}</span>,
-    }));
-    setShipper(list);
+    try {
+      const response = await api.get(
+        `Account/GetAllShipperByAgencyId?agencyId=${selectedAgencyId}`
+      );
+      const data = response.data.data;
+      const list = data.map((ship) => ({
+        value: ship.id,
+        label: <span>{ship.fullName}</span>,
+      }));
+      setShipper(list);
+    } catch (error) {
+      setShipper(null);
+    }
   };
 
   const fetchDocument = async () => {
     try {
-      const response = await api.get("Document/GetDocumentsToBeNotarized");
+      setLoading(true);
+      const response = await api.get(
+        `Document/GetDocumentsToBeNotarized?id=${selectedAgencyId}`
+      );
       setDataSource(response.data.data);
+      setSelectedDocumentIds([]);
+      setLoading(false);
     } catch (error) {
-      toast.error("Fail");
+      // toast.error("Fail.");
+      setLoading(false);
     }
   };
 
@@ -93,6 +133,16 @@ function AssignNotarization() {
           onChange={() => handleSelectDocument(record.id)}
         />
       ),
+    },
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
     },
     {
       title: "Ngôn ngữ gốc",
@@ -143,12 +193,12 @@ function AssignNotarization() {
         return founddocumentType ? founddocumentType.label : null;
       },
     },
-    {
-      title: "Yêu cầu công chứng",
-      dataIndex: "notarizationRequest",
-      key: "notarizationRequest",
-      render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
-    },
+    // {
+    //   title: "Yêu cầu công chứng",
+    //   dataIndex: "notarizationRequest",
+    //   key: "notarizationRequest",
+    //   render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
+    // },
     {
       title: "Số bản công chứng",
       dataIndex: "numberOfNotarizedCopies",
@@ -203,24 +253,55 @@ function AssignNotarization() {
       setIsOpen(false);
       fetchDocument();
     } catch (error) {
-      toast.error("Giao việc thất bại!");
+      toast.error("Giao việc thất bại.");
     }
   };
 
   return (
-    <div className="AssignNotarizationPage">
-      <Button
-        type="primary"
-        onClick={handleAssignNotarization}
-        style={{ marginBottom: 16 }}
+    <div>
+      <div style={{ marginBottom: 10 }}>
+        <Button
+          type="primary"
+          onClick={handleAssignNotarization}
+          style={{ marginRight: 10 }}
+        >
+          <SignatureOutlined />
+          Giao việc
+        </Button>
+        <Select
+          options={agencyList}
+          value={selectedAgencyId}
+          onChange={(value) => setSelectedAgencyId(value)}
+          style={{ width: 300 }}
+          placeholder="Chọn trung tâm"
+        />
+      </div>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
+      <span
+        style={{
+          color: selectedDocumentIds.length === 0 ? "#f07575" : "#2bc24e",
+        }}
       >
-        Giao việc
-      </Button>
-      <Table columns={columns} dataSource={dataSource}></Table>
+        <em>* {selectedDocumentIds.length} tài liệu đang được chọn</em>
+      </span>
       <Modal
         open={isOpen}
         title="Giao việc công chứng"
-        onCancel={() => setIsOpen(false)}
+        cancelText="Hủy"
+        onCancel={() => {
+          setIsOpen(false);
+          formVariable.resetFields();
+        }}
+        okText="Giao việc"
         onOk={() => formVariable.submit()}
       >
         <Form form={formVariable} onFinish={handlesubmitNotarization}>

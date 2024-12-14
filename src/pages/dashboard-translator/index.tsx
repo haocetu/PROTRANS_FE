@@ -75,7 +75,7 @@ const DashboardTranslator: React.FC = () => {
         <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={["assignment"]}
           mode="inline"
           items={items}
         />
