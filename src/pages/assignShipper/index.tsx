@@ -130,8 +130,22 @@ function AssignShipper() {
     console.log(payload);
     try {
       const response = await api.post("AssignmentShipping/Ship", payload);
-
       console.log(response.data.data);
+      if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+        console.log(response.data.data.shipperId);
+
+        const paramPushNoti = {
+          specId: response.data.data.shipperId,
+          title: "Giao việc đi giao đơn hàng",
+          message: `Bạn có một nhiệm vụ đi giao đơn hàng vào ngày thông báo: ${currentDateTime}`,
+          author: "string",
+        };
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
       setDataAssignShipper([...dataAssignshipper, response.data.data]);
       formVariable.resetFields();
       setIsOpen(false);
