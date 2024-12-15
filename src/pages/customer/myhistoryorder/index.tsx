@@ -16,6 +16,7 @@ import api from "../../../config/api";
 import "./index.css";
 import {
   AlignRightOutlined,
+  ArrowRightOutlined,
   CheckCircleFilled,
   CheckCircleOutlined,
   CheckOutlined,
@@ -24,9 +25,12 @@ import {
   CloseOutlined,
   CopyOutlined,
   EyeTwoTone,
+  FieldTimeOutlined,
   FormOutlined,
+  InfoCircleFilled,
   InfoCircleOutlined,
   LikeOutlined,
+  SmallDashOutlined,
   TruckFilled,
   TruckOutlined,
 } from "@ant-design/icons";
@@ -552,48 +556,103 @@ function HistoryOrder() {
                         ])}
                       </span>
                     </div>
-                    {/* <div className="document-status">
-                      <Steps
-                        direction="horizontal"
-                        size="small"
-                        current={0}
-                        items={[
-                          { title: "Finished", description: "F" },
-                          { title: "Finished", description },
-                          { title: "Finished", description },
-                          { title: "Finished", description },
-                          {
-                            title: "In Progress",
-                            description,
-                          },
-                          {
-                            title: "Waiting",
-                            description,
-                          },
-                        ]}
-                      />
+                    {/* Hiển thị listTranslationStatus */}
+                    <div style={{ width: "70%" }}>
+                      {" "}
+                      <Divider
+                        orientation="left"
+                        variant="dashed"
+                        style={{
+                          borderColor: "gray",
+                          fontSize: "14px",
+                          color: "#0394fc",
+                        }}
+                      >
+                        <InfoCircleFilled /> Trạng thái dịch thuật
+                      </Divider>
                     </div>
-                    <div className="document-status">
-                      <Steps
-                        direction="horizontal"
-                        size="small"
-                        current={0}
-                        items={[
-                          { title: "Finished", description },
-                          { title: "Finished", description },
-                          { title: "Finished", description },
-                          { title: "Finished", description },
-                          {
-                            title: "In Progress",
-                            description,
-                          },
-                          {
-                            title: "Waiting",
-                            description,
-                          },
-                        ]}
-                      />
-                    </div> */}
+                    <div>
+                      {formUpdate
+                        .getFieldValue([
+                          "documents",
+                          name,
+                          "listTranslationStatus",
+                        ])
+                        ?.map((statusItem, index, array) => (
+                          <div
+                            key={index}
+                            style={{
+                              display: "inline-block",
+                              marginRight: "16px",
+                              marginBottom: "8px",
+                              fontSize: "12px",
+                            }}
+                          >
+                            <span style={{ fontWeight: "bold" }}>
+                              {statusItem.status}
+                            </span>
+                            <span style={{ marginLeft: "8px", color: "gray" }}>
+                              {dayjs(statusItem.time).format(
+                                "DD/MM/YYYY HH:mm"
+                              )}
+                            </span>
+
+                            {index < array.length - 1 && " |"}
+                          </div>
+                        )) || "Không có trạng thái"}
+                    </div>
+
+                    {/* Hiển thị listNotarizationStatus */}
+                    {formUpdate.getFieldValue([
+                      "documents",
+                      name,
+                      "notarizationRequest",
+                    ]) && (
+                      <div style={{ width: "70%" }}>
+                        <Divider
+                          orientation="left"
+                          variant="dashed"
+                          style={{
+                            borderColor: "gray",
+                            fontSize: "14px",
+                            color: "#0394fc",
+                          }}
+                        >
+                          <InfoCircleFilled /> Trạng thái công chứng
+                        </Divider>
+                        <div>
+                          {formUpdate
+                            .getFieldValue([
+                              "documents",
+                              name,
+                              "listNotarizationStatus",
+                            ])
+                            ?.map((statusItem, index, array) => (
+                              <div
+                                key={index}
+                                style={{
+                                  display: "inline-block",
+                                  marginRight: "16px",
+                                  marginBottom: "8px",
+                                  fontSize: "12px",
+                                }}
+                              >
+                                <span style={{ fontWeight: "bold" }}>
+                                  {statusItem.status}
+                                </span>
+                                <span
+                                  style={{ marginLeft: "8px", color: "gray" }}
+                                >
+                                  {dayjs(statusItem.time).format(
+                                    "DD/MM/YYYY HH:mm"
+                                  )}
+                                </span>
+                                {index < array.length - 1 && " |"}
+                              </div>
+                            )) || "Không có trạng thái"}
+                        </div>
+                      </div>
+                    )}
                     <div className="document-price">
                       <span>
                         <label>Giá dịch thuật: </label>
