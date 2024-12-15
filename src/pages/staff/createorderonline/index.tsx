@@ -16,7 +16,7 @@ function CreateOrderOnline() {
       title: "CustomerId",
       dataIndex: "customerId",
       key: "customerId",
-      // hidden: true,
+      hidden: true,
     },
     {
       title: "Tên khách hàng",

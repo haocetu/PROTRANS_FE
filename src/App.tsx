@@ -52,7 +52,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (connection) {
+    if (connection && account && account.Id) {
       const startConnection = async () => {
         try {
           connection.on(`${account.Id}`, async (title, message, author) => {
