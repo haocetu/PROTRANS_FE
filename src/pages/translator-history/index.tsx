@@ -26,7 +26,7 @@ import "./index.scss";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 
-function Translator() {
+function History() {
   const [dataSource, setDataSource] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
@@ -343,4 +343,4 @@ function Translator() {
   );
 }
 
-export default Translator;
+export default History;

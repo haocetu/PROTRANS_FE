@@ -6,12 +6,23 @@ import {
   BookOutlined,
   CopyOutlined,
   FileOutlined,
+  FontSizeOutlined,
   FormOutlined,
+  HistoryOutlined,
   ShoppingCartOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Badge, Breadcrumb, Button, Dropdown, Layout, Menu, Space, theme } from "antd";
+import {
+  Badge,
+  Breadcrumb,
+  Button,
+  Dropdown,
+  Layout,
+  Menu,
+  Space,
+  theme,
+} from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,7 +49,10 @@ function getItem(
   } as MenuItem;
 }
 
-const items: MenuItem[] = [getItem("Tài liệu", "assignment", <CopyOutlined />)];
+const items: MenuItem[] = [
+  getItem("Tài liệu đang dịch", "assignment", <FontSizeOutlined />),
+  getItem("Lịch sử", "history", <HistoryOutlined />),
+];
 
 const DashboardTranslator: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -148,7 +162,7 @@ const DashboardTranslator: React.FC = () => {
       <Layout>
         <Header className="header-container">
           <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-          <Dropdown menu={{ items: renderItem }} trigger={["click"]}>
+            <Dropdown menu={{ items: renderItem }} trigger={["click"]}>
               <a onClick={(e) => e.preventDefault()}>
                 <Space>
                   <Badge count={countNoti} showZero>
@@ -157,7 +171,7 @@ const DashboardTranslator: React.FC = () => {
                 </Space>
               </a>
             </Dropdown>
-            
+
             <Dropdown.Button menu={menuProps} placement="bottomRight">
               <UserOutlined />
               {account.Username}
