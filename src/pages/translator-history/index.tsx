@@ -5,6 +5,7 @@ import {
   Modal,
   Popconfirm,
   Select,
+  Spin,
   Table,
   Tooltip,
 } from "antd";
@@ -38,6 +39,7 @@ function History() {
   const [language, setLanguage] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -140,41 +142,26 @@ function History() {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      render: (status: string) =>
-        status === "Translating" ? (
-          <div className="status-translating">
-            <FileSyncOutlined />
-            &nbsp; Đang dịch
-          </div>
-        ) : (
-          <span>{status}</span>
-        ),
-    },
-    {
-      title: "Tác vụ",
-      dataIndex: "id",
-      key: "id",
-      align: "center" as const,
-      render: (id, data) => (
-        <Popconfirm
-          title="Bạn có chắc chắn đã hoàn thành việc dịch thuật?"
-          onConfirm={() => handleCompleteDocument(id)}
-          okText="Có"
-          cancelText="Hủy"
-        >
-          <Tooltip title="Hoàn thành dịch">
-            <Button
-              type="primary"
-              style={{
-                background: "green",
-                borderRadius: "12px",
-              }}
-            >
-              <CheckOutlined style={{ fontWeight: "bold" }} />
-            </Button>
-          </Tooltip>
-        </Popconfirm>
-      ),
+      render: (status: string) => {
+        switch (status) {
+          case "Translating":
+            return (
+              <div className="status-translating">
+                <FileSyncOutlined />
+                &nbsp; Đang dịch
+              </div>
+            );
+          case "Translated":
+            return (
+              <div className="status-translated">
+                <CheckOutlined />
+                &nbsp; Đã dịch xong
+              </div>
+            );
+          default:
+            return status;
+        }
+      },
     },
   ];
 
@@ -187,31 +174,21 @@ function History() {
     setPagination(newPagination);
   };
 
-  async function handleCompleteDocument(id) {
-    console.log(id);
-    try {
-      const response = await api.put(`AssignmentTranslation/Complete?id=${id}`);
-
-      console.log(response.data.data);
-      toast.success("Đã cập nhật thành công.");
-      fetchAssignment();
-    } catch (error) {
-      toast.error("Đã cập nhật thất bại.");
-    }
-  }
-
   const fetchAssignment = async () => {
     console.log(UserAccount2);
     try {
+      setLoading(true);
       const response = await api.get(`AssignmentTranslation/${UserAccount2}`);
-      const data = Array.isArray(response.data.data)
-        ? response.data.data
-        : [response.data.data];
 
-      console.log(data);
-      setDataSource(data);
+      const filteredData = response.data.data.filter(
+        (item) => item.status !== "Translating"
+      );
+
+      setDataSource(filteredData);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -335,6 +312,10 @@ function History() {
       <Table
         style={{ width: "50%" }}
         columns={columns}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
         dataSource={dataSource}
         pagination={pagination}
         onChange={handleTableChange}

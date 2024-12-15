@@ -5,6 +5,7 @@ import {
   Modal,
   Popconfirm,
   Select,
+  Spin,
   Table,
   Tooltip,
 } from "antd";
@@ -38,6 +39,7 @@ function Translator() {
   const [language, setLanguage] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -196,22 +198,23 @@ function Translator() {
       toast.success("Đã cập nhật thành công.");
       fetchAssignment();
     } catch (error) {
-      toast.error("Đã cập nhật thất bại.");
+      toast.error("Cập nhật thất bại.");
     }
   }
 
   const fetchAssignment = async () => {
     console.log(UserAccount2);
     try {
-      const response = await api.get(`AssignmentTranslation/${UserAccount2}`);
-      const data = Array.isArray(response.data.data)
-        ? response.data.data
-        : [response.data.data];
+      setLoading(true);
+      const response = await api.get(
+        `AssignmentTranslation/GetTranslating?id=${UserAccount2}`
+      );
 
-      console.log(data);
-      setDataSource(data);
+      setDataSource(response.data.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -335,6 +338,10 @@ function Translator() {
       <Table
         style={{ width: "50%" }}
         columns={columns}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
         dataSource={dataSource}
         pagination={pagination}
         onChange={handleTableChange}
