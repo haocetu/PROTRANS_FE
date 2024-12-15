@@ -119,6 +119,21 @@ function AssignHardCopy() {
     try {
       const response = await api.post("AssignmentShipping/PickUp", payload);
 
+      if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+        console.log(response.data.data.shipperId);
+
+        const paramPushNoti = {
+          specId: response.data.data.shipperId,
+          title: "Thông báo đi nhận bản cứng",
+          message: ` Bạn đã nhận nhiệm vụ đi nhận bản cứng vào ngày thông báo: ${currentDateTime}`,
+          author: "string",
+        };
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
       console.log(response.data.data);
       setdataPickHardCopy([...dataPickHardCopy, response.data.data]);
       formVariable.resetFields();
