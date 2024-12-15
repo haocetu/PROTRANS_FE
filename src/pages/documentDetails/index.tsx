@@ -289,6 +289,23 @@ function DocumentDetails() {
 
     try {
       const response = await api.post("AssignmentTranslation", payload);
+
+      if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+        console.log(response.data.data.translatorId);
+
+        const paramPushNoti = {
+          specId: response.data.data.translatorId,
+          title: "Nhiệm vụ dịch thuật",
+          message: `Bạn đã nhận một task mới vào ngày thông báo ${currentDateTime}.`,
+          author: "string",
+        };
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
+
       setDataAssignTrans(response.data.data);
       formVariable.resetFields();
       toast.success("Assign Translator success");

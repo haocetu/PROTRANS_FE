@@ -59,7 +59,7 @@ function App() {
             console.log("title", title);
             console.log("message", message);
             console.log("author", author);
-            toast.success(`title: ${title}`);
+            toast.success(` Thông báo: ${title}`);
             // Handle the notification here, e.g., display a notification, update UI, etc.
           });
           connection
