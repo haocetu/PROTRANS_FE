@@ -16,6 +16,7 @@ import DynamicDocumentsForm from "./pages/documentType";
 import DocumentDetails from "./pages/documentDetails";
 import TranslatorAccount from "./pages/admin/translatorAccount";
 import Translator from "./pages/translatorPage";
+import History from "./pages/translator-history";
 import AssignShipper from "./pages/assignShipper";
 import AssignNotarization from "./pages/AssignNotarization";
 import ShipperAndStaff from "./pages/admin/createShipperandStaff";
@@ -289,6 +290,10 @@ function App() {
         {
           path: "assignment",
           element: <Translator />,
+        },
+        {
+          path: "history",
+          element: <History />,
         },
       ],
     },
