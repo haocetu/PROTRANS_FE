@@ -112,6 +112,23 @@ function AssignNotarization() {
       const response = await api.get(
         `Document/GetDocumentsToBeNotarized?id=${selectedAgencyId}`
       );
+
+      // if (response) {
+      //   const currentDateTime = new Date().toLocaleString("vi-VN", {
+      //     timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+      //   });
+      //   console.log(response.data.data.customerId);
+
+      //   const paramPushNoti = {
+      //     specId: response.data.data.customerId,
+      //     title: "Báo giá dịch thuật",
+      //     message: `Đơn giá của bạn đã được xử lí có giá ${response.data.data.totalPrice}. Ngày thông báo: ${currentDateTime}`,
+      //     author: "string",
+      //   };
+      //   const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+      //   console.log("resPushNoti", resPushNoti);
+      // }
+
       setDataSource(response.data.data);
       setSelectedDocumentIds([]);
       setLoading(false);
@@ -248,6 +265,24 @@ function AssignNotarization() {
 
     try {
       const response = await api.post("AssignmentNotarization", payload);
+
+      console.log(response.data.data);
+
+      if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+        console.log(response.data.data.shipperId);
+
+        const paramPushNoti = {
+          specId: response.data.data.shipperId,
+          title: "Giao việc đi công chứng",
+          message: `Bạn có một nhiệm vụ đi công chứng vào ngày thông báo: ${currentDateTime}`,
+          author: "string",
+        };
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
       formVariable.resetFields();
       toast.success("Giao việc thành công.");
       setIsOpen(false);

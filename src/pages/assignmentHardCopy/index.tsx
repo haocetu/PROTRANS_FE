@@ -123,7 +123,6 @@ function AssignHardCopy() {
         const currentDateTime = new Date().toLocaleString("vi-VN", {
           timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
         });
-        console.log(response.data.data.shipperId);
 
         const paramPushNoti = {
           specId: response.data.data.shipperId,
