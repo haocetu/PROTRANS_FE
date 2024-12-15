@@ -27,7 +27,7 @@ function Header() {
   const [countNoti, setCountNoti] = useState(0);
 
   useEffect(() => {
-    if (account.Id && account) {
+    if (account) {
       const getListNoti = async () => {
         try {
           const res = await api.get(`Notification/${account.Id}`);
