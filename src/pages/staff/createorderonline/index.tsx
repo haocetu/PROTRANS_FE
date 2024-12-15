@@ -7,10 +7,17 @@ import { toast } from "react-toastify";
 
 function CreateOrderOnline() {
   const [datasource, setDataSource] = useState([]);
+  // const [selectcustomerid, setselectcustomerid] = useState(null);
   const token = localStorage.getItem("token");
 
   console.log(token);
   const columns = [
+    {
+      title: "CustomerId",
+      dataIndex: "customerId",
+      key: "customerId",
+      // hidden: true,
+    },
     {
       title: "Tên khách hàng",
       dataIndex: "fullName",
@@ -75,7 +82,10 @@ function CreateOrderOnline() {
         <Space>
           <FormOutlined
             onClick={() => {
+              console.log(data.customerId);
+              // setselectcustomerid(data.customerId);
               const newData = { ...data };
+              console.log("id", newData.customerId);
               console.log(newData);
 
               for (const key of Object.keys(data)) {
@@ -109,14 +119,23 @@ function CreateOrderOnline() {
         },
       });
 
-      // if (response) {
-      //   const paramPushNoti = {
-      //     specId: selectcustomerid,
-      //     title: "Báo giá dịch thuật",
-      //     message: `Yêu cầu của bạn có giá ${response.data.data.estimatedPrice}`,
-      //     author: "string",
-      //   };
+      // console.log("customer", selectcustomerid);
 
+      if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+        console.log(response.data.data.customerId);
+
+        const paramPushNoti = {
+          specId: response.data.data.customerId,
+          title: "Báo giá dịch thuật",
+          message: `Đơn giá của bạn đã được xử lí có giá ${response.data.data.totalPrice}. Ngày thông báo: ${currentDateTime}`,
+          author: "string",
+        };
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
       console.log(response.data.data);
       fetchMyRequest();
       toast.success("Tạo đơn hàng thành công.");

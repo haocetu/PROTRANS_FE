@@ -333,10 +333,14 @@ function RequestManager() {
 
       //Gọi hàm đẩy noti
       if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+
         const paramPushNoti = {
           specId: selectcustomerid,
           title: "Báo giá dịch thuật",
-          message: `Yêu cầu của bạn có giá ${response.data.data.estimatedPrice}`,
+          message: `Yêu cầu của bạn có giá ${response.data.data.estimatedPrice}. Ngày thông báo: ${currentDateTime}`,
           author: "string",
         };
 
