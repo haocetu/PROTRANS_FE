@@ -25,8 +25,9 @@ function Header() {
   const dispatch = useDispatch();
   const [listNoti, setListNoti] = useState([]);
   const [countNoti, setCountNoti] = useState(0);
+
   useEffect(() => {
-    if (account.Id) {
+    if (account.Id && account) {
       const getListNoti = async () => {
         try {
           const res = await api.get(`Notification/${account.Id}`);
@@ -128,39 +129,39 @@ function Header() {
     },
   ];
 
-  const notiItems: MenuProps["items"] = [
-    {
-      label: (
-        <a
-          href="https://www.antgroup.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          1st menu item
-        </a>
-      ),
-      key: "0",
-    },
-    {
-      label: (
-        <a
-          href="https://www.aliyun.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          2nd menu item
-        </a>
-      ),
-      key: "1",
-    },
-    {
-      type: "divider",
-    },
-    {
-      label: "3rd menu item",
-      key: "3",
-    },
-  ];
+  // const notiItems: MenuProps["items"] = [
+  //   {
+  //     label: (
+  //       <a
+  //         href="https://www.antgroup.com"
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //       >
+  //         1st menu item
+  //       </a>
+  //     ),
+  //     key: "0",
+  //   },
+  //   {
+  //     label: (
+  //       <a
+  //         href="https://www.aliyun.com"
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //       >
+  //         2nd menu item
+  //       </a>
+  //     ),
+  //     key: "1",
+  //   },
+  //   {
+  //     type: "divider",
+  //   },
+  //   {
+  //     label: "3rd menu item",
+  //     key: "3",
+  //   },
+  // ];
 
   const menuProps = {
     items,
