@@ -2,6 +2,7 @@ import {
   Button,
   Form,
   Input,
+  InputNumber,
   Modal,
   Popconfirm,
   Select,
@@ -14,6 +15,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { EditOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 function QuotePrice() {
   const [formVariable] = useForm();
@@ -34,6 +36,18 @@ function QuotePrice() {
 
     setLanguage(list);
   };
+
+  const handleDelete = async (id) => {
+    console.log(id);
+    try {
+      await api.delete(`QuotePrice/${id}`);
+      toast.info("Cập nhật thành công.");
+      fetchQuotePrice();
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
   // const fetchLanguages = async () => {
   //   const response = await axios.get(`https://localhost:7122/api/Language`);
   //   const data = response.data.data;
@@ -108,17 +122,27 @@ function QuotePrice() {
       },
     },
     {
+      title: "Trạng thái",
+      dataIndex: "isDeleted",
+      key: "isDeleted",
+      render: (isDeleted) =>
+        isDeleted ? (
+          <div className="status-inactive">Đã ẩn</div>
+        ) : (
+          <div className="status-active">Hiển thị</div>
+        ),
+    },
+    {
       title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
         <Space>
           <Popconfirm
-            title="Delete Category"
-            description="Are you sure to delete this language?"
-            // onConfirm={() => handleDeleteLanguage(id)}
-            okText="Yes"
-            cancelText="No"
+            title="Bạn có chắc chắn?"
+            onConfirm={() => handleDelete(id)}
+            okText="Có"
+            cancelText="Không"
           >
             <Tooltip title="Ngưng dịch">
               <Button type="primary" danger>
@@ -131,7 +155,7 @@ function QuotePrice() {
               type="primary"
               style={{ background: "orange" }}
               onClick={() => {
-                // setVisibleEditModal(true);
+                setIsOpenUpdate(true);
                 formVariable.setFieldsValue(data);
               }}
             >
@@ -168,12 +192,29 @@ function QuotePrice() {
     try {
       console.log(values);
       const response = await api.post("QuotePrice", values);
+      toast.success("Tạo báo giá mới thành công.");
       console.log(response.data.data);
       setDataSource([...dataSource, response.data.data]);
       formVariable.resetFields();
       setIsOpen(false);
     } catch (error) {
-      console.log("Create fail");
+      toast.error(error.response.data.message);
+    }
+  }
+
+  async function handleUpdate(values) {
+    console.log(values);
+    try {
+      const { id, ...updateData } = values; // Lấy id riêng và các trường khác
+      const response = await api.put(`QuotePrice/${id}`, updateData); // Truyền id vào URL
+      toast.success("Cập nhật thành công.");
+      console.log(response.data.data);
+      setIsOpenUpdate(false);
+      fetchQuotePrice();
+      formVariable.resetFields();
+      setIsOpen(false);
+    } catch (error) {
+      toast.error(error.response.data.message);
     }
   }
 
@@ -205,7 +246,7 @@ function QuotePrice() {
         title="Tạo báo giá mới"
         onCancel={() => setIsOpen(false)}
         onOk={handleOk}
-        cancelText="Đóng"
+        cancelText="Hủy"
         okText="Tạo"
       >
         <Form form={formVariable} onFinish={handleSubmit}>
@@ -243,41 +284,49 @@ function QuotePrice() {
               },
             ]}
           >
-            <Input />
+            <InputNumber min={10000} />
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
         open={isOpenUpdate}
-        title="Cập nhập báo giá"
-        onCancel={() => setIsOpenUpdate(false)}
+        title="Cập nhật bảng báo giá"
+        okText="Cập nhật"
+        cancelText="Hủy"
+        onCancel={() => {
+          setIsOpenUpdate(false);
+          formVariable.resetFields(); // Reset form
+        }}
         onOk={handleOk}
       >
-        <Form form={formVariable} onFinish={handleSubmit}>
+        <Form form={formVariable} onFinish={handleUpdate}>
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
           <Form.Item
-            label="Ngôn Ngữ Gốc"
+            label="Ngôn ngữ gốc"
             name={"firstLanguageId"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập ngôn ngữ gốc",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <Select options={language} />
+            <Select options={language} disabled />
           </Form.Item>
           <Form.Item
-            label="Ngôn Ngữ Dịch"
+            label="Ngôn cần dịch"
             name={"secondLanguageId"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập ngôn ngữ dịch",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <Select options={language} />
+            <Select options={language} disabled />
           </Form.Item>
           <Form.Item
             label="Giá"
@@ -285,11 +334,11 @@ function QuotePrice() {
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập giá",
+                message: "* vui lòng nhập",
               },
             ]}
           >
-            <Input />
+            <InputNumber min={10000} />
           </Form.Item>
         </Form>
       </Modal>

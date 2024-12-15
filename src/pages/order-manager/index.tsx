@@ -10,7 +10,9 @@ import {
   CloseOutlined,
   EyeOutlined,
   FormOutlined,
+  MoreOutlined,
   PauseOutlined,
+  TruckOutlined,
 } from "@ant-design/icons";
 import "./index.css";
 
@@ -137,7 +139,7 @@ function Order() {
           case "Delivering":
             return (
               <div className="status-delivering">
-                <CheckOutlined />
+                <TruckOutlined />
                 &nbsp; Đang giao
               </div>
             );
@@ -174,10 +176,10 @@ function Order() {
       render: (id, data) => (
         <Button
           type="primary"
-          style={{ background: "orange" }}
+          style={{ background: "orange", borderRadius: "8px" }}
           onClick={() => navigate(`details/${id}`)}
         >
-          <EyeOutlined />
+          <FormOutlined style={{ fontSize: "14px", fontWeight: "bold" }} />
         </Button>
       ),
     },

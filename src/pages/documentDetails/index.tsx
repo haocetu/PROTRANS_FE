@@ -1,8 +1,27 @@
-import { Button, DatePicker, Form, Input, Modal, Select, Table } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Table,
+  Tag,
+} from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { useParams } from "react-router-dom";
-import { ContainerOutlined, FileZipOutlined } from "@ant-design/icons";
+import {
+  CheckCircleFilled,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ContainerOutlined,
+  DownloadOutlined,
+  EditTwoTone,
+  FileOutlined,
+  FileTwoTone,
+  FileZipOutlined,
+} from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 
@@ -84,7 +103,7 @@ function DocumentDetails() {
   //--------------------------------------------------------
   const columns = [
     {
-      title: "Ngôn Ngữ Gốc",
+      title: "Ngôn ngữ gốc",
       dataIndex: "firstLanguageId",
       key: "firstLanguageId",
       render: (firstLanguageId) => {
@@ -99,7 +118,7 @@ function DocumentDetails() {
       },
     },
     {
-      title: "Ngôn Ngữ Dịch",
+      title: "Ngôn ngữ dịch",
       dataIndex: "secondLanguageId",
       key: "secondLanguageId",
       render: (secondLanguageId) => {
@@ -114,7 +133,7 @@ function DocumentDetails() {
       },
     },
     {
-      title: "Mã",
+      title: "Mã tài liệu",
       dataIndex: "code",
       key: "code",
     },
@@ -126,84 +145,126 @@ function DocumentDetails() {
         // Check if there is a URL to render
         return urlPath ? (
           <a href={urlPath} target="_blank" rel="noopener noreferrer">
-            <FileZipOutlined />
+            <FileTwoTone style={{ fontSize: "16px" }} />
           </a>
         ) : null;
       },
     },
+    // {
+    //   title: "Loại tài liệu",
+    //   dataIndex: "fileType",
+    //   key: "fileType",
+    // },
+    // {
+    //   title: "Loại tài liệu",
+    //   dataIndex: "documentTypeId",
+    //   key: "documentTypeId",
+    //   render: (documentTypeId) => {
+    //     // Check if category is available and initialized
+    //     if (!documentType || documentType.length === 0) return null;
+
+    //     // Find the category by ID and return its name
+    //     const founddocumentType = documentType.find(
+    //       (lang) => lang.value === documentTypeId
+    //     );
+    //     return founddocumentType ? founddocumentType.label : null;
+    //   },
+    // },
+    // {
+    //   title: "Số trang",
+    //   dataIndex: "pageNumber",
+    //   key: "pageNumber",
+    // },
+    // {
+    //   title: "Số bản cần dịch",
+    //   dataIndex: "numberOfCopies",
+    //   key: "numberOfCopies",
+    // },
     {
-      title: "Loại Tài Liệu",
-      dataIndex: "fileType",
-      key: "fileType",
-    },
-    {
-      title: "Số Trang",
-      dataIndex: "pageNumber",
-      key: "pageNumber",
-    },
-    {
-      title: "Số Trang Công Chứng",
-      dataIndex: "numberOfCopies",
-      key: "numberOfCopies",
-    },
-    {
-      title: "Yêu Cầu Công Chứng",
+      title: "Yêu cầu công chứng",
       dataIndex: "notarizationRequest",
       key: "notarizationRequest",
-      render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
+      render: (notarizationRequest) =>
+        notarizationRequest ? (
+          <CheckCircleOutlined style={{ color: "green", fontSize: "16px" }} />
+        ) : (
+          <CloseCircleOutlined style={{ color: "red", fontSize: "16px" }} />
+        ),
     },
-    {
-      title: "Số bản Photo Công Chứng",
-      dataIndex: "numberOfNotarizedCopies",
-      key: "numberOfNotarizedCopies",
-    },
-    {
-      title: "Loại Công Chứng",
-      dataIndex: "notarizationId",
-      key: "notarizationId",
-      render: (notarizationId) => {
-        // Check if category is available and initialized
-        if (!notarizationType || notarizationType.length === 0) return null;
+    // {
+    //   title: "Số bản công chứng",
+    //   dataIndex: "numberOfNotarizedCopies",
+    //   key: "numberOfNotarizedCopies",
+    // },
+    // {
+    //   title: "Loại công chứng",
+    //   dataIndex: "notarizationId",
+    //   key: "notarizationId",
+    //   render: (notarizationId) => {
+    //     // Check if category is available and initialized
+    //     if (!notarizationType || notarizationType.length === 0) return null;
 
-        // Find the category by ID and return its name
-        const foundnotarizationType = notarizationType.find(
-          (lang) => lang.value === notarizationId
-        );
-        return foundnotarizationType ? foundnotarizationType.label : null;
-      },
-    },
+    //     // Find the category by ID and return its name
+    //     const foundnotarizationType = notarizationType.find(
+    //       (lang) => lang.value === notarizationId
+    //     );
+    //     return foundnotarizationType ? foundnotarizationType.label : null;
+    //   },
+    // },
     {
-      title: "Loại Tài Liệu",
-      dataIndex: "documentTypeId",
-      key: "documentTypeId",
-      render: (documentTypeId) => {
-        // Check if category is available and initialized
-        if (!documentType || documentType.length === 0) return null;
-
-        // Find the category by ID and return its name
-        const founddocumentType = documentType.find(
-          (lang) => lang.value === documentTypeId
-        );
-        return founddocumentType ? founddocumentType.label : null;
-      },
-    },
-    {
-      title: "Trạng Thái Dịch",
+      title: "Trạng thái dịch",
       dataIndex: "translationStatus",
       key: "translationStatus",
+      render: (status) => (
+        <Tag
+          color={
+            status === "Translating"
+              ? "orange"
+              : status === "Translated"
+              ? "green"
+              : status === "Processing"
+              ? "red"
+              : "default"
+          }
+        >
+          {status === "Translating"
+            ? "Đang dịch"
+            : status === "Translated"
+            ? "Đã dịch"
+            : status === "Processing"
+            ? "Chờ xử lý"
+            : "N/A"}
+        </Tag>
+      ),
     },
     {
-      title: "Trạng Thái Công Chứng",
+      title: "Trạng thái công chứng",
       dataIndex: "notarizationStatus",
       key: "notarizationStatus",
+      render: (status) => (
+        <Tag color="blue">
+          {status === "Processing"
+            ? "Chờ xử lý"
+            : status === "PickingUp"
+            ? "Đang chờ lấy bản gốc"
+            : status === "PickedUp"
+            ? "Đã lấy bản gốc"
+            : status === "Notarizating"
+            ? "Đang công chứng"
+            : status === "Notarizated"
+            ? "Đã công chứng"
+            : "Không"}
+        </Tag>
+      ),
     },
     {
-      title: "",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) =>
         data.translationStatus === "Processing" ? (
-          <ContainerOutlined
+          <EditTwoTone
+            style={{ fontSize: "18px" }}
             onClick={() => {
               console.log(data.firstLanguageId);
               console.log(data.secondLanguageId);
@@ -216,6 +277,41 @@ function DocumentDetails() {
         ) : null,
     },
   ];
+
+  const expandable = {
+    expandedRowRender: (record) => (
+      <div
+        style={{
+          padding: "10px 20px",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "16px",
+          borderRadius: "8px",
+          justifyContent: "center",
+        }}
+      >
+        <p>
+          <b>Số trang:</b> {record.pageNumber}
+        </p>
+        <p>
+          <b>Loại tài liệu:</b>{" "}
+          {documentType.find((type) => type.value === record.documentTypeId)
+            ?.label || "Không"}
+        </p>
+        <p>
+          <b>Số bản cần dịch:</b> {record.numberOfCopies}
+        </p>
+        <p>
+          <b>Loại công chứng:</b>{" "}
+          {notarizationType.find((type) => type.value === record.notarizationId)
+            ?.label || "Không"}
+        </p>
+        <p>
+          <b>Số bản công chứng:</b> {record.numberOfNotarizedCopies}
+        </p>
+      </div>
+    ),
+  };
 
   // async function fetchDocument() {
   //   const response = await api.get("Document");
@@ -257,8 +353,8 @@ function DocumentDetails() {
             <strong>
               {Account.fullName} -{" "}
               <small style={{ color: "#888" }}>
-                {Account.agencyName} {"("}cách {Account.distance} km{")"} - Đang
-                nhận {Account.assignmentsInProgress} việc
+                {Account.agencyName} - Đang nhận {Account.assignmentsInProgress}{" "}
+                việc
               </small>
             </strong>
           </span>
@@ -308,11 +404,11 @@ function DocumentDetails() {
 
       setDataAssignTrans(response.data.data);
       formVariable.resetFields();
-      toast.success("Assign Translator success");
+      toast.success("Giao việc thành công.");
       fetchDetaildocuments();
       setIsOpen(false);
     } catch (error) {
-      toast.error("Assign fail");
+      toast.error("Có lỗi xảy ra.");
     }
     console.log("payload:", payload);
   };
@@ -342,47 +438,54 @@ function DocumentDetails() {
   return (
     <div className="details">
       {loading ? (
-        "Đang tải"
+        "Đang tải..."
       ) : (
         <Table
           columns={columns}
           dataSource={document}
+          expandable={expandable}
           rowKey="id"
           loading={isFetching}
         ></Table>
       )}
       <Modal
         open={isOpen}
-        title="Giao Việc Dịch "
-        onCancel={() => setIsOpen(false)}
+        title="GIAO VIỆC DỊCH TÀI LIỆU"
+        onCancel={() => {
+          setIsOpen(false);
+          formVariable.resetFields();
+        }}
         onOk={() => {
           formVariable.submit();
         }}
+        cancelText="Hủy"
+        okText="Giao việc"
+        width={600}
       >
         <Form form={formVariable} onFinish={handlesubmitAssignTrans}>
           <Form.Item
-            label="Người Dịch"
+            label="Dịch thuật viên"
             name={"translatorId"}
             rules={[
               {
                 required: true,
-                message: "Please Input Translator",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <Select options={translator} />
+            <Select options={translator} style={{ width: "420px" }} />
           </Form.Item>
           <Form.Item
-            label="Thời Gian Dịch"
+            label="Thời hạn"
             name={"deadline"}
             rules={[
               {
                 required: true,
-                message: "Please Input deadline",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <DatePicker />
+            <DatePicker placeholder="Chọn ngày" />
           </Form.Item>
         </Form>
       </Modal>
