@@ -10,6 +10,7 @@ import {
   FormOutlined,
   HistoryOutlined,
   ShoppingCartOutlined,
+  TranslationOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
@@ -50,7 +51,7 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Tài liệu đang dịch", "assignment", <FontSizeOutlined />),
+  getItem("Tài liệu đang dịch", "assignment", <TranslationOutlined />),
   getItem("Lịch sử", "history", <HistoryOutlined />),
 ];
 

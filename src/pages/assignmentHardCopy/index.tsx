@@ -1,4 +1,14 @@
-import { Button, DatePicker, Form, Input, Modal, Select, Table } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Spin,
+  Table,
+  Tag,
+} from "antd";
 import api from "../../config/api";
 import { useEffect, useState } from "react";
 import { SnippetsOutlined } from "@ant-design/icons";
@@ -15,6 +25,7 @@ function AssignHardCopy() {
   const [isOpen, setIsOpen] = useState(false);
   const [agency, setAgency] = useState([]);
   const [shipper, setShipper] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [selectedAgencyId, setSelectedAgencyId] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
@@ -88,9 +99,26 @@ function AssignHardCopy() {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (status) => (
+        <Tag
+          color={
+            status === "Implementing"
+              ? "orange"
+              : status === "Processing"
+              ? "red"
+              : "default"
+          }
+        >
+          {status === "Implementing"
+            ? "Đang thực hiện"
+            : status === "Processing"
+            ? "Chờ xử lý"
+            : "N/A"}
+        </Tag>
+      ),
     },
     {
-      title: "",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -168,9 +196,11 @@ function AssignHardCopy() {
   }
 
   async function fetchOrder() {
+    setLoading(true);
     const response = await api.get("Order/GetOrdersToPickUp");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -184,7 +214,14 @@ function AssignHardCopy() {
 
   return (
     <div className="AssignmentHardCopy">
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+      ></Table>
       <Modal
         open={isOpen}
         title="Giao đi nhận bản cứng"

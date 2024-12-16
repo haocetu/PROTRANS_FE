@@ -1,9 +1,20 @@
-import { Button, DatePicker, Form, Input, Modal, Select, Table } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Spin,
+  Table,
+} from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { CheckOutlined, FormOutlined, TruckOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import { setLogLevel } from "firebase/app";
 
 function AssignShipper() {
   const [formVariable] = useForm();
@@ -13,7 +24,9 @@ function AssignShipper() {
   const [shipper, setShipper] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [selectedAgencyId, setSelectedAgencyId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [agency, setAgency] = useState([]);
+  const [currentOrderDeadline, setCurrentOrderDeadline] = useState(null);
 
   const fetchAgency = async () => {
     const response = await api.get("Agency");
@@ -55,6 +68,12 @@ function AssignShipper() {
       key: "address",
     },
     {
+      title: "Thời hạn",
+      dataIndex: "deadline",
+      key: "deadline",
+      render: (deadline) => dayjs(deadline).format("DD/MM/YYYY HH:mm"),
+    },
+    {
       title: "Chi nhánh",
       dataIndex: "agencyId",
       key: "agencyId",
@@ -76,7 +95,7 @@ function AssignShipper() {
       },
     },
     {
-      title: "Trạng thái đơn hàng",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
       render: (status) => {
@@ -106,6 +125,7 @@ function AssignShipper() {
             setIsOpen(true);
             setSelectedOrderId(id);
             setSelectedAgencyId(data.agencyId);
+            setCurrentOrderDeadline(data.deadline);
           }}
         />
       ),
@@ -180,9 +200,11 @@ function AssignShipper() {
   };
 
   async function fetchOrder() {
+    setLoading(true);
     const response = await api.get("Order/GetCompletedOrders");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -199,6 +221,10 @@ function AssignShipper() {
       <Table
         columns={columns}
         dataSource={dataSource}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
         pagination={pagination}
         onChange={handleTableChange}
       ></Table>
@@ -210,7 +236,7 @@ function AssignShipper() {
         onOk={() => formVariable.submit()}
         cancelText="Đóng"
         okText="Giao việc"
-        title="Giao việc vận chuyển"
+        title="GIAO VIỆC VẬN CHUYỂN"
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
@@ -235,7 +261,18 @@ function AssignShipper() {
               },
             ]}
           >
-            <DatePicker placeholder="Chọn ngày" />
+            <DatePicker
+              placeholder="Chọn ngày"
+              disabledDate={(current) => {
+                const today = dayjs();
+                const orderDeadline = dayjs(currentOrderDeadline);
+                return (
+                  current &&
+                  (current.isBefore(today, "day") ||
+                    current.isAfter(orderDeadline, "day"))
+                );
+              }}
+            />
           </Form.Item>
         </Form>
       </Modal>
