@@ -21,6 +21,7 @@ import {
   EyeOutlined,
   FormOutlined,
   LikeOutlined,
+  MailOutlined,
   MoreOutlined,
   PauseOutlined,
   TruckOutlined,
@@ -39,6 +40,8 @@ function Order() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [activeButton, setActiveButton] = useState<string>("");
   const [filteredData, setFilteredData] = useState([]);
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
+  const [currentFeedback, setCurrentFeedback] = useState("");
   const navigate = useNavigate();
 
   const fetchNotarizationType = async () => {
@@ -95,6 +98,11 @@ function Order() {
   useEffect(() => {
     fetchLanguages();
   }, []);
+
+  const showFeedbackMessage = (message) => {
+    setCurrentFeedback(message);
+    setIsFeedbackVisible(true);
+  };
 
   //===============================
 
@@ -209,13 +217,25 @@ function Order() {
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
-        <Button
-          type="primary"
-          style={{ background: "orange", borderRadius: "8px" }}
-          onClick={() => navigate(`details/${id}`)}
-        >
-          <FormOutlined style={{ fontSize: "14px", fontWeight: "bold" }} />
-        </Button>
+        <div>
+          <Button
+            type="primary"
+            style={{ background: "orange", borderRadius: "8px" }}
+            onClick={() => navigate(`details/${id}`)}
+          >
+            <FormOutlined style={{ fontSize: "14px", fontWeight: "bold" }} />
+          </Button>
+
+          {data.status === "Delivered" && data.feedbackMessage && (
+            <Button
+              type="default"
+              style={{ marginLeft: "10px", borderRadius: "8px" }}
+              onClick={() => showFeedbackMessage(data.feedbackMessage)}
+            >
+              <MailOutlined />
+            </Button>
+          )}
+        </div>
       ),
     },
   ];
@@ -346,6 +366,18 @@ function Order() {
         pagination={pagination}
         onChange={handleTableChange}
       ></Table>
+      <Modal
+        open={isFeedbackVisible}
+        title="KHÁCH HÀNG ĐÁNH GIÁ:"
+        onCancel={() => setIsFeedbackVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsFeedbackVisible(false)}>
+            Đóng
+          </Button>,
+        ]}
+      >
+        <p>{currentFeedback}</p>
+      </Modal>
       {/* <Modal
         open={isOpen}
         title="Add New Order"
