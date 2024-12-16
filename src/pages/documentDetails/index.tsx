@@ -21,6 +21,7 @@ import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 function DocumentDetails() {
   const [formVariable] = useForm();
@@ -35,11 +36,13 @@ function DocumentDetails() {
   const [selectsecondlanguageId, setSelectsecondlanguageId] = useState(null);
   const [selectfirstlanguageId, setSelectfirstlanguageId] = useState(null);
   const [dataAssignTrans, setDataAssignTrans] = useState([]);
+  const [Selectdealine, setSelectdealine] = useState(null);
   //---------------------------------------------------------
   const [loading, setLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
 
   dayjs.extend(isSameOrBefore);
+  dayjs.extend(isSameOrAfter);
 
   //------------------------------------------------
   const fetchNotarizationType = async () => {
@@ -147,6 +150,20 @@ function DocumentDetails() {
             <FileTwoTone style={{ fontSize: "16px" }} />
           </a>
         ) : null;
+      },
+    },
+    {
+      title: "Thời hạn",
+      dataIndex: "deadline",
+      key: "deadline",
+      render: (deadline) => {
+        const isValid = dayjs(deadline).isAfter(dayjs(), "day");
+        return (
+          <span style={{ color: isValid ? "inherit" : "red" }}>
+            {dayjs(deadline).format("DD/MM/YYYY")}
+            {!isValid && " (Không hợp lệ)"}
+          </span>
+        );
       },
     },
     // {
@@ -271,6 +288,7 @@ function DocumentDetails() {
               setSelectsecondlanguageId(data.secondLanguageId);
               setSelectedDocumentId(id);
               setIsOpen(true);
+              setSelectdealine(data.deadline);
             }}
           />
         ) : null,
@@ -489,7 +507,11 @@ function DocumentDetails() {
             <DatePicker
               placeholder="Chọn ngày"
               disabledDate={(current) => {
-                return current && current.isSameOrBefore(dayjs(), "day");
+                return (
+                  current &&
+                  (current.isSameOrBefore(dayjs(), "day") ||
+                    current.isSameOrAfter(dayjs(Selectdealine), "day"))
+                );
               }}
             />
           </Form.Item>
