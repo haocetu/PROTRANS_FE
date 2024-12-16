@@ -157,13 +157,7 @@ function DocumentDetails() {
       dataIndex: "deadline",
       key: "deadline",
       render: (deadline) => {
-        const isValid = dayjs(deadline).isAfter(dayjs(), "day");
-        return (
-          <span style={{ color: isValid ? "inherit" : "red" }}>
-            {dayjs(deadline).format("DD/MM/YYYY")}
-            {!isValid && " (Không hợp lệ)"}
-          </span>
-        );
+        return <span>{dayjs(deadline).format("DD/MM/YYYY")}</span>;
       },
     },
     // {
