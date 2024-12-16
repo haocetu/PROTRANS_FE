@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { AuditOutlined, SignatureOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
+import { SortOrder } from "antd/es/table/interface";
 
 function AssignNotarization() {
   const [formVariable] = useForm();
@@ -220,7 +221,7 @@ function AssignNotarization() {
         const timeB = b.deadline ? dayjs(b.deadline).unix() : 0;
         return timeA - timeB;
       },
-      defaultSortOrder: "ascend",
+      defaultSortOrder: "ascend" as SortOrder,
       render: (deadline) => {
         return deadline ? dayjs(deadline).format("DD/MM/YYYY") : "N/A";
       },
