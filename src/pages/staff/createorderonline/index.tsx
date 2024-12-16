@@ -1,5 +1,10 @@
-import { FileAddOutlined, FormOutlined } from "@ant-design/icons";
-import { Space, Table } from "antd";
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  FileAddOutlined,
+  FormOutlined,
+} from "@ant-design/icons";
+import { Popconfirm, Space, Spin, Table, Tag } from "antd";
 import api from "../../../config/api";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -9,9 +14,20 @@ function CreateOrderOnline() {
   const [datasource, setDataSource] = useState([]);
   // const [selectcustomerid, setselectcustomerid] = useState(null);
   const token = localStorage.getItem("token");
+  const [loading, setLoading] = useState(false);
 
   console.log(token);
   const columns = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
     {
       title: "CustomerId",
       dataIndex: "customerId",
@@ -43,25 +59,38 @@ function CreateOrderOnline() {
       dataIndex: "deadline",
       key: "deadline",
       render: (deadline) => {
-        return dayjs(deadline).format("DD/MM/YYYY HH:mm");
+        return dayjs(deadline).format("DD/MM/YYYY");
       },
     },
     {
-      title: "Giá ước tính",
+      title: "Giá (VNĐ)",
       dataIndex: "estimatedPrice",
       key: "estimatedPrice",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     {
       title: "Yêu cầu nhận tài liệu",
       dataIndex: "pickUpRequest",
       key: "pickUpRequest",
-      render: (pickUpRequest) => (pickUpRequest ? "Có" : "Không"),
+      render: (pickUpRequest) =>
+        pickUpRequest ? (
+          <CheckCircleOutlined style={{ color: "green" }} />
+        ) : (
+          <CloseCircleOutlined style={{ color: "red" }} />
+        ),
     },
     {
       title: "Yêu cầu giao hàng",
       dataIndex: "shipRequest",
       key: "shipRequest",
-      render: (shipRequest) => (shipRequest ? "Có" : "Không"),
+      render: (shipRequest) =>
+        shipRequest ? (
+          <CheckCircleOutlined style={{ color: "green" }} />
+        ) : (
+          <CloseCircleOutlined style={{ color: "red" }} />
+        ),
     },
     // {
     //   title: "Trạng thái xóa",
@@ -73,40 +102,61 @@ function CreateOrderOnline() {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (status) => {
+        return status === "Accept" ? (
+          <Tag color="orange">Được chấp nhận</Tag>
+        ) : (
+          status
+        );
+      },
     },
     {
-      title: "",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
-        <Space>
-          <FormOutlined
-            onClick={() => {
-              console.log(data.customerId);
-              // setselectcustomerid(data.customerId);
-              const newData = { ...data };
-              console.log("id", newData.customerId);
-              console.log(newData);
+        <Popconfirm
+          title="Bạn có chắc chắn muốn tạo đơn hàng này không?"
+          okText="Có"
+          cancelText="Hủy"
+          onConfirm={() => {
+            console.log(data.customerId);
+            // setselectcustomerid(data.customerId);
+            const newData = { ...data };
+            console.log("id", newData.customerId);
+            console.log(newData);
 
-              for (const key of Object.keys(data)) {
-                const value = newData[key];
+            for (const key of Object.keys(data)) {
+              const value = newData[key];
 
-                const date: any = new Date(value);
-                // const time: any = date.getTime();
-                //|| isNaN(time)
-                if (typeof value === "number") {
-                } else {
-                  newData[key] = dayjs(value);
-                }
+              const date: any = new Date(value);
+              // const time: any = date.getTime();
+              //|| isNaN(time)
+              if (typeof value === "number") {
+              } else {
+                newData[key] = dayjs(value);
               }
-              handleSubmit(id);
-            }}
+            }
+            handleSubmit(id);
+          }}
+        >
+          <FormOutlined
             title="Tạo đơn hàng"
+            style={{ fontSize: "18px", color: "orange", fontWeight: "bold" }}
           />
-        </Space>
+        </Popconfirm>
       ),
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   async function handleSubmit(values) {
     console.log(values);
@@ -145,10 +195,12 @@ function CreateOrderOnline() {
   }
 
   async function fetchMyRequest() {
+    setLoading(true);
     const response = await api.get("Request/GetStatusAccept");
     console.log("=============================");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -157,7 +209,14 @@ function CreateOrderOnline() {
 
   return (
     <div className="orderonline">
-      <Table columns={columns} dataSource={datasource}></Table>
+      <Table
+        columns={columns}
+        dataSource={datasource}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+      ></Table>
     </div>
   );
 }

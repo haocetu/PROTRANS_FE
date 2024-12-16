@@ -130,13 +130,7 @@ function AssignNotarization() {
       //   console.log("resPushNoti", resPushNoti);
       // }
 
-      const documents = response.data.data;
-      const sortedDocuments = documents.sort((a, b) =>
-        dayjs(a.deadline).isAfter(dayjs(b.deadline)) ? 1 : -1
-      );
-
-      console.log(response.data.data);
-      setDataSource(sortedDocuments);
+      setDataSource(response.data.data);
       setSelectedDocumentIds([]);
       setLoading(false);
     } catch (error) {
@@ -193,42 +187,42 @@ function AssignNotarization() {
       },
     },
     {
-      title: "Thời hạn",
-      dataIndex: "deadline",
-      key: "deadline",
-      render: (deadline) => {
-        const isValid = dayjs(deadline).isAfter(dayjs(), "day");
-        return (
-          <span style={{ color: isValid ? "inherit" : "red" }}>
-            {dayjs(deadline).format("DD/MM/YYYY")}
-            {!isValid && " (Không hợp lệ)"}
-          </span>
-        );
-      },
-    },
-    {
-      title: "Mã tài liệu",
+      title: "Mã",
       dataIndex: "code",
       key: "code",
     },
     {
-      title: "Số Trang",
+      title: "Số trang",
       dataIndex: "pageNumber",
       key: "pageNumber",
     },
-    {
-      title: "Loại tài liệu",
-      dataIndex: "documentTypeId",
-      key: "documentTypeId",
-      render: (documentTypeId) => {
-        // Check if category is available and initialized
-        if (!documentType || documentType.length === 0) return null;
+    // {
+    //   title: "Loại tài liệu",
+    //   dataIndex: "documentTypeId",
+    //   key: "documentTypeId",
+    //   render: (documentTypeId) => {
+    //     // Check if category is available and initialized
+    //     if (!documentType || documentType.length === 0) return null;
 
-        // Find the category by ID and return its name
-        const founddocumentType = documentType.find(
-          (lang) => lang.value === documentTypeId
-        );
-        return founddocumentType ? founddocumentType.label : null;
+    //     // Find the category by ID and return its name
+    //     const founddocumentType = documentType.find(
+    //       (lang) => lang.value === documentTypeId
+    //     );
+    //     return founddocumentType ? founddocumentType.label : null;
+    //   },
+    // },
+    {
+      title: "Thời hạn đơn hàng",
+      dataIndex: "deadline",
+      key: "deadline",
+      sorter: (a, b) => {
+        const timeA = a.deadline ? dayjs(a.deadline).unix() : 0;
+        const timeB = b.deadline ? dayjs(b.deadline).unix() : 0;
+        return timeA - timeB;
+      },
+      defaultSortOrder: "ascend",
+      render: (deadline) => {
+        return deadline ? dayjs(deadline).format("DD/MM/YYYY") : "N/A";
       },
     },
     // {
@@ -238,7 +232,7 @@ function AssignNotarization() {
     //   render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
     // },
     {
-      title: "Số bản công chứng",
+      title: "Số bản",
       dataIndex: "numberOfNotarizedCopies",
       key: "numberOfNotarizedCopies",
     },

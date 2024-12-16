@@ -4,7 +4,9 @@ import {
   AuditOutlined,
   BellOutlined,
   BookOutlined,
+  ContainerOutlined,
   FormOutlined,
+  ProfileOutlined,
   ShoppingCartOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -46,11 +48,11 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Quản lí yêu cầu", "requestmanage", <BookOutlined />),
-  getItem("Đơn hàng online", "orderonlinemanage", <AuditOutlined />),
-  getItem("Tạo đơn hàng online", "orderonline", <ShoppingCartOutlined />),
+  getItem("Quản lí yêu cầu", "requestmanage", <ContainerOutlined />),
+  // getItem("Đơn hàng online", "orderonlinemanage", <AuditOutlined />),
+  getItem("Tạo đơn hàng online", "orderonline", <FormOutlined />),
   getItem("Tạo đơn hàng", "createoderoffline", <FormOutlined />),
-  getItem("Đơn hàng offline", "order", <FormOutlined />),
+  // getItem("Đơn hàng offline", "order", <FormOutlined />),
 ];
 
 const DashboardStaff: React.FC = () => {
