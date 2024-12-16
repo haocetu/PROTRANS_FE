@@ -27,6 +27,8 @@ import api from "../../../config/api";
 import { toast } from "react-toastify";
 import uploadFileFire from "../../../utils/upload";
 import "./index.scss";
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 
 function SendRequest() {
   const [formVariable] = useForm();
@@ -35,6 +37,8 @@ function SendRequest() {
   const [documentType, setDocumentType] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isPickUpEnabled, setIsPickUpEnabled] = useState(false);
+
+  dayjs.extend(isSameOrBefore);
 
   //--------------------------------
   const props: UploadProps = {
@@ -219,7 +223,7 @@ function SendRequest() {
                 <DatePicker
                   placeholder="Chọn ngày"
                   disabledDate={(current) => {
-                    return current && current.isBefore(new Date(), "day");
+                    return current && current.isSameOrBefore(dayjs(), "day");
                   }}
                 />
               </Form.Item>
