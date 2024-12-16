@@ -420,6 +420,8 @@ function DocumentDetails() {
       const data = Array.isArray(response.data.data)
         ? response.data.data
         : [response.data.data];
+
+      console.log(response.data.data);
       if (data.length > 0) {
         setDocument(data);
         setLoading(false);

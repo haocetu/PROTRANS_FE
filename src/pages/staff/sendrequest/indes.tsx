@@ -12,7 +12,6 @@ import {
   DatePicker,
   Divider,
   Form,
-  Input,
   InputNumber,
   Row,
   Select,
@@ -223,7 +222,11 @@ function SendRequest() {
                 <DatePicker
                   placeholder="Chọn ngày"
                   disabledDate={(current) => {
-                    return current && current.isSameOrBefore(dayjs(), "day");
+                    // return current && current.isSameOrBefore(dayjs(), "day");
+
+                    return (
+                      current && current.isBefore(dayjs().add(3, "day"), "day")
+                    );
                   }}
                 />
               </Form.Item>

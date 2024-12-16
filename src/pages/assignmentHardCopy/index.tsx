@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { SnippetsOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 
 function AssignHardCopy() {
   const [formVariable] = useForm();
@@ -14,6 +16,10 @@ function AssignHardCopy() {
   const [shipper, setShipper] = useState([]);
   const [selectedAgencyId, setSelectedAgencyId] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+  const [Selectdealine, setSelectdealine] = useState(null);
+
+  dayjs.extend(isSameOrBefore);
   //--------------------------------------
   const fetchAgency = async () => {
     const response = await api.get("Agency");
@@ -43,6 +49,20 @@ function AssignHardCopy() {
       title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
+    },
+    {
+      title: "Thời hạn",
+      dataIndex: "deadline",
+      key: "deadline",
+      render: (deadline) => {
+        const isValid = dayjs(deadline).isAfter(dayjs(), "day");
+        return (
+          <span style={{ color: isValid ? "inherit" : "red" }}>
+            {dayjs(deadline).format("DD/MM/YYYY")}
+            {!isValid && " (Không hợp lệ)"}
+          </span>
+        );
+      },
     },
     {
       title: "Chi nhánh",
@@ -79,6 +99,7 @@ function AssignHardCopy() {
             setIsOpen(true);
             setSelectedAgencyId(data.agencyId);
             setSelectedOrderId(id);
+            setSelectdealine(data.deadline);
           }}
           title="Giao đi nhận bản cứng"
         />
@@ -172,8 +193,40 @@ function AssignHardCopy() {
           <Form.Item label="Nhân viên đi nhận" name={"shipperId"}>
             <Select options={shipper} />
           </Form.Item>
-          <Form.Item label="Thời hạn" name={"deadline"}>
-            <DatePicker placeholder="Chọn ngày" />
+          <Form.Item
+            label="Thời hạn"
+            name={"deadline"}
+            rules={[
+              {
+                validator: (_, value) => {
+                  // Ensure that value is a valid dayjs object
+                  if (!value) {
+                    return Promise.reject(new Error("Vui lòng chọn thời hạn!"));
+                  }
+
+                  console.log(Selectdealine);
+                  const selectedDeadline = dayjs(value); // Ensure it's a dayjs object
+                  const previousDeadline = dayjs(Selectdealine); // Ensure date is a dayjs object
+
+                  console.log(" ngay 1", selectedDeadline);
+                  console.log("Ngay 2", previousDeadline);
+                  if (selectedDeadline.isAfter(previousDeadline, "day")) {
+                    return Promise.reject(
+                      new Error("Thời hạn phải bé hơn thời hạn trước đó!")
+                    );
+                  }
+
+                  return Promise.resolve(); // Validation passed if no rejection
+                },
+              },
+            ]}
+          >
+            <DatePicker
+              placeholder="Chọn ngày"
+              disabledDate={(current) =>
+                current && current.isSameOrBefore(dayjs(), "day")
+              }
+            />
           </Form.Item>
         </Form>
       </Modal>
