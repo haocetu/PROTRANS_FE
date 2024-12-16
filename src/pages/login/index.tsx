@@ -1,5 +1,10 @@
 import { Button, Form, Input } from "antd";
-import { LoadingOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  LockOutlined,
+  MailOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import Authenlayout from "../../components/auth-layout";
 import "./index.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -122,7 +127,7 @@ function Login() {
             ]}
           >
             <Input
-              prefix={<UserOutlined />}
+              prefix={<MailOutlined />}
               placeholder="Email"
               style={{ width: "300px" }}
             />
