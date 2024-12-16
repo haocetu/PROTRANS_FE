@@ -12,18 +12,15 @@ import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { useParams } from "react-router-dom";
 import {
-  CheckCircleFilled,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  ContainerOutlined,
-  DownloadOutlined,
   EditTwoTone,
-  FileOutlined,
   FileTwoTone,
-  FileZipOutlined,
 } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 
 function DocumentDetails() {
   const [formVariable] = useForm();
@@ -41,6 +38,8 @@ function DocumentDetails() {
   //---------------------------------------------------------
   const [loading, setLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+
+  dayjs.extend(isSameOrBefore);
 
   //------------------------------------------------
   const fetchNotarizationType = async () => {
@@ -485,7 +484,12 @@ function DocumentDetails() {
               },
             ]}
           >
-            <DatePicker placeholder="Chọn ngày" />
+            <DatePicker
+              placeholder="Chọn ngày"
+              disabledDate={(current) => {
+                return current && current.isSameOrBefore(dayjs(), "day");
+              }}
+            />
           </Form.Item>
         </Form>
       </Modal>
