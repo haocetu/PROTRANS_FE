@@ -4,9 +4,17 @@ import {
   AuditOutlined,
   BellOutlined,
   BookOutlined,
+  ContainerOutlined,
+  DeliveredProcedureOutlined,
+  FontColorsOutlined,
   FormOutlined,
+  InboxOutlined,
+  ProfileOutlined,
   ShoppingCartOutlined,
+  SignatureOutlined,
   TranslationOutlined,
+  TruckFilled,
+  TruckOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
@@ -47,15 +55,18 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Ngôn ngữ", "language", <TranslationOutlined />),
-  getItem("Bảng giá", "quoteprice", <BookOutlined />),
-  getItem("Loại công chứng", "notarization", <AuditOutlined />),
-  getItem("Đơn hàng", "order", <ShoppingCartOutlined />),
-  getItem("Giao việc vận chuyển", "assignshipper", <FormOutlined />),
-  getItem("Giao việc công chứng", "assignNotarization", <FormOutlined />),
-  getItem("Giao đi nhận bản cứng", "assignhardcopy", <FormOutlined />),
-  getItem("Loại tài liệu", "documenttype", <FormOutlined />),
-  // getItem("Task Notarization List", "tasknotarizationlist", <FormOutlined />),
+  getItem("Ngôn ngữ", "language", <FontColorsOutlined />),
+  getItem("Bảng giá", "quoteprice", <ContainerOutlined />),
+  getItem("Loại tài liệu", "documenttype", <ProfileOutlined />),
+  getItem("Loại công chứng", "notarization", <ProfileOutlined />),
+  getItem("Đơn hàng", "order", <InboxOutlined />),
+  getItem("Giao việc vận chuyển", "assignshipper", <TruckOutlined />),
+  getItem("Giao việc công chứng", "assignNotarization", <SignatureOutlined />),
+  getItem(
+    "Giao đi nhận bản cứng",
+    "assignhardcopy",
+    <DeliveredProcedureOutlined />
+  ),
 ];
 
 const DashboardManager: React.FC = () => {

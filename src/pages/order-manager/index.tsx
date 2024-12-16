@@ -1,4 +1,13 @@
-import { Button, Form, Input, InputNumber, Modal, Select, Table } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Spin,
+  Table,
+} from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { useForm } from "antd/es/form/Form";
@@ -15,6 +24,7 @@ import {
   TruckOutlined,
 } from "@ant-design/icons";
 import "./index.css";
+import dayjs from "dayjs";
 
 function Order() {
   const [formVariable] = useForm();
@@ -23,6 +33,7 @@ function Order() {
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [language, setLanguage] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const fetchNotarizationType = async () => {
@@ -107,6 +118,12 @@ function Order() {
       title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
+    },
+    {
+      title: "Thời hạn",
+      dataIndex: "deadline",
+      key: "deadline",
+      render: (deadline) => dayjs(deadline).format("DD/MM/YYYY HH:mm"),
     },
     {
       title: "Tổng giá (VNĐ)",
@@ -208,9 +225,11 @@ function Order() {
   // }
 
   async function fetchOrder() {
+    setLoading(true);
     const response = await api.get("Order");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -229,6 +248,10 @@ function Order() {
       <Table
         columns={columns}
         dataSource={dataSource}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
         pagination={pagination}
         onChange={handleTableChange}
       ></Table>
