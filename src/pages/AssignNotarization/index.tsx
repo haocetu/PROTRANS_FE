@@ -15,6 +15,7 @@ import api from "../../config/api";
 import { toast } from "react-toastify";
 import { AuditOutlined, SignatureOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
+import dayjs from "dayjs";
 
 function AssignNotarization() {
   const [formVariable] = useForm();
@@ -129,7 +130,13 @@ function AssignNotarization() {
       //   console.log("resPushNoti", resPushNoti);
       // }
 
-      setDataSource(response.data.data);
+      const documents = response.data.data;
+      const sortedDocuments = documents.sort((a, b) =>
+        dayjs(a.deadline).isAfter(dayjs(b.deadline)) ? 1 : -1
+      );
+
+      console.log(response.data.data);
+      setDataSource(sortedDocuments);
       setSelectedDocumentIds([]);
       setLoading(false);
     } catch (error) {
@@ -183,6 +190,20 @@ function AssignNotarization() {
           (lang) => lang.value === secondLanguageId
         );
         return foundLanguage ? foundLanguage.label : null;
+      },
+    },
+    {
+      title: "Thời hạn",
+      dataIndex: "deadline",
+      key: "deadline",
+      render: (deadline) => {
+        const isValid = dayjs(deadline).isAfter(dayjs(), "day");
+        return (
+          <span style={{ color: isValid ? "inherit" : "red" }}>
+            {dayjs(deadline).format("DD/MM/YYYY")}
+            {!isValid && " (Không hợp lệ)"}
+          </span>
+        );
       },
     },
     {
