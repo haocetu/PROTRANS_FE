@@ -1,12 +1,6 @@
 import {
   ArrowRightOutlined,
   BellOutlined,
-  ContainerFilled,
-  ContainerOutlined,
-  ContainerTwoTone,
-  CopyFilled,
-  CopyOutlined,
-  FileOutlined,
   HistoryOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -18,6 +12,7 @@ import { logout } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/rootReducer";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../config/api";
+import { toast } from "react-toastify";
 
 function Header() {
   const navigate = useNavigate();
@@ -37,7 +32,8 @@ function Header() {
             setListNoti(arrResponse);
           }
         } catch (error) {
-          console.log("Error", error);
+          toast.error("Không thể tải thông báo.");
+          setListNoti([]);
         }
       };
       console.log("check");
@@ -73,6 +69,16 @@ function Header() {
       }));
       console.log("lít not", listRenderItem);
       return listRenderItem;
+    } else {
+      return [
+        {
+          label: (
+            <span style={{ color: "red" }}> Hiện tại không có thông báo</span>
+          ),
+          key: "no-notifications",
+          disabled: true,
+        },
+      ];
     }
   }, [listNoti]);
 
