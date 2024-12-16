@@ -14,11 +14,13 @@ import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import {
+  AlignRightOutlined,
   CheckOutlined,
   ClockCircleOutlined,
   CloseOutlined,
   EyeOutlined,
   FormOutlined,
+  LikeOutlined,
   MoreOutlined,
   PauseOutlined,
   TruckOutlined,
@@ -34,6 +36,9 @@ function Order() {
   const [documentType, setDocumentType] = useState([]);
   const [language, setLanguage] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [activeButton, setActiveButton] = useState<string>("");
+  const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate();
 
   const fetchNotarizationType = async () => {
@@ -123,7 +128,20 @@ function Order() {
       title: "Thời hạn",
       dataIndex: "deadline",
       key: "deadline",
-      render: (deadline) => dayjs(deadline).format("DD/MM/YYYY HH:mm"),
+      sorter: (a, b) => dayjs(a.deadline).unix() - dayjs(b.deadline).unix(),
+      render: (deadline) => {
+        return dayjs(deadline).format("DD/MM/YYYY");
+      },
+    },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      sorter: (a, b) =>
+        dayjs(a.createdDate).unix() - dayjs(b.createdDate).unix(),
+      render: (deadline) => {
+        return dayjs(deadline).format("DD/MM/YYYY HH:mm");
+      },
     },
     {
       title: "Tổng giá (VNĐ)",
@@ -229,25 +247,98 @@ function Order() {
     const response = await api.get("Order");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setFilteredData(response.data.data);
     setLoading(false);
   }
 
   useEffect(() => {
     fetchOrder();
   }, []);
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setActiveButton(status);
+  };
+
+  useEffect(() => {
+    if (statusFilter === "") {
+      setFilteredData(dataSource);
+    } else {
+      const filtered =
+        dataSource?.filter((order) => order.status === statusFilter) || []; // Kiểm tra dataSource không null
+      setFilteredData(filtered);
+    }
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, [statusFilter, dataSource]);
+
   return (
-    <div className="orderPage">
-      {/* <Button
-        type="primary"
-        onClick={() => {
-          setIsOpen(true);
-        }}
-      >
-        Add New Order
-      </Button> */}
+    <div>
+      <div>
+        <Button
+          className={`filter-button ${activeButton === "" ? "active" : ""}`}
+          onClick={() => handleStatusFilter("")}
+        >
+          <AlignRightOutlined />
+          Tất cả
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Processing" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Processing")}
+        >
+          <ClockCircleOutlined />
+          Chờ xử lý
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Implementing" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Implementing")}
+        >
+          <FormOutlined />
+          Đang thực hiện
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Completed" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Completed")}
+        >
+          <LikeOutlined />
+          Đã hoàn thành
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Delivering" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Delivering")}
+        >
+          <TruckOutlined />
+          Đang giao
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Delivered" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Delivered")}
+        >
+          <CheckOutlined />
+          Đã giao
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Canceled" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Canceled")}
+        >
+          <CloseOutlined />
+          Đã hủy
+        </Button>
+      </div>
       <Table
         columns={columns}
-        dataSource={dataSource}
+        dataSource={filteredData}
         loading={{
           spinning: loading,
           indicator: <Spin />,
