@@ -92,7 +92,8 @@ const DashboardStaff: React.FC = () => {
             setListNoti(arrResponse);
           }
         } catch (error) {
-          toast.error("Không có thông báo");
+          toast.error("Không thể tải thông báo.");
+          setListNoti([]);
         }
       };
       console.log("check");
@@ -128,6 +129,16 @@ const DashboardStaff: React.FC = () => {
       }));
       console.log("lít not", listRenderItem);
       return listRenderItem;
+    } else {
+      return [
+        {
+          label: (
+            <span style={{ color: "red" }}> Hiện tại không có thông báo</span>
+          ),
+          key: "no-notifications",
+          disabled: true,
+        },
+      ];
     }
   }, [listNoti]);
 

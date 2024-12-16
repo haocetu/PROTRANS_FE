@@ -10,7 +10,16 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Badge, Breadcrumb, Button, Dropdown, Layout, Menu, Space, theme } from "antd";
+import {
+  Badge,
+  Breadcrumb,
+  Button,
+  Dropdown,
+  Layout,
+  Menu,
+  Space,
+  theme,
+} from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -88,7 +97,8 @@ const DashboardManager: React.FC = () => {
             setListNoti(arrResponse);
           }
         } catch (error) {
-          toast.error("Không có thông báo");
+          toast.error("Không thể tải thông báo.");
+          setListNoti([]);
         }
       };
       console.log("check");
@@ -124,6 +134,16 @@ const DashboardManager: React.FC = () => {
       }));
       console.log("lít not", listRenderItem);
       return listRenderItem;
+    } else {
+      return [
+        {
+          label: (
+            <span style={{ color: "red" }}> Hiện tại không có thông báo</span>
+          ),
+          key: "no-notifications",
+          disabled: true,
+        },
+      ];
     }
   }, [listNoti]);
 
