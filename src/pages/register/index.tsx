@@ -81,7 +81,11 @@ function Register() {
             { required: true, message: "Please select your date of birth!" },
           ]}
         >
-          <DatePicker />
+          <DatePicker
+            disabledDate={(current) =>
+              current && current.valueOf() > Date.now()
+            }
+          />
         </Form.Item>
 
         <Form.Item
