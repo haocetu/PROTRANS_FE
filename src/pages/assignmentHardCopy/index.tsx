@@ -149,7 +149,7 @@ function AssignHardCopy() {
         <span>
           <strong>
             {ship.fullName}
-            {"-"}
+            {" - "}
             <small style={{ color: "#888" }}>{ship.agencyName}</small>
           </strong>{" "}
           <br />
@@ -224,9 +224,14 @@ function AssignHardCopy() {
       ></Table>
       <Modal
         open={isOpen}
-        title="Giao đi nhận bản cứng"
-        onCancel={() => setIsOpen(false)}
+        title="GIAO ĐI NHẬN BẢN CỨNG"
+        onCancel={() => {
+          setIsOpen(false);
+          formVariable.resetFields();
+        }}
         onOk={() => formVariable.submit()}
+        cancelText="Hủy"
+        okText="Giao việc"
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item label="Nhân viên đi nhận" name={"shipperId"}>
