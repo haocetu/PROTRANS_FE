@@ -11,9 +11,10 @@
 
 /* Hero Section */
 .hero-section {
-  background: #f0f2f5;
+  background: #c7e2ef;
   padding: 50px;
   text-align: center;
+  border-radius: 14px;
 }
 
 .hero-title {
