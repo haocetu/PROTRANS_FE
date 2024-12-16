@@ -41,6 +41,7 @@ import HistoryOrder from "./pages/customer/myhistoryorder";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import OrderNoShip from "./pages/orderNoShip";
+import OrderNoPick from "./pages/orderNoPick";
 
 function App() {
   const [connection, setConnection] = useState(null);
@@ -281,6 +282,10 @@ function App() {
         {
           path: "ordernoship",
           element: <OrderNoShip />,
+        },
+        {
+          path: "ordernopick",
+          element: <OrderNoPick />,
         },
       ],
     },

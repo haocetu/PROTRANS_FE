@@ -7,6 +7,8 @@ import {
   ClockCircleFilled,
   ClockCircleOutlined,
   ContainerOutlined,
+  FileDoneOutlined,
+  FileSyncOutlined,
   FormOutlined,
   ProfileOutlined,
   ShoppingCartOutlined,
@@ -51,10 +53,10 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem("Quản lí yêu cầu", "requestmanage", <ContainerOutlined />),
-  // getItem("Đơn hàng online", "orderonlinemanage", <AuditOutlined />),
   getItem("Tạo đơn hàng online", "orderonline", <FormOutlined />),
   getItem("Tạo đơn hàng", "createoderoffline", <FormOutlined />),
-  getItem("Đơn hàng chờ nhận", "ordernoship", <ClockCircleOutlined />),
+  getItem("Bàn giao đơn hàng", "ordernoship", <FileDoneOutlined />),
+  getItem("Tiếp nhận bản gốc", "ordernopick", <FileSyncOutlined />),
 ];
 
 const DashboardStaff: React.FC = () => {
