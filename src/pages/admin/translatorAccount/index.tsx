@@ -6,9 +6,12 @@ import {
   Form,
   Input,
   Modal,
+  Popconfirm,
+  Radio,
   Row,
   Select,
   Space,
+  Spin,
   Switch,
   Table,
 } from "antd";
@@ -19,9 +22,14 @@ import { useForm } from "antd/es/form/Form";
 import {
   CheckOutlined,
   CloseOutlined,
+  LoadingOutlined,
+  LockOutlined,
   MinusCircleOutlined,
   PlusOutlined,
+  UnlockOutlined,
 } from "@ant-design/icons";
+import "./index.css";
+import dayjs from "dayjs";
 
 function TranslatorAccount() {
   const [formVariable] = useForm();
@@ -30,6 +38,7 @@ function TranslatorAccount() {
   const [language, setLanguage] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [role, setRole] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchAgency = async () => {
     const response = await api.get("Agency");
@@ -78,19 +87,34 @@ function TranslatorAccount() {
     setRole(list);
   };
 
+  const handleToggleStatus = async (id, currentStatus) => {
+    try {
+      const response = await api.put(`Account/Toggle?id=${id}`);
+      toast.success(
+        `Tài khoản đã được ${!currentStatus ? "khóa" : "kích hoạt"} thành công.`
+      );
+
+      // Cập nhật lại danh sách sau khi trạng thái được thay đổi
+      fetchTranslatorAccount();
+    } catch (error) {
+      // Hiển thị thông báo lỗi
+      toast.error("Cập nhật trạng thái thất bại. Vui lòng thử lại.");
+    }
+  };
+
   const columns = [
     {
-      title: "Tên Người Dùng",
-      dataIndex: "userName",
-      key: "userName",
-    },
-    {
-      title: "Tên Đầy Đủ",
+      title: "Họ và tên",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Mã Nhân Viên",
+      title: "Số điện thoại",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+    },
+    {
+      title: "Mã",
       dataIndex: "code",
       key: "code",
     },
@@ -98,24 +122,6 @@ function TranslatorAccount() {
       title: "Email",
       dataIndex: "email",
       key: "email",
-    },
-    {
-      title: "Địa Chỉ",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "Vai Trò",
-      dataIndex: "roleId",
-      key: "roleId",
-      render: (roleId) => {
-        // Check if category is available and initialized
-        if (!role || role.length === 0) return null;
-
-        // Find the category by ID and return its name
-        const foundrole = role.find((rol) => rol.value === roleId);
-        return foundrole ? foundrole.label : null;
-      },
     },
     {
       title: "Chi nhánh",
@@ -131,10 +137,58 @@ function TranslatorAccount() {
       },
     },
     {
-      title: "Trạng Thái",
+      title: "Trạng thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Stop" : "Active"),
+      render: (isDeleted) =>
+        isDeleted ? (
+          <div className="status-inactive">Ngưng hoạt động</div>
+        ) : (
+          <div className="status-active">Đang hoạt động</div>
+        ),
+    },
+    {
+      title: "Tác vụ",
+      dataIndex: "id",
+      key: "id",
+      render: (id, data) => (
+        <Popconfirm
+          title={`Bạn có chắc chắn muốn ${
+            !data.isDeleted
+              ? "khóa tài khoản này?"
+              : "kích hoạt lại tài khoản này?"
+          }`}
+          onConfirm={() => handleToggleStatus(id, data.isDeleted)}
+          okText="Đồng ý"
+          cancelText="Hủy"
+        >
+          <button
+            style={{
+              color: "white",
+              backgroundColor: data.isDeleted ? "#23d783" : "#e03955",
+              padding: 5,
+              width: 80,
+              borderRadius: 8,
+              borderWidth: 0,
+              fontSize: 12,
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+          >
+            {data.isDeleted ? (
+              <div>
+                <UnlockOutlined />
+                &nbsp; Mở
+              </div>
+            ) : (
+              <div>
+                <LockOutlined />
+                &nbsp; Khóa
+              </div>
+            )}
+          </button>
+        </Popconfirm>
+      ),
     },
   ];
 
@@ -142,21 +196,23 @@ function TranslatorAccount() {
     console.log(values);
     try {
       const response = await api.post("Account/Translator", values);
-      setDataSource(response.data.data);
+      fetchTranslatorAccount();
       formVariable.resetFields();
-      toast.success("Tạo thành công tài khoản cho dịch thuật viên");
+      toast.success("Tạo thành công tài khoản cho dịch thuật viên.");
     } catch (error) {
-      toast.error("tạo thất bại");
+      toast.error("Tạo thất bại. " + error.response.data.message);
     }
   }
 
   async function fetchTranslatorAccount() {
+    setLoading(true);
     try {
       const response = await api.get("Account/GetAllTranslator");
       setDataSource(response.data.data);
-      toast.success("Chào mừng đến trang Account");
+      setLoading(false);
     } catch (error) {
-      toast.error("Không có Account nào");
+      toast.error("Danh sách trống.");
+      setLoading(false);
     }
   }
 
@@ -168,19 +224,34 @@ function TranslatorAccount() {
   return (
     <div className="translator">
       <Button
+        className="button-add"
         type="primary"
         onClick={() => {
+          formVariable.setFieldsValue({
+            skills: [{}],
+          });
           setIsOpen(true);
         }}
       >
-        Thêm Dịch Thuật Viên Mới
+        <PlusOutlined />
+        Tạo tài khoản mới
       </Button>
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+      ></Table>
       <Modal
         open={isOpen}
         onCancel={() => {
           setIsOpen(false);
+          formVariable.resetFields();
         }}
+        cancelText="Hủy"
+        okText="Tạo tài khoản mới"
         onOk={() => {
           formVariable.submit();
         }}
@@ -198,19 +269,19 @@ function TranslatorAccount() {
             rules={[
               {
                 required: true,
-                message: "Please Input Tên người dùng",
+                message: "* vui lòng nhập",
               },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Họ và tên "
+            label="Họ và tên"
             name={"fullName"}
             rules={[
               {
                 required: true,
-                message: "Please Input Second Language",
+                message: "* vui lòng nhập",
               },
             ]}
           >
@@ -222,7 +293,7 @@ function TranslatorAccount() {
             rules={[
               {
                 required: true,
-                message: "Please Input Email",
+                message: "* vui lòng nhập",
               },
             ]}
           >
@@ -234,7 +305,7 @@ function TranslatorAccount() {
             rules={[
               {
                 required: true,
-                message: "Please Input Số điện thoại",
+                message: "* vui lòng nhập",
               },
             ]}
           >
@@ -246,60 +317,60 @@ function TranslatorAccount() {
             rules={[
               {
                 required: true,
-                message: "Please Input Địa chỉ",
+                message: "* vui lòng nhập",
               },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Mật Khẩu"
+            label="Mật khẩu"
             name={"password"}
             rules={[
               {
                 required: true,
-                message: "Please Input Mật Khẩu",
+                message: "* vui lòng nhập",
               },
             ]}
           >
             <Input.Password />
           </Form.Item>
           <Form.Item
-            label="Ngày tháng năm sinh"
+            label="Ngày sinh"
             name={"dob"}
             rules={[
               {
                 required: true,
-                message: "Please Input ngày tháng năm sinh",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <DatePicker />
+            <DatePicker
+              placeholder="Chọn ngày"
+              disabledDate={(current) => {
+                return (
+                  current &&
+                  current > dayjs().subtract(16, "years").endOf("day")
+                );
+              }}
+              defaultPickerValue={dayjs().subtract(16, "years")}
+            />
           </Form.Item>
           <Form.Item
             label="Giới tính"
-            name={"gender"}
+            name="gender"
             rules={[
               {
                 required: true,
-                message: "Please Input Giới tính",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <Select
-              showSearch
-              placeholder="chọn giới tính"
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={[
-                { value: "Male", label: "Male" },
-                { value: "Female", label: "Female" },
-                { value: "Other", label: "Other" },
-              ]}
-            />
+            <Radio.Group>
+              <Radio value="Male">Nam</Radio>
+              <Radio value="Female">Nữ</Radio>
+              <Radio value="Other">Khác</Radio>
+            </Radio.Group>
           </Form.Item>
           <Form.Item
             label="Chi nhánh"
@@ -307,11 +378,11 @@ function TranslatorAccount() {
             rules={[
               {
                 required: true,
-                message: "Please Input Chi nhánh",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <Select options={agency} />
+            <Select options={agency} placeholder="Chọn chi nhánh" />
           </Form.Item>
 
           <Form.List name="skills">
@@ -327,7 +398,7 @@ function TranslatorAccount() {
                       orientation="left"
                       style={{ borderColor: "black" }}
                     >
-                      Kỹ Năng
+                      Ngôn ngữ
                     </Divider>
                     <Row gutter={16}>
                       <Col span={24}>
@@ -338,7 +409,7 @@ function TranslatorAccount() {
                           rules={[
                             {
                               required: true,
-                              message: "chọn ngôn ngữ",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Ngôn ngữ"
@@ -354,10 +425,10 @@ function TranslatorAccount() {
                           rules={[
                             {
                               required: true,
-                              message: "Vui gửi ảnh bằng cấp",
+                              message: "* vui lòng chọn",
                             },
                           ]}
-                          label="Bằng Cấp"
+                          label="Chứng chỉ"
                         >
                           <Input />
                         </Form.Item>
@@ -384,7 +455,7 @@ function TranslatorAccount() {
                     icon={<PlusOutlined />}
                     style={{ width: "160px" }}
                   >
-                    Thêm tài liệu
+                    Thêm ngôn ngữ
                   </Button>
                 </Form.Item>
               </>

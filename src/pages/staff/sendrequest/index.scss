@@ -1,6 +1,14 @@
-.sendrequest{
-
-    .sendrequestmiddle{
-        border-radius: 0.5;
-    }
+.sendrequest {
+  padding: 10px 200px;
+  padding-bottom: 200px;
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .sendrequestmiddle {
+    border-radius: 8px;
+    background-color: #d0f2ec;
+    padding: 10px 20px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  }
 }

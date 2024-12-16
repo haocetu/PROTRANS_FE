@@ -2,20 +2,25 @@ import {
   Button,
   Form,
   Input,
+  InputNumber,
   Modal,
   Popconfirm,
   Select,
   Space,
   Table,
+  Tooltip,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
+import { EditOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 function QuotePrice() {
   const [formVariable] = useForm();
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [language, setLanguage] = useState([]);
 
@@ -31,6 +36,18 @@ function QuotePrice() {
 
     setLanguage(list);
   };
+
+  const handleDelete = async (id) => {
+    console.log(id);
+    try {
+      await api.delete(`QuotePrice/${id}`);
+      toast.info("Cập nhật thành công.");
+      fetchQuotePrice();
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
   // const fetchLanguages = async () => {
   //   const response = await axios.get(`https://localhost:7122/api/Language`);
   //   const data = response.data.data;
@@ -57,7 +74,17 @@ function QuotePrice() {
 
   const columns = [
     {
-      title: "Ngôn Ngữ Gốc",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
+    {
+      title: "Ngôn ngữ gốc",
       dataIndex: "firstLanguageId", // Use firstLanguageId from QuotePrice data
       key: "firstLanguageId",
       render: (firstLanguageId) => {
@@ -72,7 +99,7 @@ function QuotePrice() {
       },
     },
     {
-      title: "Ngôn Ngữ Dịch",
+      title: "Ngôn ngữ cần dịch",
       dataIndex: "secondLanguageId", // Use secondLanguageId from QuotePrice data
       key: "secondLanguageId",
       render: (secondLanguageId) => {
@@ -87,41 +114,67 @@ function QuotePrice() {
       },
     },
     {
-      title: "Giá",
+      title: "Giá (VNĐ/trang)",
       dataIndex: "pricePerPage",
       key: "pricePerPage",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     {
-      title: "",
+      title: "Trạng thái",
+      dataIndex: "isDeleted",
+      key: "isDeleted",
+      render: (isDeleted) =>
+        isDeleted ? (
+          <div className="status-inactive">Đã ẩn</div>
+        ) : (
+          <div className="status-active">Hiển thị</div>
+        ),
+    },
+    {
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
         <Space>
           <Popconfirm
-            title="Delete Category"
-            description="Are you sure to delete this language?"
-            // onConfirm={() => handleDeleteLanguage(id)}
-            okText="Yes"
-            cancelText="No"
+            title="Bạn có chắc chắn?"
+            onConfirm={() => handleDelete(id)}
+            okText="Có"
+            cancelText="Không"
           >
-            <Button type="primary" danger>
-              Delete
-            </Button>
+            <Tooltip title="Ngưng dịch">
+              <Button type="primary" danger>
+                <StopOutlined />
+              </Button>
+            </Tooltip>
           </Popconfirm>
-          <Button
-            type="primary"
-            style={{ background: "orange" }}
-            onClick={() => {
-              // setVisibleEditModal(true);
-              formVariable.setFieldsValue(data);
-            }}
-          >
-            Update
-          </Button>
+          <Tooltip title="Cập nhật">
+            <Button
+              type="primary"
+              style={{ background: "orange" }}
+              onClick={() => {
+                setIsOpenUpdate(true);
+                formVariable.setFieldsValue(data);
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </Tooltip>
         </Space>
       ),
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   async function fetchQuotePrice() {
     const response = await api.get("QuotePrice");
@@ -139,12 +192,29 @@ function QuotePrice() {
     try {
       console.log(values);
       const response = await api.post("QuotePrice", values);
+      toast.success("Tạo báo giá mới thành công.");
       console.log(response.data.data);
       setDataSource([...dataSource, response.data.data]);
       formVariable.resetFields();
       setIsOpen(false);
     } catch (error) {
-      console.log("Create fail");
+      toast.error(error.response.data.message);
+    }
+  }
+
+  async function handleUpdate(values) {
+    console.log(values);
+    try {
+      const { id, ...updateData } = values; // Lấy id riêng và các trường khác
+      const response = await api.put(`QuotePrice/${id}`, updateData); // Truyền id vào URL
+      toast.success("Cập nhật thành công.");
+      console.log(response.data.data);
+      setIsOpenUpdate(false);
+      fetchQuotePrice();
+      formVariable.resetFields();
+      setIsOpen(false);
+    } catch (error) {
+      toast.error(error.response.data.message);
     }
   }
 
@@ -160,52 +230,115 @@ function QuotePrice() {
           formVariable.resetFields();
           setIsOpen(true);
         }}
+        style={{ marginBottom: "10px" }}
       >
-        Add New QuotePrice
+        <PlusOutlined />
+        Tạo báo giá mới
       </Button>
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
       <Modal
         open={isOpen}
-        title="Add New QuotePrice"
+        title="Tạo báo giá mới"
         onCancel={() => setIsOpen(false)}
         onOk={handleOk}
+        cancelText="Hủy"
+        okText="Tạo"
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
-            label="First Language"
+            label="Ngôn ngữ gốc"
             name={"firstLanguageId"}
             rules={[
               {
                 required: true,
-                message: "Please Input First Language",
+                message: "* vui lòng chọn",
               },
             ]}
           >
             <Select options={language} />
           </Form.Item>
           <Form.Item
-            label="Second Language "
+            label="Ngôn ngữ cần dịch"
             name={"secondLanguageId"}
             rules={[
               {
                 required: true,
-                message: "Please Input Second Language",
+                message: "* vui lòng chọn",
               },
             ]}
           >
             <Select options={language} />
           </Form.Item>
           <Form.Item
-            label="Price Page"
+            label="Giá"
             name={"pricePerPage"}
             rules={[
               {
                 required: true,
-                message: "Please Input Price Per Page",
+                message: "* vui lòng nhập",
               },
             ]}
           >
+            <InputNumber min={10000} />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={isOpenUpdate}
+        title="Cập nhật bảng báo giá"
+        okText="Cập nhật"
+        cancelText="Hủy"
+        onCancel={() => {
+          setIsOpenUpdate(false);
+          formVariable.resetFields(); // Reset form
+        }}
+        onOk={handleOk}
+      >
+        <Form form={formVariable} onFinish={handleUpdate}>
+          <Form.Item name="id" hidden>
             <Input />
+          </Form.Item>
+          <Form.Item
+            label="Ngôn ngữ gốc"
+            name={"firstLanguageId"}
+            rules={[
+              {
+                required: true,
+                message: "* vui lòng chọn",
+              },
+            ]}
+          >
+            <Select options={language} disabled />
+          </Form.Item>
+          <Form.Item
+            label="Ngôn cần dịch"
+            name={"secondLanguageId"}
+            rules={[
+              {
+                required: true,
+                message: "* vui lòng chọn",
+              },
+            ]}
+          >
+            <Select options={language} disabled />
+          </Form.Item>
+          <Form.Item
+            label="Giá"
+            name={"pricePerPage"}
+            rules={[
+              {
+                required: true,
+                message: "* vui lòng nhập",
+              },
+            ]}
+          >
+            <InputNumber min={10000} />
           </Form.Item>
         </Form>
       </Modal>

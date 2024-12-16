@@ -7,17 +7,24 @@ import { toast } from "react-toastify";
 
 function CreateOrderOnline() {
   const [datasource, setDataSource] = useState([]);
+  // const [selectcustomerid, setselectcustomerid] = useState(null);
   const token = localStorage.getItem("token");
 
   console.log(token);
   const columns = [
     {
-      title: "Tên Khách hàng",
+      title: "CustomerId",
+      dataIndex: "customerId",
+      key: "customerId",
+      hidden: true,
+    },
+    {
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
@@ -26,13 +33,13 @@ function CreateOrderOnline() {
       dataIndex: "address",
       key: "address",
     },
+    // {
+    //   title: "Email",
+    //   dataIndex: "email",
+    //   key: "email",
+    // },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Thời gian hoàn thành",
+      title: "Thời hạn",
       dataIndex: "deadline",
       key: "deadline",
       render: (deadline) => {
@@ -51,31 +58,34 @@ function CreateOrderOnline() {
       render: (pickUpRequest) => (pickUpRequest ? "Có" : "Không"),
     },
     {
-      title: "Yêu cầu ship",
+      title: "Yêu cầu giao hàng",
       dataIndex: "shipRequest",
       key: "shipRequest",
       render: (shipRequest) => (shipRequest ? "Có" : "Không"),
     },
+    // {
+    //   title: "Trạng thái xóa",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
+    //   render: (isDeleted) => (isDeleted ? "Có" : "Không"),
+    // },
     {
-      title: "Trạng Thái xóa",
-      dataIndex: "isDeleted",
-      key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Có" : "Không"),
-    },
-    {
-      title: "trạng thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },
     {
-      title: "Action",
+      title: "",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
         <Space>
           <FormOutlined
             onClick={() => {
+              console.log(data.customerId);
+              // setselectcustomerid(data.customerId);
               const newData = { ...data };
+              console.log("id", newData.customerId);
               console.log(newData);
 
               for (const key of Object.keys(data)) {
@@ -91,6 +101,7 @@ function CreateOrderOnline() {
               }
               handleSubmit(id);
             }}
+            title="Tạo đơn hàng"
           />
         </Space>
       ),
@@ -108,10 +119,28 @@ function CreateOrderOnline() {
         },
       });
 
+      // console.log("customer", selectcustomerid);
+
+      if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+        console.log(response.data.data.customerId);
+
+        const paramPushNoti = {
+          specId: response.data.data.customerId,
+          title: "Báo giá dịch thuật",
+          message: `Đơn giá của bạn đã được xử lí có giá ${response.data.data.totalPrice}. Ngày thông báo: ${currentDateTime}`,
+          author: "string",
+        };
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
       console.log(response.data.data);
-      toast.success("tạo order thành công");
+      fetchMyRequest();
+      toast.success("Tạo đơn hàng thành công.");
     } catch (error) {
-      toast.error("Tạo order thất bại");
+      toast.error("Tạo đơn hàng thất bại.");
     }
   }
 

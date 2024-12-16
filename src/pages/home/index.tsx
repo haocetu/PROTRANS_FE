@@ -9,6 +9,9 @@ import {
   PlayCircleOutlined,
 } from "@ant-design/icons";
 import "./index.css"; // Import CSS
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
 
 const { Content } = Layout;
 const { Title, Paragraph } = Typography;
@@ -66,6 +69,8 @@ const testimonials = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
+  const account = useSelector((store: RootState) => store.accountmanage);
   return (
     <Layout>
       {/* Hero Image Section */}
@@ -94,7 +99,19 @@ const Home = () => {
             <strong>ProTrans</strong> đã tạo dựng được <em>uy tín vững chắc</em>{" "}
             trong ngành dịch thuật.
           </Paragraph>
-          <Button type="primary" size="large" className="hero-button">
+          <Button
+            onClick={() => {
+              if (account) {
+                navigate("/sendrequest");
+                window.scrollTo(0, 0);
+              } else {
+                navigate("/login");
+              }
+            }}
+            type="primary"
+            size="large"
+            className="hero-button"
+          >
             Gửi yêu cầu
           </Button>
           <Button type="default" size="large" className="hero-button">

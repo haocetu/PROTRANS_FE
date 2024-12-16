@@ -1,33 +1,163 @@
 import {
   Button,
   DatePicker,
+  Divider,
   Form,
   Input,
+  InputNumber,
   Modal,
   Select,
   Space,
-  Switch,
+  Spin,
   Table,
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
-import { CheckOutlined, CloseOutlined, FormOutlined } from "@ant-design/icons";
+import {
+  AlignRightOutlined,
+  ArrowRightOutlined,
+  CheckCircleFilled,
+  CheckCircleOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
+  CloseCircleFilled,
+  CloseCircleOutlined,
+  CloseOutlined,
+  CloseSquareFilled,
+  CopyOutlined,
+  FormOutlined,
+  HourglassOutlined,
+  PauseOutlined,
+} from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
+import "./index.css";
+import FormItem from "antd/es/form/FormItem";
 
 function RequestManager() {
   const [formUpdate] = useForm();
   const [datasource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [idRequest, SetidRequest] = useState("");
+  const [idRequest, setIdRequest] = useState("");
+  const [language, setLanguage] = useState([]);
+  const [documentType, setDocumentType] = useState([]);
+  const [notarizationType, setNotarizationType] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [statusFilter, setStatusFilter] = useState<string>("Waitting");
+  const [activeButton, setActiveButton] = useState<string>("Waitting");
+  const [loading, setLoading] = useState(false);
+  const [selectcustomerid, setselectcustomerid] = useState(null);
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setActiveButton(status);
+  };
+
+  useEffect(() => {
+    if (statusFilter === "") {
+      setFilteredData(datasource);
+    } else {
+      const filtered =
+        datasource?.filter((order) => order.status === statusFilter) || []; // Kiểm tra datasource không null
+      setFilteredData(filtered);
+    }
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, [statusFilter, datasource]);
+
+  // const props: UploadProps = {
+  //   name: "file",
+  //   action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+  //   headers: {
+  //     authorization: "authorization-text",
+  //   },
+  //   onChange(info) {
+  //     if (info.file.status !== "uploading") {
+  //       console.log(info.file, info.fileList);
+  //     }
+  //     if (info.file.status === "done") {
+  //       toast.success(`${info.file.name} file uploaded successfully`);
+  //     } else if (info.file.status === "error") {
+  //       toast.error(`${info.file.name} file upload failed.`);
+  //     }
+  //   },
+  // };
+
+  const fetchNotarizationType = async () => {
+    const response = await api.get("Notarization");
+    const data = response.data.data;
+    console.log({ data });
+
+    const list = data.map((notarization) => ({
+      value: notarization.id,
+      label: <span>{notarization.name}</span>,
+    }));
+
+    setNotarizationType(list);
+  };
+
+  useEffect(() => {
+    fetchNotarizationType();
+  }, []);
+
+  const fetchDocumentType = async () => {
+    const response = await api.get("DocumentType");
+    const data = response.data.data;
+    console.log({ data });
+
+    const list = data.map((Document) => ({
+      value: Document.id,
+      label: <span>{Document.name}</span>,
+    }));
+
+    setDocumentType(list);
+  };
+
+  useEffect(() => {
+    fetchDocumentType();
+  }, []);
+
+  const fetchLanguages = async () => {
+    const response = await api.get("Language");
+    const data = response.data.data;
+    console.log({ data });
+
+    const list = data.map((language) => ({
+      value: language.id,
+      label: <span>{language.name}</span>,
+    }));
+
+    setLanguage(list);
+  };
+
+  useEffect(() => {
+    fetchLanguages();
+  }, []);
+
   const columns = [
     {
-      title: "Tên Khách hàng",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
+    {
+      title: "CustomerId",
+      dataIndex: "customerId",
+      key: "customerId",
+      hidden: true,
+    },
+    {
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
@@ -41,74 +171,136 @@ function RequestManager() {
       dataIndex: "email",
       key: "email",
     },
+    // {
+    //   title: "Thời hạn",
+    //   dataIndex: "deadline",
+    //   key: "deadline",
+    //   render: (deadline) => {
+    //     return dayjs(deadline).format("DD/MM/YYYY");
+    //   },
+    // },
     {
-      title: "Thời gian hoàn thành",
-      dataIndex: "deadline",
-      key: "deadline",
+      title: "Ngày tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      sorter: (a, b) =>
+        dayjs(a.createdDate).unix() - dayjs(b.createdDate).unix(),
       render: (deadline) => {
         return dayjs(deadline).format("DD/MM/YYYY HH:mm");
       },
     },
     {
-      title: "Giá ước tính",
+      title: "Giá ước tính (VNĐ)",
       dataIndex: "estimatedPrice",
       key: "estimatedPrice",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
+    // {
+    //   title: "Trạng thái xóa",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
+    //   render: (isDeleted) => (isDeleted ? "Có" : "Không"),
+    // },
     {
-      title: "Yêu cầu nhận tài liệu",
-      dataIndex: "pickUpRequest",
-      key: "pickUpRequest",
-      render: (pickUpRequest) => (pickUpRequest ? "Có" : "Không"),
-    },
-    {
-      title: "Yêu cầu ship",
-      dataIndex: "shipRequest",
-      key: "shipRequest",
-      render: (shipRequest) => (shipRequest ? "Có" : "Không"),
-    },
-    {
-      title: "Trạng Thái xóa",
-      dataIndex: "isDeleted",
-      key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Có" : "Không"),
-    },
-    {
-      title: "trạng thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (status) => {
+        switch (status) {
+          case "Waitting":
+            return (
+              <div className="status-waiting">
+                <ClockCircleOutlined />
+                &nbsp; Chờ xử lý
+              </div>
+            );
+          case "Quoted":
+            return (
+              <div className="status-quoted">
+                <FormOutlined />
+                &nbsp; Đã báo giá
+              </div>
+            );
+          case "Refuse":
+            return (
+              <div className="status-refused">
+                <CloseOutlined />
+                &nbsp; Bị từ chối
+              </div>
+            );
+          case "Accept":
+            return (
+              <div className="status-accepted">
+                <CheckOutlined />
+                &nbsp; Được chấp nhận
+              </div>
+            );
+          case "Finish":
+            return (
+              <div className="status-finished">
+                <PauseOutlined />
+                &nbsp; Kết thúc
+              </div>
+            );
+          default:
+            return status;
+        }
+      },
     },
     {
-      title: "Action",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
-      render: (id, data) => (
-        <Space>
-          <FormOutlined
-            onClick={() => {
-              setIsOpen(true);
-              SetidRequest(id);
-              const newData = { ...data };
-              console.log(newData);
+      render: (id, data) => {
+        if (data.status === "Waitting") {
+          return (
+            <Space>
+              <FormOutlined
+                style={{ fontSize: "14px", color: "orange" }}
+                onClick={() => {
+                  setselectcustomerid(data.customerId);
+                  setIsOpen(true);
+                  setIdRequest(id);
+                  const newData = { ...data };
+                  console.log(newData);
 
-              for (const key of Object.keys(data)) {
-                const value = newData[key];
+                  // Lấy dữ liệu request dựa trên id
+                  const selectedRequest = datasource.find(
+                    (request) => request.id === id
+                  );
+                  if (selectedRequest) {
+                    // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
+                    const newData = {
+                      ...selectedRequest,
+                      deadline: dayjs(selectedRequest.deadline),
+                      documents: selectedRequest.documents || [],
+                      status: "Quoted",
+                    };
 
-                const date: any = new Date(value);
-                // const time: any = date.getTime();
-                //|| isNaN(time)
-                if (typeof value === "number") {
-                } else {
-                  newData[key] = dayjs(value);
-                }
-              }
-              console.log(newData);
-              formUpdate.setFieldsValue(newData);
-            }}
-          />
-        </Space>
-      ),
+                    console.log("Dữ liệu được thiết lập:", newData);
+
+                    // Thiết lập giá trị cho form
+                    formUpdate.setFieldsValue(newData);
+                  }
+                }}
+              />
+            </Space>
+          );
+        } else return null;
+      },
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   // async function handleEditRequest(value) {
   //   const updateRequest = formUpdate.getFieldsValue();
@@ -131,46 +323,136 @@ function RequestManager() {
     const updateRequest = formUpdate.getFieldsValue();
 
     // Chuyển đổi các giá trị boolean của Switch cho pickUpRequest và shipRequest
-    updateRequest.pickUpRequest = updateRequest.pickUpRequest ? true : false;
-    updateRequest.shipRequest = updateRequest.shipRequest ? true : false;
+    // updateRequest.pickUpRequest = updateRequest.pickUpRequest ? true : false;
+    // updateRequest.shipRequest = updateRequest.shipRequest ? true : false;
 
-    console.log(updateRequest);
     try {
       // Gửi yêu cầu PUT với requestId và payload updateRequest
       const response = await api.put(
         `Request/StaffUpdate?requestId=${idRequest}`,
         updateRequest
       );
+      console.log("log param,", updateRequest);
+      console.log("gia uoc tinh: ", response.data.data.estimatedPrice);
+      console.log("Ngày: ", response.data.data.deadline);
+      console.log(selectcustomerid);
+      console.log(response.data.data);
 
-      console.log("Response:", response);
+      //Gọi hàm đẩy noti
+      if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+
+        const paramPushNoti = {
+          specId: selectcustomerid,
+          title: "Báo giá dịch thuật",
+          message: `Yêu cầu của bạn có giá ${response.data.data.estimatedPrice}. Ngày thông báo: ${currentDateTime}`,
+          author: "string",
+        };
+
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
+      fetchRequest();
+      formUpdate.resetFields();
+      toast.success("Gửi báo giá thành công.");
+      setIsOpen(false);
     } catch (error) {
-      console.error("Error updating request:", error);
+      toast.error("Gửi báo giá thất bại.");
     }
   }
 
   async function fetchRequest() {
-    const response = await api.get("Request/GetStatusWaitting");
-    console.log("=============================");
+    setLoading(true);
+    const response = await api.get("Request/ToQuote");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
     fetchRequest();
   }, []);
+
   return (
     <div className="requestmanager">
-      <Table columns={columns} dataSource={datasource} />
-
+      <div>
+        <Button
+          className={`filter-button ${activeButton === "" ? "active" : ""}`}
+          onClick={() => handleStatusFilter("")}
+        >
+          <AlignRightOutlined />
+          Tất cả
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Waitting" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Waitting")}
+        >
+          <ClockCircleOutlined />
+          Chờ xử lý
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Quoted" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Quoted")}
+        >
+          <FormOutlined />
+          Đã báo giá
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Refuse" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Refuse")}
+        >
+          <CloseOutlined />
+          Bị từ chối
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Accept" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Accept")}
+        >
+          <CheckOutlined />
+          Được chấp nhận
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Finish" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Finish")}
+        >
+          <PauseOutlined />
+          Kết thúc
+        </Button>
+      </div>
+      <Table
+        columns={columns}
+        dataSource={filteredData}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+        pagination={pagination}
+        onChange={handleTableChange}
+      />
       <Modal
         open={isOpen}
         onCancel={() => {
           setIsOpen(false);
           formUpdate.resetFields();
         }}
+        width={1200}
         onOk={() => {
           formUpdate.submit();
         }}
+        okText="Gửi báo giá"
+        cancelText="Đóng"
       >
         <Form form={formUpdate} onFinish={handleEditRequest}>
           <Form.Item
@@ -179,72 +461,235 @@ function RequestManager() {
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập thời hạn",
+                message: "* vui lòng chọn",
               },
             ]}
           >
             <DatePicker />
           </Form.Item>
-          <Form.Item
-            label="Giá ước tính"
-            name={"estimatedPrice"}
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập giá ước tính",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Yêu cầu nhận hồ sơ"
-            name={"pickUpRequest"}
-            valuePropName="checked"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập Yêu cầu",
-              },
-            ]}
-          >
-            <Switch
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-              defaultChecked={false}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Yêu cầu giao hồ sơ"
-            name={"shipRequest"}
-            valuePropName="checked"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập Yêu cầu",
-              },
-            ]}
-          >
-            <Switch
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-              defaultChecked={false}
-            />
-          </Form.Item>
+          <div className="request-content">
+            <span>
+              Yêu cầu nhận tài liệu:&nbsp;
+              {formUpdate.getFieldValue("pickUpRequest") ? (
+                <CheckCircleFilled style={{ color: "green" }} />
+              ) : (
+                <CloseCircleFilled style={{ color: "red" }} />
+              )}
+            </span>
+            <span>
+              Yêu cầu giao hàng:&nbsp;
+              {formUpdate.getFieldValue("shipRequest") ? (
+                <CheckCircleFilled style={{ color: "green" }} />
+              ) : (
+                <CloseCircleFilled style={{ color: "red" }} />
+              )}
+            </span>
+          </div>
+          <Form.List name="documents">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, fieldKey, ...restField }, index) => (
+                  <div key={key}>
+                    <Divider
+                      orientation="left"
+                      style={{ borderColor: "black" }}
+                    >
+                      Tài liệu {index + 1}
+                    </Divider>
+                    <div className="document-content">
+                      <Form.Item
+                        {...restField}
+                        name={[name, "firstLanguageId"]}
+                        fieldKey={[fieldKey, "firstLanguageId"]}
+                        label="Ngôn ngữ gốc"
+                      >
+                        <span>
+                          {(() => {
+                            const firstLanguageId = formUpdate.getFieldValue([
+                              "documents",
+                              name,
+                              "firstLanguageId",
+                            ]);
+                            if (!language || language.length === 0) {
+                              return "Loading...";
+                            }
+                            const foundLanguage = language.find(
+                              (lang) => lang.value === firstLanguageId
+                            );
+                            return foundLanguage ? foundLanguage.label : null;
+                          })()}
+                        </span>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "secondLanguageId"]}
+                        fieldKey={[fieldKey, "secondLanguageId"]}
+                        label="Ngôn ngữ cần dịch"
+                      >
+                        <span>
+                          {(() => {
+                            const secondLanguageId = formUpdate.getFieldValue([
+                              "documents",
+                              name,
+                              "secondLanguageId",
+                            ]);
+                            if (!language || language.length === 0) {
+                              return "Loading...";
+                            }
+                            const foundLanguage = language.find(
+                              (lang) => lang.value === secondLanguageId
+                            );
+                            return foundLanguage ? foundLanguage.label : null;
+                          })()}
+                        </span>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "pageNumber"]}
+                        fieldKey={[fieldKey, "pageNumber"]}
+                        label="Số trang"
+                      >
+                        <InputNumber min={1} />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "numberOfCopies"]}
+                        fieldKey={[fieldKey, "numberOfCopies"]}
+                        label="Số bản cần dịch"
+                      >
+                        <span>
+                          {formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "numberOfCopies",
+                          ])}
+                        </span>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "documentTypeId"]}
+                        fieldKey={[fieldKey, "documentTypeId"]}
+                        rules={[
+                          {
+                            required: false,
+                            message: "* vui lòng chọn",
+                          },
+                        ]}
+                        label="Loại tài liệu"
+                      >
+                        <Select
+                          options={documentType}
+                          placeholder="Loại tài liệu"
+                          style={{ width: "100px" }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "urlPath"]}
+                        fieldKey={[fieldKey, "urlPath"]}
+                        label="Tệp đính kèm"
+                      >
+                        <span>
+                          {(() => {
+                            const urlPath = formUpdate.getFieldValue([
+                              "documents",
+                              name,
+                              "urlPath",
+                            ]);
+                            return urlPath ? (
+                              <a
+                                href={urlPath}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <CopyOutlined />
+                              </a>
+                            ) : null;
+                          })()}
+                        </span>
+                      </Form.Item>
+                    </div>
+                    <div className="document-content">
+                      <Form.Item
+                        {...restField}
+                        name={[name, "notarizationRequest"]}
+                        fieldKey={[fieldKey, "notarizationRequest"]}
+                        label="Yêu cầu công chứng"
+                      >
+                        <span>
+                          {(() => {
+                            const notarizationRequest =
+                              formUpdate.getFieldValue([
+                                "documents",
+                                name,
+                                "notarizationRequest",
+                              ]);
+                            return notarizationRequest ? (
+                              <CheckCircleFilled style={{ color: "green" }} />
+                            ) : (
+                              <CloseCircleFilled style={{ color: "red" }} />
+                            );
+                          })()}
+                        </span>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "notarizationId"]}
+                        fieldKey={[fieldKey, "notarizationId"]}
+                        rules={[
+                          {
+                            required: false,
+                            message: "* vui lòng chọn",
+                          },
+                        ]}
+                        label="Loại công chứng"
+                      >
+                        <Select
+                          options={notarizationType}
+                          placeholder="Loại công chứng"
+                          style={{ width: "400px" }}
+                          disabled={
+                            !formUpdate.getFieldValue([
+                              "documents",
+                              name,
+                              "notarizationRequest",
+                            ])
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "numberOfNotarizedCopies"]}
+                        fieldKey={[fieldKey, "numberOfNotarizedCopies"]}
+                        label="Số bản công chứng"
+                      >
+                        <span>
+                          {formUpdate.getFieldValue([
+                            "documents",
+                            name,
+                            "numberOfNotarizedCopies",
+                          ])}
+                        </span>
+                      </Form.Item>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </Form.List>
           <Form.Item
             label="Trạng thái"
             name={"status"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập trạng thái",
+                message: "* vui lòng chọn",
               },
             ]}
+            hidden
           >
             <Select placeholder="Trạng thái">
-              <Select.Option value="Waitting">Đang xử lí</Select.Option>
-              <Select.Option value="Quoted">Đã báo giá</Select.Option>
-              <Select.Option value="Cancel">Hủy</Select.Option>
+              <Select value="Quoted">Đã báo giá</Select>
             </Select>
           </Form.Item>
         </Form>

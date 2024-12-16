@@ -1,0 +1,103 @@
+.translatorPage {
+  .ant-select-selector {
+    display: flex;
+    align-items: center;
+    font-size: 14px; /* Adjust the font size if needed */
+  }
+
+  .ant-select-selection-item {
+    color: rebeccapurple; /* Set the color of the selected item */
+    font-weight: normal;
+  }
+
+  .ant-select-selection-item span {
+    color: rebeccapurple; /* Ensure the text inside the selected item is colored */
+  }
+
+  .ant-select-item-option {
+    color: black; /* Color of the dropdown options */
+  }
+
+  /* Adjust height and line-height */
+  .ant-select-selection-item {
+    line-height: 30px; /* Aligns the text vertically */
+    padding: 0;
+  }
+
+  .ant-select-single.ant-select-show-arrow {
+    padding: 0;
+    height: 32px; /* Adjust height of the select box */
+  }
+
+  .ant-select-arrow {
+    color: #1890ff; /* Arrow color */
+  }
+
+  /* New styles for input fields */
+  .ant-input {
+    color: rebeccapurple; /* Change text color inside the input fields */
+  }
+
+  /* Make sure the placeholder text color is not affected */
+  .ant-input::placeholder {
+    color: #bfbfbf; /* Adjust placeholder color if necessary */
+  }
+}
+
+.container {
+  display: flex;
+  justify-content: right;
+  gap: 20px;
+}
+
+.document-details {
+  background-color: #bcf1ac;
+  padding: 20px;
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.document-details h1 {
+  margin-bottom: 10px;
+  text-decoration: underline;
+}
+
+.details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  line-height: 1.8;
+}
+
+.details-row span:first-child {
+  font-weight: bold;
+  width: 280px; /* Độ rộng của cột thuộc tính */
+}
+
+.details-row span:last-child {
+  flex: 1;
+}
+
+.status-translating {
+  background-color: #f1c557;
+  padding: 5px;
+  border-radius: 8px;
+  width: 100px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.status-translated {
+  background-color: #23d783;
+  padding: 5px;
+  border-radius: 8px;
+  width: 100px;
+  font-size: 12px;
+  text-align: center;
+}

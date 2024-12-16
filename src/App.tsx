@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Layout from "./components/layout";
 import Home from "./pages/home";
 import Login from "./pages/login";
@@ -12,6 +16,7 @@ import DynamicDocumentsForm from "./pages/documentType";
 import DocumentDetails from "./pages/documentDetails";
 import TranslatorAccount from "./pages/admin/translatorAccount";
 import Translator from "./pages/translatorPage";
+import History from "./pages/translator-history";
 import AssignShipper from "./pages/assignShipper";
 import AssignNotarization from "./pages/AssignNotarization";
 import ShipperAndStaff from "./pages/admin/createShipperandStaff";
@@ -20,14 +25,74 @@ import DashboardAdmin from "./pages/dashboard-admin";
 import StaffAccount from "./pages/admin/staffAccount";
 import SendRequest from "./pages/staff/sendrequest/indes";
 import DashboardStaff from "./pages/dashboard-staff";
+import DashboardTranslator from "./pages/dashboard-translator";
 import RequestManager from "./pages/staff/request-manager";
 import MyRequest from "./pages/customer/myrequest";
 import CreateOrderOnline from "./pages/staff/createorderonline";
 import QuotePageDesign from "./pages/design/quotePaged";
 import OrderOnlineManage from "./pages/admin/orderOnline-manage";
 import AssignHardCopy from "./pages/assignmentHardCopy";
+import DocumentType from "./pages/documentTypeManagement";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { logout } from "./redux/features/userSlice";
+import { RootState } from "./redux/rootReducer";
+import HistoryOrder from "./pages/customer/myhistoryorder";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [connection, setConnection] = useState(null);
+  const account = useSelector((state: RootState) => state.accountmanage);
+  useEffect(() => {
+    const hubConnection = new HubConnectionBuilder()
+      .withUrl("https://protrans.azurewebsites.net/notificationHub")
+      .withAutomaticReconnect()
+      .build();
+    setConnection(hubConnection);
+  }, []);
+
+  useEffect(() => {
+    if (connection && account && account.Id) {
+      const startConnection = async () => {
+        try {
+          connection.on(`${account.Id}`, async (title, message, author) => {
+            console.log("title", title);
+            console.log("message", message);
+            console.log("author", author);
+            toast.success(` Thông báo: ${title}`);
+            // Handle the notification here, e.g., display a notification, update UI, etc.
+          });
+          connection
+            .start()
+            .then(() => console.log("Connected"))
+            .catch((error) => console.error(error));
+
+          // Subscribe to a specific method
+        } catch (error) {
+          console.error("Error connecting to SignalR Hub:", error);
+        }
+      };
+
+      startConnection();
+      return () => {
+        console.log("Stopped");
+        connection.stop();
+      };
+    }
+  }, [connection]);
+
+  const AdminRoute = ({ children, role }) => {
+    const user = useSelector((store: RootState) => store.accountmanage);
+    const dispatch = useDispatch();
+    if (user?.role === role) {
+      return children;
+    } else {
+      toast.error("Truy cập bị từ chối.");
+      dispatch(logout());
+      return <Navigate to="/login" />;
+    }
+  };
   const router = createBrowserRouter([
     {
       path: "",
@@ -38,20 +103,36 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/register",
-          element: <Register />,
-        },
-        {
-          path: "/traslator",
-          element: <Translator />,
+          path: "/translator",
+          element: (
+            <AdminRoute role="Translator">
+              <Translator />
+            </AdminRoute>
+          ),
         },
         {
           path: "/sendrequest",
-          element: <SendRequest />,
+          element: (
+            <AdminRoute role="Customer">
+              <SendRequest />
+            </AdminRoute>
+          ),
         },
         {
           path: "/myrequest",
-          element: <MyRequest />,
+          element: (
+            <AdminRoute role="Customer">
+              <MyRequest />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "/myhistoryorder",
+          element: (
+            <AdminRoute role="Customer">
+              <HistoryOrder />
+            </AdminRoute>
+          ),
         },
         {
           path: "/quotePageDesign",
@@ -66,15 +147,27 @@ function App() {
           path: "/login",
           element: <Login />,
         },
+        {
+          path: "/register",
+          element: <Register />,
+        },
       ],
     },
     {
       path: "dashboardmanager",
-      element: <DashboardManager />,
+      element: (
+        <AdminRoute role="Manager">
+          <DashboardManager />
+        </AdminRoute>
+      ),
       children: [
         {
           path: "assignhardcopy",
           element: <AssignHardCopy />,
+        },
+        {
+          path: "documenttype",
+          element: <DocumentType />,
         },
         {
           path: "language",
@@ -97,10 +190,6 @@ function App() {
           element: <Order />,
         },
         {
-          path: "createOrder",
-          element: <DynamicDocumentsForm />,
-        },
-        {
           path: "order/details/:id",
           element: <DocumentDetails />,
         },
@@ -120,7 +209,11 @@ function App() {
     },
     {
       path: "dashboardadmin",
-      element: <DashboardAdmin />,
+      element: (
+        <AdminRoute role="Admin">
+          <DashboardAdmin />
+        </AdminRoute>
+      ),
       children: [
         {
           path: "translatorAccount",
@@ -146,7 +239,11 @@ function App() {
     },
     {
       path: "dashboardstaff",
-      element: <DashboardStaff />,
+      element: (
+        <AdminRoute role="Staff">
+          <DashboardStaff />
+        </AdminRoute>
+      ),
       children: [
         {
           path: "orderonlinemanage/details/:id",
@@ -169,7 +266,7 @@ function App() {
           element: <RequestManager />,
         },
         {
-          path: "document",
+          path: "createoderoffline",
           element: <DynamicDocumentsForm />,
         },
         {
@@ -179,6 +276,24 @@ function App() {
         {
           path: "order/details/:id",
           element: <DocumentDetails />,
+        },
+      ],
+    },
+    {
+      path: "dashboardtranslator",
+      element: (
+        <AdminRoute role="Translator">
+          <DashboardTranslator />
+        </AdminRoute>
+      ),
+      children: [
+        {
+          path: "assignment",
+          element: <Translator />,
+        },
+        {
+          path: "history",
+          element: <History />,
         },
       ],
     },

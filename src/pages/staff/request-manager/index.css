@@ -1,0 +1,60 @@
+.document-content {
+  display: flex;
+  gap: 20px;
+}
+
+.document-content label {
+  font-weight: bold;
+}
+
+.request-content {
+  display: flex;
+  gap: 20px;
+}
+
+.status-waiting {
+  background-color: rgb(199, 243, 210);
+  padding: 5px;
+  border-radius: 8px;
+  width: 100px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.status-quoted {
+  background-color: #23d783;
+  padding: 5px;
+  border-radius: 8px;
+  width: 100px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.status-refused {
+  color: white;
+  background-color: #e03955;
+  padding: 5px;
+  border-radius: 8px;
+  width: 100px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.status-accepted {
+  background-color: #f1c557;
+  padding: 5px;
+  border-radius: 8px;
+  width: 120px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.status-finished {
+  color: white;
+  background-color: rgb(147, 153, 151);
+  padding: 5px;
+  border-radius: 8px;
+  width: 100px;
+  font-size: 12px;
+  text-align: center;
+}

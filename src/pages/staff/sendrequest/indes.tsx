@@ -1,6 +1,7 @@
 import {
   CheckOutlined,
   CloseOutlined,
+  LoadingOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   UploadOutlined,
@@ -11,7 +12,6 @@ import {
   DatePicker,
   Divider,
   Form,
-  Input,
   InputNumber,
   Row,
   Select,
@@ -25,12 +25,19 @@ import { useEffect, useState } from "react";
 import api from "../../../config/api";
 import { toast } from "react-toastify";
 import uploadFileFire from "../../../utils/upload";
+import "./index.scss";
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 
 function SendRequest() {
   const [formVariable] = useForm();
   const [language, setLanguage] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isPickUpEnabled, setIsPickUpEnabled] = useState(false);
+
+  dayjs.extend(isSameOrBefore);
 
   //--------------------------------
   const props: UploadProps = {
@@ -63,6 +70,23 @@ function SendRequest() {
     }));
 
     setDocumentType(list);
+  };
+
+  const checkPickUpRequestState = (documents) => {
+    const hasNotarizationRequest = documents.some(
+      (doc) => doc.notarizationRequest
+    );
+    setIsPickUpEnabled(hasNotarizationRequest);
+
+    if (!hasNotarizationRequest) {
+      formVariable.setFieldValue("pickUpRequest", false);
+    }
+  };
+
+  const handleFormChange = (changedValues, allValues) => {
+    if (changedValues.documents) {
+      checkPickUpRequestState(allValues.documents);
+    }
   };
 
   useEffect(() => {
@@ -106,6 +130,7 @@ function SendRequest() {
   }, []);
 
   async function handleSubmit(values) {
+    setLoading(true);
     console.log(values);
 
     // const originFileObj =
@@ -128,20 +153,37 @@ function SendRequest() {
     try {
       const response = await api.post("Request", values);
       console.log(response.data.data);
-      toast.success("tạo yêu cầu thành công");
+      toast.success("Gửi yêu cầu thành công.");
+      setLoading(false);
       formVariable.resetFields();
     } catch (error) {
-      toast.error("tạo request thất bại");
+      toast.error("Gửi yêu cầu thất bại. " + error.response.data.message);
+      setLoading(false);
     }
   }
 
+  const handleNotarizationChange = (index, checked) => {
+    const newDocuments = formVariable.getFieldValue("documents");
+    newDocuments[index].notarizationRequest = checked;
+    if (!checked) {
+      newDocuments[index].numberOfNotarizedCopies = 0;
+      newDocuments[index].notarizationId = null;
+    }
+    if (checked) {
+      newDocuments[index].numberOfNotarizedCopies = 1;
+    }
+    formVariable.setFieldsValue({ documents: newDocuments });
+    checkPickUpRequestState(newDocuments);
+  };
+
   return (
     <div className="sendrequest">
-      <div className="sendrequesttop">Trang gửi Yêu Cầu</div>
+      <h1>GỬI YÊU CẦU DỊCH THUẬT</h1>
       <div className="sendrequestmiddle">
         <Form
           form={formVariable}
           onFinish={handleSubmit}
+          onValuesChange={handleFormChange}
           layout="vertical"
           initialValues={{
             deadline: "",
@@ -152,11 +194,11 @@ function SendRequest() {
                 firstLanguageId: null,
                 secondLanguageId: null,
                 urlPath: null,
-                fileType: null,
-                pageNumber: null,
-                numberOfCopies: null,
+                fileType: "Soft",
+                pageNumber: 1,
+                numberOfCopies: 1,
                 notarizationRequest: false,
-                numberOfNotarizatedCopies: null,
+                numberOfNotarizedCopies: 0,
                 notarizationId: null,
                 documentTypeId: null,
               },
@@ -165,16 +207,28 @@ function SendRequest() {
         >
           <Row gutter={16}>
             {" "}
-            <Col span={8}>
+            <Col span={4}>
               {" "}
               <Form.Item
                 label="Thời gian yêu cầu"
                 name="deadline"
                 rules={[
-                  { required: true, message: "Vui lòng Thời gian yêu cầu!" },
+                  {
+                    required: true,
+                    message: "* vui lòng chọn",
+                  },
                 ]}
               >
-                <DatePicker />
+                <DatePicker
+                  placeholder="Chọn ngày"
+                  disabledDate={(current) => {
+                    // return current && current.isSameOrBefore(dayjs(), "day");
+
+                    return (
+                      current && current.isBefore(dayjs().add(3, "day"), "day")
+                    );
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={4}>
@@ -184,8 +238,8 @@ function SendRequest() {
                 valuePropName="checked"
                 rules={[
                   {
-                    required: true,
-                    message: "vui lòng chọn nhận tài liệu",
+                    required: false,
+                    message: "* vui lòng chọn",
                   },
                 ]}
               >
@@ -193,19 +247,16 @@ function SendRequest() {
                   checkedChildren={<CheckOutlined />}
                   unCheckedChildren={<CloseOutlined />}
                   defaultChecked={false}
+                  disabled={!isPickUpEnabled}
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label="Yêu cầu ship"
+                label="Yêu cầu giao hàng"
                 name="shipRequest"
                 valuePropName="checked"
-                rules={[
-                  { required: true, message: "vui lòng chọn ship tài liệu" },
-                ]}
+                rules={[{ required: false, message: "* vui lòng chọn" }]}
               >
                 <Switch
                   checkedChildren={<CheckOutlined />}
@@ -219,7 +270,7 @@ function SendRequest() {
           <Form.List name="documents">
             {(fields, { add, remove }) => (
               <>
-                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                {fields.map(({ key, name, fieldKey, ...restField }, index) => (
                   <Space
                     key={key}
                     style={{ display: "block", marginBottom: 8 }}
@@ -232,7 +283,7 @@ function SendRequest() {
                       Tài liệu
                     </Divider>
                     <Row gutter={16}>
-                      <Col span={7}>
+                      <Col span={8}>
                         <Form.Item
                           {...restField}
                           name={[name, "firstLanguageId"]}
@@ -240,7 +291,7 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "First Language ID is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Ngôn ngữ gốc"
@@ -252,7 +303,7 @@ function SendRequest() {
                         </Form.Item>
                       </Col>
 
-                      <Col span={7}>
+                      <Col span={8}>
                         <Form.Item
                           {...restField}
                           name={[name, "secondLanguageId"]}
@@ -260,7 +311,7 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "Second Language ID is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Ngôn ngữ cần dịch"
@@ -271,7 +322,7 @@ function SendRequest() {
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={7}>
+                      <Col span={5}>
                         <Form.Item
                           {...restField}
                           name={[name, "documentTypeId"]}
@@ -279,7 +330,7 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "Document Type ID is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Loại tài liệu"
@@ -298,10 +349,11 @@ function SendRequest() {
                           rules={[
                             {
                               required: true,
-                              message: "Page Number is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Số trang"
+                          initialValue={1}
                         >
                           <InputNumber
                             min={1}
@@ -315,57 +367,37 @@ function SendRequest() {
                       <Col span={4}>
                         <Form.Item
                           {...restField}
-                          name={[name, "fileType"]}
-                          fieldKey={[fieldKey, "fileType"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "File Type is required",
-                            },
-                          ]}
-                          label="Loại tệp"
-                        >
-                          <Select placeholder="Loại tệp">
-                            <Select.Option value="Hard">Hard</Select.Option>
-                            <Select.Option value="Soft">Soft</Select.Option>
-                          </Select>
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item
-                          {...restField}
                           name={[name, "numberOfCopies"]}
                           fieldKey={[fieldKey, "numberOfCopies"]}
                           rules={[
                             {
                               required: true,
-                              message: "Number of Copies is required",
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Số bản cần dịch"
+                          initialValue={1}
                         >
                           <InputNumber
                             min={1}
                             placeholder="Số bản cần dịch"
-                            style={{ width: "100%" }}
+                            style={{ width: "75%" }}
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={4}>
+                      <Col span={3}>
                         <Form.Item
                           {...restField}
                           name={[name, "urlPath"]}
                           fieldKey={[fieldKey, "urlPath"]}
                           rules={[
-                            { required: true, message: "URL Path is required" },
+                            { required: true, message: "* vui lòng chọn" },
                           ]}
-                          label="Đường dẫn"
+                          label="Tệp"
                         >
                           {/* <Input placeholder="Đường dẫn" /> */}
                           <Upload {...props}>
-                            <Button icon={<UploadOutlined />}>
-                              Click to Upload
-                            </Button>
+                            <Button icon={<UploadOutlined />}>Tải lên</Button>
                           </Upload>
                         </Form.Item>
                       </Col>
@@ -376,30 +408,77 @@ function SendRequest() {
                           valuePropName="checked"
                           fieldKey={[fieldKey, "notarizationRequest"]}
                           label="Công chứng"
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            textAlign: "center",
-                          }}
+                          initialValue={false}
                         >
                           <Switch
                             checkedChildren={<CheckOutlined />}
                             unCheckedChildren={<CloseOutlined />}
                             defaultChecked={false}
+                            onChange={(checked) =>
+                              handleNotarizationChange(index, checked)
+                            }
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={5}>
+                      <Col span={4}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "numberOfNotarizedCopies"]}
+                          fieldKey={[fieldKey, "numberOfNotarizedCopies"]}
+                          rules={[
+                            {
+                              required: formVariable.getFieldValue([
+                                "documents",
+                                index,
+                                "notarizationRequest",
+                              ]),
+                              message: "* vui lòng chọn",
+                            },
+                          ]}
+                          label="Số bản công chứng"
+                          initialValue={0}
+                        >
+                          <InputNumber
+                            min={1}
+                            placeholder=""
+                            style={{ width: "75%" }}
+                            value={formVariable.getFieldValue([
+                              "documents",
+                              index,
+                              "numberOfNotarizedCopies",
+                            ])}
+                            onChange={(value) => {
+                              const newDocuments =
+                                formVariable.getFieldValue("documents");
+                              newDocuments[index].numberOfNotarizedCopies =
+                                value;
+                              formVariable.setFieldsValue({
+                                documents: newDocuments,
+                              });
+                            }}
+                            disabled={
+                              !formVariable.getFieldValue([
+                                "documents",
+                                index,
+                                "notarizationRequest",
+                              ])
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={10}>
                         <Form.Item
                           {...restField}
                           name={[name, "notarizationId"]}
                           fieldKey={[fieldKey, "notarizationId"]}
                           rules={[
                             {
-                              required: true,
-                              message: "Notarization ID is required",
+                              required: formVariable.getFieldValue([
+                                "documents",
+                                index,
+                                "notarizationRequest",
+                              ]),
+                              message: "* vui lòng chọn",
                             },
                           ]}
                           label="Loại công chứng"
@@ -407,26 +486,13 @@ function SendRequest() {
                           <Select
                             options={notarizationType}
                             placeholder="Loại công chứng"
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item
-                          {...restField}
-                          name={[name, "numberOfNotarizatedCopies"]}
-                          fieldKey={[fieldKey, "numberOfNotarizatedCopies"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Number of Notarized Copies is required",
-                            },
-                          ]}
-                          label="Số bản công chứng"
-                        >
-                          <InputNumber
-                            min={0}
-                            placeholder="Số bản công chứng"
-                            style={{ width: "100%" }}
+                            disabled={
+                              !formVariable.getFieldValue([
+                                "documents",
+                                index,
+                                "notarizationRequest",
+                              ])
+                            }
                           />
                         </Form.Item>
                       </Col>
@@ -462,7 +528,7 @@ function SendRequest() {
 
           <Form.Item style={{ display: "flex", justifyContent: "center" }}>
             <Button type="primary" htmlType="submit" style={{ width: "160px" }}>
-              Tạo đơn hàng
+              {loading ? <LoadingOutlined /> : "Gửi yêu cầu"}
             </Button>
           </Form.Item>
         </Form>

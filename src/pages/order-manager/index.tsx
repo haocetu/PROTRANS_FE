@@ -1,9 +1,32 @@
-import { Button, Form, Input, InputNumber, Modal, Select, Table } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Spin,
+  Table,
+} from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import {
+  AlignRightOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
+  CloseOutlined,
+  EyeOutlined,
+  FormOutlined,
+  LikeOutlined,
+  MoreOutlined,
+  PauseOutlined,
+  TruckOutlined,
+} from "@ant-design/icons";
+import "./index.css";
+import dayjs from "dayjs";
 
 function Order() {
   const [formVariable] = useForm();
@@ -12,6 +35,10 @@ function Order() {
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [language, setLanguage] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [activeButton, setActiveButton] = useState<string>("");
+  const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate();
 
   const fetchNotarizationType = async () => {
@@ -73,45 +100,134 @@ function Order() {
 
   const columns = [
     {
-      title: "Khách Hàng",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
+    {
+      title: "Tên khách hàng",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Số Điện Thoại",
+      title: "Số điện thoại",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
     {
-      title: "Địa Chỉ",
+      title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "Tổng Giá",
+      title: "Thời hạn",
+      dataIndex: "deadline",
+      key: "deadline",
+      sorter: (a, b) => dayjs(a.deadline).unix() - dayjs(b.deadline).unix(),
+      render: (deadline) => {
+        return dayjs(deadline).format("DD/MM/YYYY");
+      },
+    },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      sorter: (a, b) =>
+        dayjs(a.createdDate).unix() - dayjs(b.createdDate).unix(),
+      render: (deadline) => {
+        return dayjs(deadline).format("DD/MM/YYYY HH:mm");
+      },
+    },
+    {
+      title: "Tổng giá (VNĐ)",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     {
-      title: "Trạng Thái",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (status) => {
+        switch (status) {
+          case "Processing":
+            return (
+              <div className="status-processing">
+                <ClockCircleOutlined />
+                &nbsp; Chờ xử lý
+              </div>
+            );
+          case "Completed":
+            return (
+              <div className="status-completed">
+                <FormOutlined />
+                &nbsp; Đã hoàn thành
+              </div>
+            );
+          case "Delivering":
+            return (
+              <div className="status-delivering">
+                <TruckOutlined />
+                &nbsp; Đang giao
+              </div>
+            );
+          case "Delivered":
+            return (
+              <div className="status-delivered">
+                <CheckOutlined />
+                &nbsp; Đã giao
+              </div>
+            );
+          case "Implementing":
+            return (
+              <div className="status-implementing">
+                <CheckOutlined />
+                &nbsp; Đang thực hiện
+              </div>
+            );
+          case "Canceled":
+            return (
+              <div className="status-canceled">
+                <PauseOutlined />
+                &nbsp; Đã hủy
+              </div>
+            );
+          default:
+            return status;
+        }
+      },
     },
     {
-      title: "",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
         <Button
           type="primary"
-          style={{ background: "orange" }}
+          style={{ background: "orange", borderRadius: "8px" }}
           onClick={() => navigate(`details/${id}`)}
         >
-          Details
+          <FormOutlined style={{ fontSize: "14px", fontWeight: "bold" }} />
         </Button>
       ),
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   // async function handleSubmit(values) {
   //   try {
@@ -127,25 +243,109 @@ function Order() {
   // }
 
   async function fetchOrder() {
+    setLoading(true);
     const response = await api.get("Order");
     console.log(response.data.data);
     setDataSource(response.data.data);
+    setFilteredData(response.data.data);
+    setLoading(false);
   }
 
   useEffect(() => {
     fetchOrder();
   }, []);
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setActiveButton(status);
+  };
+
+  useEffect(() => {
+    if (statusFilter === "") {
+      setFilteredData(dataSource);
+    } else {
+      const filtered =
+        dataSource?.filter((order) => order.status === statusFilter) || []; // Kiểm tra dataSource không null
+      setFilteredData(filtered);
+    }
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, [statusFilter, dataSource]);
+
   return (
-    <div className="orderPage">
-      {/* <Button
-        type="primary"
-        onClick={() => {
-          setIsOpen(true);
+    <div>
+      <div>
+        <Button
+          className={`filter-button ${activeButton === "" ? "active" : ""}`}
+          onClick={() => handleStatusFilter("")}
+        >
+          <AlignRightOutlined />
+          Tất cả
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Processing" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Processing")}
+        >
+          <ClockCircleOutlined />
+          Chờ xử lý
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Implementing" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Implementing")}
+        >
+          <FormOutlined />
+          Đang thực hiện
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Completed" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Completed")}
+        >
+          <LikeOutlined />
+          Đã hoàn thành
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Delivering" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Delivering")}
+        >
+          <TruckOutlined />
+          Đang giao
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Delivered" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Delivered")}
+        >
+          <CheckOutlined />
+          Đã giao
+        </Button>
+        <Button
+          className={`filter-button ${
+            activeButton === "Canceled" ? "active" : ""
+          }`}
+          onClick={() => handleStatusFilter("Canceled")}
+        >
+          <CloseOutlined />
+          Đã hủy
+        </Button>
+      </div>
+      <Table
+        columns={columns}
+        dataSource={filteredData}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
         }}
-      >
-        Add New Order
-      </Button> */}
-      <Table columns={columns} dataSource={dataSource}></Table>
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
       {/* <Modal
         open={isOpen}
         title="Add New Order"

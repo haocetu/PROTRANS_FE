@@ -113,9 +113,8 @@ function StaffAccount() {
     try {
       const response = await api.get("Account/GetAllStaff");
       setDataSource(response.data.data);
-      toast.success("Chào mừng đến trang Account");
     } catch (error) {
-      toast.error("Không có Account nào");
+      toast.error("Danh sách trống.");
     }
   }
   useEffect(() => {

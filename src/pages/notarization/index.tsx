@@ -1,8 +1,17 @@
-import { Button, Form, Input, Modal, Popconfirm, Space, Table } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Space,
+  Table,
+  Tooltip,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
-import { Value } from "sass";
 import api from "../../config/api";
+import { EditOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
 
 function Notarization() {
   const [formVariable] = useForm();
@@ -12,7 +21,17 @@ function Notarization() {
   const [dataSource, setDataSource] = useState([]);
   const columns = [
     {
-      title: "Loại Công Chứng",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
+    {
+      title: "Loại công chứng",
       dataIndex: "name",
       key: "name",
     },
@@ -22,13 +41,13 @@ function Notarization() {
       key: "price",
     },
     {
-      title: "Status",
+      title: "Trạng thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
       render: (isDeleted) => (isDeleted ? "Stop" : "Active"),
     },
     {
-      title: "Action",
+      title: "Tác vụ",
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
@@ -40,25 +59,38 @@ function Notarization() {
             okText="Yes"
             cancelText="No"
           >
-            <Button type="primary" danger>
-              Delete
-            </Button>
+            <Tooltip title="Vô hiệu hóa">
+              <Button type="primary" danger>
+                <StopOutlined />
+              </Button>
+            </Tooltip>
           </Popconfirm>
-          <Button
-            type="primary"
-            style={{ background: "orange" }}
-            onClick={() => {
-              setVisibleEditModal(true);
-              // SetidCategory(id);
-              formVariable.setFieldsValue(data);
-            }}
-          >
-            Update
-          </Button>
+          <Tooltip title="Cập nhật">
+            <Button
+              type="primary"
+              style={{ background: "orange" }}
+              onClick={() => {
+                setVisibleEditModal(true);
+                // SetidCategory(id);
+                formVariable.setFieldsValue(data);
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </Tooltip>
         </Space>
       ),
     },
   ];
+
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   async function fetchNotarization() {
     const response = await api.get("Notarization");
@@ -116,6 +148,7 @@ function Notarization() {
   useEffect(() => {
     fetchNotarization();
   }, []);
+
   return (
     <div className="languagePage">
       <Button
@@ -124,36 +157,45 @@ function Notarization() {
           formVariable.resetFields();
           setIsOpen(true);
         }}
+        style={{ marginBottom: "10px" }}
       >
-        Add New Notarization
+        <PlusOutlined />
+        Thêm loại công chứng mới
       </Button>
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
       <Modal
         open={isOpen}
-        title="Add New Notarization"
+        title="Thêm loại công chứng"
         onCancel={handleHideModal}
         onOk={handleOk}
+        cancelText="Đóng"
+        okText="Thêm"
       >
         <Form form={formVariable} onFinish={handleSubmit}>
           <Form.Item
-            label="TypeNotarization"
+            label="Loại công chứng"
             name={"name"}
             rules={[
               {
                 required: true,
-                message: "Please Input TypeNotarization",
+                message: "* vui lòng nhập",
               },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Price"
+            label="Giá"
             name={"price"}
             rules={[
               {
                 required: true,
-                message: "Please Input Language",
+                message: "* vui lòng nhập",
               },
             ]}
           >
@@ -164,7 +206,7 @@ function Notarization() {
 
       <Modal
         open={visibleEditModal}
-        title="Update Langauge"
+        title="Cập nhật loại công chứng"
         onCancel={() => {
           setVisibleEditModal(false);
         }}
@@ -175,12 +217,12 @@ function Notarization() {
       >
         <Form form={formUpdate} onFinish={handleSubmit}>
           <Form.Item
-            label="Langeuage Name"
+            label="Loại công chứng"
             name={"name"}
             rules={[
               {
                 required: true,
-                message: "Please Input Language",
+                message: "* vui lòng nhập",
               },
             ]}
           >

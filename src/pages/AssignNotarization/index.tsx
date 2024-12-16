@@ -7,12 +7,15 @@ import {
   Select,
   Table,
   Button,
+  Spin,
+  Badge,
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
 import { toast } from "react-toastify";
-import { AuditOutlined } from "@ant-design/icons";
+import { AuditOutlined, SignatureOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
+import dayjs from "dayjs";
 
 function AssignNotarization() {
   const [formVariable] = useForm();
@@ -20,17 +23,30 @@ function AssignNotarization() {
   const [isOpen, setIsOpen] = useState(false);
   const [shipper, setShipper] = useState([]);
   const [selectedDocumentIds, setSelectedDocumentIds] = useState([]);
+  const [agencyList, setAgencyList] = useState([]);
+  const [selectedAgencyId, setSelectedAgencyId] = useState(null);
   const [language, setLanguage] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [documentType, setDocumentType] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const handleTableChange = (newPagination) => {
+    setPagination(newPagination);
+  };
 
   useEffect(() => {
+    fetchAgency();
     fetchDocumentType();
     fetchNotarizationType();
     fetchLanguages();
     fetchShipper();
     fetchDocument();
-  }, []);
+    setSelectedDocumentIds([]);
+  }, [selectedAgencyId]);
 
   const fetchDocumentType = async () => {
     const response = await api.get("DocumentType");
@@ -52,6 +68,19 @@ function AssignNotarization() {
     setNotarizationType(list);
   };
 
+  const fetchAgency = async () => {
+    const response = await api.get("Agency");
+    const data = response.data.data;
+    const list = data.map((agency) => ({
+      value: agency.id,
+      label: <span>{agency.name}</span>,
+    }));
+    setAgencyList(list);
+    if (list.length > 0 && !selectedAgencyId) {
+      setSelectedAgencyId(list[0].value);
+    }
+  };
+
   const fetchLanguages = async () => {
     const response = await api.get("Language");
     const data = response.data.data;
@@ -63,21 +92,56 @@ function AssignNotarization() {
   };
 
   const fetchShipper = async () => {
-    const response = await api.get("Account/GetAllShipper");
-    const data = response.data.data;
-    const list = data.map((ship) => ({
-      value: ship.id,
-      label: <span>{ship.fullName}</span>,
-    }));
-    setShipper(list);
+    try {
+      const response = await api.get(
+        `Account/GetAllShipperByAgencyId?agencyId=${selectedAgencyId}`
+      );
+      const data = response.data.data;
+      const list = data.map((ship) => ({
+        value: ship.id,
+        label: <span>{ship.fullName}</span>,
+      }));
+      setShipper(list);
+    } catch (error) {
+      setShipper(null);
+    }
   };
 
   const fetchDocument = async () => {
     try {
-      const response = await api.get("Document");
-      setDataSource(response.data.data);
+      setLoading(true);
+      const response = await api.get(
+        `Document/GetDocumentsToBeNotarized?id=${selectedAgencyId}`
+      );
+
+      // if (response) {
+      //   const currentDateTime = new Date().toLocaleString("vi-VN", {
+      //     timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+      //   });
+      //   console.log(response.data.data.customerId);
+
+      //   const paramPushNoti = {
+      //     specId: response.data.data.customerId,
+      //     title: "Báo giá dịch thuật",
+      //     message: `Đơn giá của bạn đã được xử lí có giá ${response.data.data.totalPrice}. Ngày thông báo: ${currentDateTime}`,
+      //     author: "string",
+      //   };
+      //   const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+      //   console.log("resPushNoti", resPushNoti);
+      // }
+
+      const documents = response.data.data;
+      const sortedDocuments = documents.sort((a, b) =>
+        dayjs(a.deadline).isAfter(dayjs(b.deadline)) ? 1 : -1
+      );
+
+      console.log(response.data.data);
+      setDataSource(sortedDocuments);
+      setSelectedDocumentIds([]);
+      setLoading(false);
     } catch (error) {
-      toast.error("Fail");
+      // toast.error("Fail.");
+      setLoading(false);
     }
   };
 
@@ -95,7 +159,17 @@ function AssignNotarization() {
       ),
     },
     {
-      title: "Ngôn Ngữ Gốc",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (_, __, index) => {
+        const currentPage = pagination.current || 1;
+        const pageSize = pagination.pageSize || 10;
+        return (currentPage - 1) * pageSize + index + 1;
+      },
+    },
+    {
+      title: "Ngôn ngữ gốc",
       dataIndex: "firstLanguageId",
       key: "firstLanguageId",
       render: (firstLanguageId) => {
@@ -107,7 +181,7 @@ function AssignNotarization() {
       },
     },
     {
-      title: "Ngôn Ngữ Dịch",
+      title: "Ngôn ngữ dịch",
       dataIndex: "secondLanguageId",
       key: "secondLanguageId",
       render: (secondLanguageId) => {
@@ -119,14 +193,17 @@ function AssignNotarization() {
       },
     },
     {
-      title: "Mã Đơn Hàng",
-      dataIndex: "code",
-      key: "code",
+      title: "Thời hạn",
+      dataIndex: "deadline",
+      key: "deadline",
+      render: (deadline) => {
+        return <span>{dayjs(deadline).format("DD/MM/YYYY")}</span>;
+      },
     },
     {
-      title: "Loại Tệp",
-      dataIndex: "fileType",
-      key: "fileType",
+      title: "Mã tài liệu",
+      dataIndex: "code",
+      key: "code",
     },
     {
       title: "Số Trang",
@@ -134,38 +211,7 @@ function AssignNotarization() {
       key: "pageNumber",
     },
     {
-      title: "Số bản Copy",
-      dataIndex: "numberOfCopies",
-      key: "numberOfCopies",
-    },
-    {
-      title: "Yêu Cầu Công Chứng",
-      dataIndex: "notarizationRequest",
-      key: "notarizationRequest",
-      render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
-    },
-    {
-      title: "Số Bản Copy Công Chứng",
-      dataIndex: "numberOfNotarizedCopies",
-      key: "numberOfNotarizedCopies",
-    },
-    {
-      title: "Loại Công Chứng",
-      dataIndex: "notarizationId",
-      key: "notarizationId",
-      render: (notarizationId) => {
-        // Check if category is available and initialized
-        if (!notarizationType || notarizationType.length === 0) return null;
-
-        // Find the category by ID and return its name
-        const foundnotarizationType = notarizationType.find(
-          (lang) => lang.value === notarizationId
-        );
-        return foundnotarizationType ? foundnotarizationType.label : null;
-      },
-    },
-    {
-      title: "Loại Tài Liệu",
+      title: "Loại tài liệu",
       dataIndex: "documentTypeId",
       key: "documentTypeId",
       render: (documentTypeId) => {
@@ -179,24 +225,39 @@ function AssignNotarization() {
         return founddocumentType ? founddocumentType.label : null;
       },
     },
+    // {
+    //   title: "Yêu cầu công chứng",
+    //   dataIndex: "notarizationRequest",
+    //   key: "notarizationRequest",
+    //   render: (notarizationRequest) => (notarizationRequest ? "Có" : "Không"),
+    // },
     {
-      title: "",
-      dataIndex: "id",
-      key: "id",
-      render: (id) => (
-        <AuditOutlined
-          onClick={() => {
-            setIsOpen(true);
-            setSelectedDocumentIds([id]);
-          }}
-        />
-      ),
+      title: "Số bản công chứng",
+      dataIndex: "numberOfNotarizedCopies",
+      key: "numberOfNotarizedCopies",
+    },
+    {
+      title: "Loại công chứng",
+      dataIndex: "notarizationId",
+      key: "notarizationId",
+      render: (notarizationId) => {
+        // Check if category is available and initialized
+        if (!notarizationType || notarizationType.length === 0) return null;
+
+        // Find the category by ID and return its name
+        const foundnotarizationType = notarizationType.find(
+          (lang) => lang.value === notarizationId
+        );
+        return foundnotarizationType ? foundnotarizationType.label : null;
+      },
     },
   ];
 
   const handleSelectDocument = (id) => {
     if (selectedDocumentIds.includes(id)) {
-      setSelectedDocumentIds(selectedDocumentIds.filter((docId) => docId !== id));
+      setSelectedDocumentIds(
+        selectedDocumentIds.filter((docId) => docId !== id)
+      );
     } else {
       setSelectedDocumentIds([...selectedDocumentIds, id]);
     }
@@ -204,7 +265,7 @@ function AssignNotarization() {
 
   const handleAssignNotarization = () => {
     if (selectedDocumentIds.length === 0) {
-      toast.error("Vui lòng chọn ít nhất một tài liệu để giao việc");
+      toast.error("Vui lòng chọn ít nhất một tài liệu để giao việc.");
       return;
     }
     setIsOpen(true);
@@ -219,54 +280,104 @@ function AssignNotarization() {
 
     try {
       const response = await api.post("AssignmentNotarization", payload);
+
+      console.log(response.data.data);
+
+      if (response) {
+        const currentDateTime = new Date().toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh", // Đảm bảo sử dụng múi giờ Việt Nam
+        });
+        console.log(response.data.data.shipperId);
+
+        const paramPushNoti = {
+          specId: response.data.data.shipperId,
+          title: "Giao việc đi công chứng",
+          message: `Bạn có một nhiệm vụ đi công chứng vào ngày thông báo: ${currentDateTime}`,
+          author: "string",
+        };
+        const resPushNoti = api.post(`Notification/Single`, paramPushNoti);
+        console.log("resPushNoti", resPushNoti);
+      }
       formVariable.resetFields();
-      toast.success("Assign Translator success");
+      toast.success("Giao việc thành công.");
       setIsOpen(false);
+      fetchDocument();
     } catch (error) {
-      toast.error("Assign fail");
+      toast.error("Giao việc thất bại.");
     }
   };
 
   return (
-    <div className="AssignNotarizationPage">
-      <Button
-        type="primary"
-        onClick={handleAssignNotarization}
-        style={{ marginBottom: 16 }}
+    <div>
+      <div style={{ marginBottom: 10 }}>
+        <Button
+          type="primary"
+          onClick={handleAssignNotarization}
+          style={{ marginRight: 10 }}
+        >
+          <SignatureOutlined />
+          Giao việc
+        </Button>
+        <Select
+          options={agencyList}
+          value={selectedAgencyId}
+          onChange={(value) => setSelectedAgencyId(value)}
+          style={{ width: 300 }}
+          placeholder="Chọn trung tâm"
+        />
+      </div>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={{
+          spinning: loading,
+          indicator: <Spin />,
+        }}
+        pagination={pagination}
+        onChange={handleTableChange}
+      ></Table>
+      <span
+        style={{
+          color: selectedDocumentIds.length === 0 ? "#f07575" : "#2bc24e",
+        }}
       >
-        Giao Việc
-      </Button>
-      <Table columns={columns} dataSource={dataSource}></Table>
+        <em>* {selectedDocumentIds.length} tài liệu đang được chọn</em>
+      </span>
       <Modal
         open={isOpen}
-        title="Giao Việc Công Chứng"
-        onCancel={() => setIsOpen(false)}
+        title="Giao việc công chứng"
+        cancelText="Hủy"
+        onCancel={() => {
+          setIsOpen(false);
+          formVariable.resetFields();
+        }}
+        okText="Giao việc"
         onOk={() => formVariable.submit()}
       >
         <Form form={formVariable} onFinish={handlesubmitNotarization}>
           <Form.Item
-            label="người đi công chứng"
+            label="Nhân viên"
             name={"shipperId"}
             rules={[
               {
                 required: true,
-                message: "Please Input Shipper",
+                message: "* vui lòng chọn",
               },
             ]}
           >
             <Select options={shipper} />
           </Form.Item>
           <Form.Item
-            label="Thời hạn nộp"
+            label="Thời hạn"
             name={"deadline"}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập thời hạn nộp",
+                message: "* vui lòng chọn",
               },
             ]}
           >
-            <DatePicker />
+            <DatePicker placeholder="Chọn ngày" />
           </Form.Item>
         </Form>
       </Modal>

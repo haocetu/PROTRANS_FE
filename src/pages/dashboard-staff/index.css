@@ -1,0 +1,16 @@
+.header-container {
+  align-self: self-end;
+  display: flex;
+  align-items: center;
+  padding: 0 16px; /* Thêm padding ngang để tạo không gian bên trong */
+  background-color: var(--color-bg-container); /* Sử dụng biến màu nếu có */
+}
+
+.logout-button {
+  font-weight: bold;
+  background-color: red;
+  color: white;
+}
+
+
+
