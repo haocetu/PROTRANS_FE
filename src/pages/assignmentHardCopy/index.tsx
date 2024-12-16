@@ -6,6 +6,7 @@ import { useForm } from "antd/es/form/Form";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
 function AssignHardCopy() {
   const [formVariable] = useForm();
@@ -20,6 +21,7 @@ function AssignHardCopy() {
   const [Selectdealine, setSelectdealine] = useState(null);
 
   dayjs.extend(isSameOrBefore);
+  dayjs.extend(isSameOrAfter);
   //--------------------------------------
   const fetchAgency = async () => {
     const response = await api.get("Agency");
@@ -223,9 +225,13 @@ function AssignHardCopy() {
           >
             <DatePicker
               placeholder="Chọn ngày"
-              disabledDate={(current) =>
-                current && current.isSameOrBefore(dayjs(), "day")
-              }
+              disabledDate={(current) => {
+                return (
+                  current &&
+                  (current.isSameOrBefore(dayjs(), "day") ||
+                    current.isSameOrAfter(dayjs(Selectdealine), "day"))
+                );
+              }}
             />
           </Form.Item>
         </Form>
