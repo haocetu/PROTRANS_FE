@@ -40,6 +40,7 @@ import { RootState } from "./redux/rootReducer";
 import HistoryOrder from "./pages/customer/myhistoryorder";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
+import OrderNoShip from "./pages/orderNoShip";
 
 function App() {
   const [connection, setConnection] = useState(null);
@@ -276,6 +277,10 @@ function App() {
         {
           path: "order/details/:id",
           element: <DocumentDetails />,
+        },
+        {
+          path: "ordernoship",
+          element: <OrderNoShip />,
         },
       ],
     },

@@ -4,6 +4,8 @@ import {
   AuditOutlined,
   BellOutlined,
   BookOutlined,
+  ClockCircleFilled,
+  ClockCircleOutlined,
   ContainerOutlined,
   FormOutlined,
   ProfileOutlined,
@@ -52,7 +54,7 @@ const items: MenuItem[] = [
   // getItem("Đơn hàng online", "orderonlinemanage", <AuditOutlined />),
   getItem("Tạo đơn hàng online", "orderonline", <FormOutlined />),
   getItem("Tạo đơn hàng", "createoderoffline", <FormOutlined />),
-  // getItem("Đơn hàng offline", "order", <FormOutlined />),
+  getItem("Đơn hàng chờ nhận", "ordernoship", <ClockCircleOutlined />),
 ];
 
 const DashboardStaff: React.FC = () => {
