@@ -171,10 +171,20 @@ function RequestManager() {
       dataIndex: "email",
       key: "email",
     },
+    // {
+    //   title: "Thời hạn",
+    //   dataIndex: "deadline",
+    //   key: "deadline",
+    //   render: (deadline) => {
+    //     return dayjs(deadline).format("DD/MM/YYYY");
+    //   },
+    // },
     {
-      title: "Thời hạn yêu cầu",
-      dataIndex: "deadline",
-      key: "deadline",
+      title: "Ngày tạo",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      sorter: (a, b) =>
+        dayjs(a.createdDate).unix() - dayjs(b.createdDate).unix(),
       render: (deadline) => {
         return dayjs(deadline).format("DD/MM/YYYY HH:mm");
       },
@@ -323,11 +333,8 @@ function RequestManager() {
         updateRequest
       );
       console.log("log param,", updateRequest);
-
       console.log("gia uoc tinh: ", response.data.data.estimatedPrice);
-
       console.log("Ngày: ", response.data.data.deadline);
-
       console.log(selectcustomerid);
       console.log(response.data.data);
 
@@ -359,7 +366,6 @@ function RequestManager() {
   async function fetchRequest() {
     setLoading(true);
     const response = await api.get("Request/ToQuote");
-    console.log("=============================");
     console.log(response.data.data);
     setDataSource(response.data.data);
     setLoading(false);
@@ -455,7 +461,7 @@ function RequestManager() {
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập thời hạn",
+                message: "* vui lòng chọn",
               },
             ]}
           >
