@@ -1,0 +1,25 @@
+.logout-button {
+    font-weight: bold;
+    background-color: red;
+    color: white;
+  }
+  
+  
+  .logout-button {
+    font-weight: bold;
+    background-color: red;
+    color: white;
+  }
+
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px; 
+    width: 80%;
+    background: #ebedef;
+    margin-bottom: 20px;
+    border-radius: 2%;
+    margin-left: 16px;
+    margin-top: 3px;
+  }
