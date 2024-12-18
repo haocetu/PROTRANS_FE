@@ -1,30 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ArrowRightOutlined,
-  AuditOutlined,
   BellOutlined,
-  BookOutlined,
-  ClockCircleFilled,
-  ClockCircleOutlined,
   ContainerOutlined,
   FileDoneOutlined,
   FileSyncOutlined,
   FormOutlined,
-  ProfileOutlined,
-  ShoppingCartOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import {
-  Badge,
-  Breadcrumb,
-  Button,
-  Dropdown,
-  Layout,
-  Menu,
-  Space,
-  theme,
-} from "antd";
+import { Badge, Breadcrumb, Dropdown, Layout, Menu, Space, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -70,6 +55,7 @@ const DashboardStaff: React.FC = () => {
   const navigate = useNavigate();
   const [listNoti, setListNoti] = useState([]);
   const [countNoti, setCountNoti] = useState(0);
+  const [breadcrumb, setBreadcrumb] = useState("Dashboard");
 
   const handleMenuClick = ({ key }) => {
     if (key === "logout") {
@@ -155,6 +141,13 @@ const DashboardStaff: React.FC = () => {
     onClick: handleMenuClick,
   };
 
+  const handleMenuSelect = (e) => {
+    const selectedItem = items.find((item) => item.key === e.key);
+    if (selectedItem) {
+      setBreadcrumb(selectedItem.label as string);
+    }
+  };
+
   /* (
     <Menu onClick={handleMenuClick}>
       <Menu.Item key="logout" icon={<ArrowRightOutlined />}>
@@ -171,11 +164,21 @@ const DashboardStaff: React.FC = () => {
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical" />
+        <div className="logo-container">
+          <img
+            src="/bank-images/ProTranslogo_standard.png"
+            alt="ProTrans Logo"
+            className="sidebar-logo"
+            width={150}
+          />
+        </div>
+
         <Menu
           theme="dark"
           defaultSelectedKeys={["1"]}
           mode="inline"
           items={items}
+          onClick={handleMenuSelect}
         />
       </Sider>
       <Layout>
@@ -197,9 +200,11 @@ const DashboardStaff: React.FC = () => {
           </div>
         </Header>
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb style={{ margin: "16px 0", color: "black" }}>
             <Breadcrumb.Item>Staff</Breadcrumb.Item>
-            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
+            <Breadcrumb.Item className="breadcrumb_highlight">
+              <span className="breadcrumb_span">{breadcrumb}</span>
+            </Breadcrumb.Item>
           </Breadcrumb>
           <div
             style={{

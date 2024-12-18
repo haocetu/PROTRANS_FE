@@ -166,6 +166,16 @@ const DashboardAdmin: React.FC = () => {
         width={220}
       >
         <div className="demo-logo-vertical" />
+
+        <div className="logo-container">
+          <img
+            src="/bank-images/ProTranslogo_standard.png"
+            alt="ProTrans Logo"
+            className="sidebar-logo"
+            width={150}
+          />
+        </div>
+
         <Menu
           theme="dark"
           defaultSelectedKeys={["1"]}
@@ -193,10 +203,10 @@ const DashboardAdmin: React.FC = () => {
           </div>
         </Header>
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb style={{ margin: "16px 0", color: "black" }}>
             <Breadcrumb.Item>Admin</Breadcrumb.Item>
             <Breadcrumb.Item className="breadcrumb-highlight">
-              <span className="breadcrumb">{breadcrumb}</span>
+              <span className="breadcrumb-bold">{breadcrumb}</span>
             </Breadcrumb.Item>
           </Breadcrumb>
           <div
