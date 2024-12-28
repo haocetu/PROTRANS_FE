@@ -14,7 +14,13 @@ import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
-import { EditOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from "@ant-design/icons";
 import { toast } from "react-toastify";
 
 function QuotePrice() {
@@ -145,22 +151,49 @@ function QuotePrice() {
             cancelText="Không"
           >
             <Tooltip title="Ngưng dịch">
-              <Button type="primary" danger>
-                <StopOutlined />
-              </Button>
+              <button
+                style={{
+                  color: "white",
+                  backgroundColor: data.isDeleted ? "#23d783" : "#e03955",
+                  padding: 5,
+                  borderRadius: 8,
+                  borderWidth: 0,
+                  fontSize: 12,
+                  textAlign: "center",
+                  cursor: "pointer",
+                }}
+              >
+                {data.isDeleted ? (
+                  <div>
+                    <EyeOutlined style={{ fontSize: "18px" }} />
+                  </div>
+                ) : (
+                  <div>
+                    <EyeInvisibleOutlined style={{ fontSize: "18px" }} />
+                  </div>
+                )}
+              </button>
             </Tooltip>
           </Popconfirm>
           <Tooltip title="Cập nhật">
-            <Button
-              type="primary"
-              style={{ background: "orange" }}
+            <button
+              style={{
+                color: "white",
+                backgroundColor: "orange",
+                padding: 5,
+                borderRadius: 8,
+                borderWidth: 0,
+                fontSize: 12,
+                textAlign: "center",
+                cursor: "pointer",
+              }}
               onClick={() => {
                 setIsOpenUpdate(true);
                 formVariable.setFieldsValue(data);
               }}
             >
-              <EditOutlined />
-            </Button>
+              <EditOutlined style={{ fontSize: "18px" }} />
+            </button>
           </Tooltip>
         </Space>
       ),
