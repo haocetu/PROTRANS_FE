@@ -64,6 +64,9 @@ function QuotePageDesign() {
       title: "Giá (VNĐ)",
       dataIndex: "pricePerPage",
       key: "pricePerPage",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
   ];
 

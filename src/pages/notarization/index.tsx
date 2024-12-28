@@ -42,9 +42,12 @@ function Notarization() {
       key: "name",
     },
     {
-      title: "Giá",
+      title: "Giá (VNĐ)",
       dataIndex: "price",
       key: "price",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     {
       title: "Trạng thái",
