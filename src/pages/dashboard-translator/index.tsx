@@ -1,29 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ArrowRightOutlined,
-  AuditOutlined,
   BellOutlined,
-  BookOutlined,
-  CopyOutlined,
-  FileOutlined,
-  FontSizeOutlined,
-  FormOutlined,
   HistoryOutlined,
-  ShoppingCartOutlined,
   TranslationOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import {
-  Badge,
-  Breadcrumb,
-  Button,
-  Dropdown,
-  Layout,
-  Menu,
-  Space,
-  theme,
-} from "antd";
+import { Badge, Breadcrumb, Dropdown, Layout, Menu, Space, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -66,6 +50,7 @@ const DashboardTranslator: React.FC = () => {
   const navigate = useNavigate();
   const [listNoti, setListNoti] = useState([]);
   const [countNoti, setCountNoti] = useState(0);
+  const [breadcrumb, setBreadcrumb] = useState("Dashboard");
 
   const handleMenuClick = ({ key }) => {
     if (key === "logout") {
@@ -82,6 +67,12 @@ const DashboardTranslator: React.FC = () => {
     },
   ];
 
+  const handleMenuSelect = (e) => {
+    const selectedItem = items.find((item) => item.key === e.key);
+    if (selectedItem) {
+      setBreadcrumb(selectedItem.label as string);
+    }
+  };
   //----------------------
   useEffect(() => {
     if (account) {
@@ -164,11 +155,20 @@ const DashboardTranslator: React.FC = () => {
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical" />
+        <div className="logo-container">
+          <img
+            src="/bank-images/ProTranslogo_standard.png"
+            alt="ProTrans Logo"
+            className="sidebar-logo"
+            width={150}
+          />
+        </div>
         <Menu
           theme="dark"
           defaultSelectedKeys={["assignment"]}
           mode="inline"
           items={items}
+          onClick={handleMenuSelect}
         />
       </Sider>
       <Layout>
@@ -191,9 +191,11 @@ const DashboardTranslator: React.FC = () => {
           </div>
         </Header>
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb style={{ margin: "16px 0", color: "black" }}>
             <Breadcrumb.Item>Translator</Breadcrumb.Item>
-            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
+            <Breadcrumb.Item className="breadcrumb_highlight">
+              <span className="breadcrumb_span">{breadcrumb}</span>
+            </Breadcrumb.Item>
           </Breadcrumb>
           <div
             style={{

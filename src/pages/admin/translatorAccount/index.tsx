@@ -14,6 +14,8 @@ import {
   Spin,
   Switch,
   Table,
+  Upload,
+  UploadProps,
 } from "antd";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -27,11 +29,22 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
   UnlockOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import "./index.css";
 import dayjs from "dayjs";
+import uploadFileFire from "../../../utils/upload";
 
 function TranslatorAccount() {
+  //======================
+  const props: UploadProps = {
+    name: "file",
+    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    headers: {
+      authorization: "authorization-text",
+    },
+  };
+
   const [formVariable] = useForm();
   const [dataSource, setDataSource] = useState([]);
   const [agency, setAgency] = useState([]);
@@ -194,8 +207,20 @@ function TranslatorAccount() {
 
   async function handleSubmit(values) {
     console.log(values);
+
+    for (let i = 0; i < values.skills.length; i++) {
+      const skills = values.skills[i];
+      if (skills?.certificateUrl.file?.originFileObj) {
+        const originFileObj = skills.certificateUrl.file?.originFileObj;
+        const upFile = await uploadFileFire(originFileObj);
+        values.skills[i].certificateUrl = upFile;
+      }
+    }
+
     try {
       const response = await api.post("Account/Translator", values);
+
+      console.log(response.data.data);
       fetchTranslatorAccount();
       formVariable.resetFields();
       toast.success("Tạo thành công tài khoản cho dịch thuật viên.");
@@ -430,7 +455,10 @@ function TranslatorAccount() {
                           ]}
                           label="Chứng chỉ"
                         >
-                          <Input />
+                          {/* <Input /> */}
+                          <Upload {...props}>
+                            <Button icon={<UploadOutlined />}>Tải lên</Button>
+                          </Upload>
                         </Form.Item>
                       </Col>
                     </Row>
