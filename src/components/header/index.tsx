@@ -100,10 +100,6 @@ function Header() {
   //   }
   // };
 
-  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log("click left button", e);
-  };
-
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "logout") {
       dispatch(logout());
@@ -217,7 +213,10 @@ function Header() {
                 </a>
               </Dropdown>
 
-              <Dropdown.Button menu={menuProps} onClick={handleButtonClick}>
+              <Dropdown.Button
+                menu={menuProps}
+                onClick={() => navigate("/profile")}
+              >
                 <UserOutlined />
                 {account.Username}
               </Dropdown.Button>
