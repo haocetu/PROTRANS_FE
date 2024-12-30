@@ -59,6 +59,7 @@ const DashboardAdmin: React.FC = () => {
   const navigate = useNavigate();
   const [listNoti, setListNoti] = useState([]);
   const [countNoti, setCountNoti] = useState(0);
+  const [breadcrumb, setBreadcrumb] = useState("Dashboard");
 
   const handleMenuClick = ({ key }) => {
     if (key === "logout") {
@@ -142,6 +143,12 @@ const DashboardAdmin: React.FC = () => {
     onClick: handleMenuClick,
   };
 
+  const handleMenuSelect = (e) => {
+    const selectedItem = items.find((item) => item.key === e.key);
+    if (selectedItem) {
+      setBreadcrumb(selectedItem.label as string);
+    }
+  };
   // (
   //   <Menu onClick={handleMenuClick}>
   //     <Menu.Item key="logout" icon={<ArrowRightOutlined />}>
@@ -159,11 +166,22 @@ const DashboardAdmin: React.FC = () => {
         width={220}
       >
         <div className="demo-logo-vertical" />
+
+        <div className="logo-container">
+          <img
+            src="/bank-images/ProTranslogo_standard.png"
+            alt="ProTrans Logo"
+            className="sidebar-logo"
+            width={150}
+          />
+        </div>
+
         <Menu
           theme="dark"
           defaultSelectedKeys={["1"]}
           mode="inline"
           items={items}
+          onClick={handleMenuSelect}
         />
       </Sider>
       <Layout>
@@ -185,9 +203,11 @@ const DashboardAdmin: React.FC = () => {
           </div>
         </Header>
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
+          <Breadcrumb style={{ margin: "16px 0", color: "black" }}>
             <Breadcrumb.Item>Admin</Breadcrumb.Item>
-            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
+            <Breadcrumb.Item className="breadcrumb-highlight">
+              <span className="breadcrumb-bold">{breadcrumb}</span>
+            </Breadcrumb.Item>
           </Breadcrumb>
           <div
             style={{

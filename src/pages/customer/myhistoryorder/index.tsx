@@ -7,6 +7,7 @@ import {
   Modal,
   Popconfirm,
   Steps,
+  Input,
 } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -30,11 +31,14 @@ import {
   InfoCircleFilled,
   InfoCircleOutlined,
   LikeOutlined,
+  MailTwoTone,
+  SendOutlined,
   SmallDashOutlined,
   TruckFilled,
   TruckOutlined,
 } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
+import { toast } from "react-toastify";
 
 function HistoryOrder() {
   const [formUpdate] = useForm();
@@ -50,6 +54,9 @@ function HistoryOrder() {
   const [language, setLanguage] = useState([]);
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [feedbackValue, setFeedbackValue] = useState("");
+  const [selectedOrderId, setSelectedOrderId] = useState("");
 
   // Lấy thông tin các agency
   const fetchAgency = async () => {
@@ -130,6 +137,32 @@ function HistoryOrder() {
     }));
 
     setDocumentType(list);
+  };
+
+  const handleSubmitFeedback = async () => {
+    if (!feedbackValue.trim()) {
+      toast.error("Vui lòng nhập nội dung đánh giá!");
+      return;
+    }
+
+    const payload = {
+      message: feedbackValue,
+      accountId: account.Id,
+      orderId: selectedOrderId,
+    };
+
+    try {
+      const response = await api.post("Feedback", payload);
+      console.log("Feedback response:", response.data);
+
+      toast.success("Gửi đánh giá thành công.");
+      setIsFeedbackOpen(false);
+      setFeedbackValue("");
+      fetchMyOrders();
+    } catch (error) {
+      console.error("Failed to submit feedback:", error);
+      toast.error("Gửi đánh giá thất bại. Vui lòng thử lại.");
+    }
   };
 
   useEffect(() => {
@@ -283,32 +316,43 @@ function HistoryOrder() {
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
-        <EyeTwoTone
-          style={{ fontSize: "18px" }}
-          onClick={() => {
-            setIsOpen(true);
-            setIdRequest(id);
-            const newData = { ...data };
-            console.log(newData);
+        <div>
+          <EyeTwoTone
+            style={{ fontSize: "18px" }}
+            onClick={() => {
+              setIsOpen(true);
+              setIdRequest(id);
+              const newData = { ...data };
+              console.log(newData);
 
-            const selectedOrder = datasource.find(
-              (request) => request.id === id
-            );
-            if (selectedOrder) {
-              // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
-              const newData = {
-                ...selectedOrder,
-                deadline: dayjs(selectedOrder.deadline),
-                documents: selectedOrder.documents || [],
-              };
+              const selectedOrder = datasource.find(
+                (request) => request.id === id
+              );
+              if (selectedOrder) {
+                // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
+                const newData = {
+                  ...selectedOrder,
+                  deadline: dayjs(selectedOrder.deadline),
+                  documents: selectedOrder.documents || [],
+                };
 
-              console.log("Dữ liệu được thiết lập:", newData);
+                console.log("Dữ liệu được thiết lập:", newData);
 
-              // Thiết lập giá trị cho form
-              formUpdate.setFieldsValue(newData);
-            }
-          }}
-        />
+                // Thiết lập giá trị cho form
+                formUpdate.setFieldsValue(newData);
+              }
+            }}
+          />
+          {data.status === "Delivered" && !data.doneFeedback && (
+            <MailTwoTone
+              style={{ marginLeft: "10px", fontSize: "18px" }}
+              onClick={() => {
+                setSelectedOrderId(id);
+                setIsFeedbackOpen(true);
+              }}
+            />
+          )}
+        </div>
       ),
     },
   ];
@@ -712,6 +756,43 @@ function HistoryOrder() {
               </span>
             </label>
           </div>
+        </Form>
+      </Modal>
+      <Modal
+        open={isFeedbackOpen}
+        title="ĐÁNH GIÁ ĐƠN HÀNG"
+        onCancel={() => {
+          setIsFeedbackOpen(false);
+          setFeedbackValue("");
+        }}
+        footer={[
+          <Button
+            key="cancel"
+            onClick={() => {
+              setIsFeedbackOpen(false);
+              setFeedbackValue("");
+            }}
+          >
+            Hủy
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => handleSubmitFeedback()}
+          >
+            Gửi
+          </Button>,
+        ]}
+      >
+        <Form layout="vertical">
+          <Form.Item label="Nội dung:" required>
+            <Input.TextArea
+              rows={4}
+              placeholder="Nhập đánh giá của bạn"
+              value={feedbackValue}
+              onChange={(e) => setFeedbackValue(e.target.value)}
+            />
+          </Form.Item>
         </Form>
       </Modal>
     </div>

@@ -6,11 +6,42 @@
   background-color: var(--color-bg-container); /* Sử dụng biến màu nếu có */
 }
 
+.breadcrumb_highlight span.breadcrumb_span a{
+  font-size: 18px;
+  font-weight: bold;
+  color: #000000 !important;
+}
+
+.breadcrumb_span{
+  font-size: 18px;
+  color: #000000 !important;
+  
+}
+
 .logout-button {
   font-weight: bold;
   background-color: red;
   color: white;
 }
 
+
+.logout-button {
+  font-weight: bold;
+  background-color: red;
+  color: white;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px; 
+  width: 80%;
+  background: #ebedef;
+  margin-bottom: 20px;
+  border-radius: 2%;
+  margin-left: 16px;
+  margin-top: 3px;
+}
 
 

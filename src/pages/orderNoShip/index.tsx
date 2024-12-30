@@ -4,9 +4,11 @@ import {
   Input,
   InputNumber,
   Modal,
+  Popconfirm,
   Select,
   Spin,
   Table,
+  Tag,
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
@@ -21,15 +23,17 @@ import {
   EyeOutlined,
   FormOutlined,
   LikeOutlined,
-  MailOutlined,
   MoreOutlined,
   PauseOutlined,
+  SendOutlined,
   TruckOutlined,
 } from "@ant-design/icons";
 import "./index.css";
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
 
-function Order() {
+function OrderNoShip() {
   const [formVariable] = useForm();
   const [dataSource, setDataSource] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -39,9 +43,8 @@ function Order() {
   const [loading, setLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [activeButton, setActiveButton] = useState<string>("");
+  const account = useSelector((store: RootState) => store.accountmanage);
   const [filteredData, setFilteredData] = useState([]);
-  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
-  const [currentFeedback, setCurrentFeedback] = useState("");
   const navigate = useNavigate();
 
   const fetchNotarizationType = async () => {
@@ -99,9 +102,24 @@ function Order() {
     fetchLanguages();
   }, []);
 
-  const showFeedbackMessage = (message) => {
-    setCurrentFeedback(message);
-    setIsFeedbackVisible(true);
+  const handleUpdateOrderStatus = async (orderId: string) => {
+    try {
+      // Gọi API PUT
+      const response = await api.put(
+        `Order/UpdateOrderStatusDeliveredByOrderId?orderId=${orderId}`
+      );
+      console.log(response.data);
+
+      // Hiển thị thông báo thành công
+      toast.success("Đã xác nhận thành công.");
+
+      // Refresh danh sách order
+      fetchOrder();
+    } catch (error) {
+      // Xử lý lỗi
+      console.error("Update failed", error);
+      toast.error("Xác nhận thất bại, vui lòng thử lại.");
+    }
   };
 
   //===============================
@@ -133,6 +151,11 @@ function Order() {
       key: "address",
     },
     {
+      title: "Mã đơn hàng",
+      dataIndex: "orderCode",
+      key: "orderCode",
+    },
+    {
       title: "Thời hạn",
       dataIndex: "deadline",
       key: "deadline",
@@ -141,16 +164,16 @@ function Order() {
         return dayjs(deadline).format("DD/MM/YYYY");
       },
     },
-    {
-      title: "Ngày tạo",
-      dataIndex: "createdDate",
-      key: "createdDate",
-      sorter: (a, b) =>
-        dayjs(a.createdDate).unix() - dayjs(b.createdDate).unix(),
-      render: (deadline) => {
-        return dayjs(deadline).format("DD/MM/YYYY HH:mm");
-      },
-    },
+    // {
+    //   title: "Ngày tạo",
+    //   dataIndex: "createdDate",
+    //   key: "createdDate",
+    //   sorter: (a, b) =>
+    //     dayjs(a.createdDate).unix() - dayjs(b.createdDate).unix(),
+    //   render: (deadline) => {
+    //     return dayjs(deadline).format("DD/MM/YYYY HH:mm");
+    //   },
+    // },
     {
       title: "Tổng giá (VNĐ)",
       dataIndex: "totalPrice",
@@ -173,12 +196,7 @@ function Order() {
               </div>
             );
           case "Completed":
-            return (
-              <div className="status-completed">
-                <FormOutlined />
-                &nbsp; Đã hoàn thành
-              </div>
-            );
+            return <Tag color="green">Đã hoàn thành</Tag>;
           case "Delivering":
             return (
               <div className="status-delivering">
@@ -217,25 +235,19 @@ function Order() {
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
-        <div>
+        <Popconfirm
+          title="Bạn có xác nhận bàn giao đơn hàng này cho khách hàng?"
+          okText="Xác nhận"
+          cancelText="Hủy"
+          onConfirm={() => handleUpdateOrderStatus(id)}
+        >
           <Button
             type="primary"
             style={{ background: "orange", borderRadius: "8px" }}
-            onClick={() => navigate(`details/${id}`)}
           >
-            <FormOutlined style={{ fontSize: "14px", fontWeight: "bold" }} />
+            <SendOutlined style={{ fontSize: "14px", fontWeight: "bold" }} />
           </Button>
-
-          {data.status === "Delivered" && data.feedbackMessage && (
-            <Button
-              type="default"
-              style={{ marginLeft: "10px", borderRadius: "8px" }}
-              onClick={() => showFeedbackMessage(data.feedbackMessage)}
-            >
-              <MailOutlined />
-            </Button>
-          )}
-        </div>
+        </Popconfirm>
       ),
     },
   ];
@@ -264,7 +276,9 @@ function Order() {
 
   async function fetchOrder() {
     setLoading(true);
-    const response = await api.get("Order");
+    const response = await api.get(
+      `Order/GetNoShipCompletedOrders?staffId=${account.Id}`
+    );
     console.log(response.data.data);
     setDataSource(response.data.data);
     setFilteredData(response.data.data);
@@ -293,7 +307,7 @@ function Order() {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <Button
           className={`filter-button ${activeButton === "" ? "active" : ""}`}
           onClick={() => handleStatusFilter("")}
@@ -355,7 +369,7 @@ function Order() {
           <CloseOutlined />
           Đã hủy
         </Button>
-      </div>
+      </div> */}
       <Table
         columns={columns}
         dataSource={filteredData}
@@ -366,193 +380,181 @@ function Order() {
         pagination={pagination}
         onChange={handleTableChange}
       ></Table>
-      <Modal
-        open={isFeedbackVisible}
-        title="KHÁCH HÀNG ĐÁNH GIÁ:"
-        onCancel={() => setIsFeedbackVisible(false)}
-        footer={[
-          <Button key="close" onClick={() => setIsFeedbackVisible(false)}>
-            Đóng
-          </Button>,
-        ]}
-      >
-        <p>{currentFeedback}</p>
-      </Modal>
       {/* <Modal
-        open={isOpen}
-        title="Add New Order"
-        onCancel={() => {
-          setIsOpen(false);
-        }}
-        onOk={() => formVariable.submit()}
-      >
-        <Form form={formVariable} onFinish={handleSubmit}>
-          <Form.Item
-            label="Full Name"
-            name={"fullName"}
-            rules={[
-              {
-                required: true,
-                message: "Please Input Full Name",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Phone Number"
-            name={"phoneNumber"}
-            rules={[
-              {
-                required: true,
-                message: "Please Input Phone Number",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Address"
-            name={"address"}
-            rules={[
-              {
-                required: true,
-                message: "Please Input Address",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="First Language"
-            name={["documents", 0, "firstLanguageId"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input First Language",
-              },
-            ]}
-          >
-            <Select options={language} />
-          </Form.Item>
-          <Form.Item
-            label="Second Language"
-            name={["documents", 0, "secondLanguageId"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input First Language",
-              },
-            ]}
-          >
-            <Select options={language} />
-          </Form.Item>
-          <Form.Item
-            label="File"
-            name={["documents", 0, "urlPath"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input File",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="fileType"
-            name={["documents", 0, "fileType"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input First Language",
-              },
-            ]}
-          >
-            <Select placeholder="Select File Type">
-              <Select.Option value="Hard">Hard</Select.Option>
-              <Select.Option value="Soft">Soft</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="PageNumber"
-            name={["documents", 0, "pageNumber"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input PageNumber",
-              },
-            ]}
-          >
-            <InputNumber min={1} />
-          </Form.Item>
-          <Form.Item
-            label="NumberOfCopies"
-            name={["documents", 0, "NumberOfCopies"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input NumberOfCopies",
-              },
-            ]}
-          >
-            <InputNumber min={1} />
-          </Form.Item>
-          <Form.Item
-            label="notarizationRequest"
-            name={["documents", "notarizationRequest"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input notarizationRequest",
-              },
-            ]}
-          >
-            <Select placeholder="Select notarizationRequest">
-              <Select.Option value="True">Yes</Select.Option>
-              <Select.Option value="false">No</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="NumberOfNotarizatedCopies"
-            name={["documents", 0, "NumberOfNotarizatedCopies"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input NumberOfNotarizatedCopies",
-              },
-            ]}
-          >
-            <InputNumber min={1} />
-          </Form.Item>
-          <Form.Item
-            label="Notarization Type"
-            name={["documents", 0, "notarizationId"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input Notarization Type",
-              },
-            ]}
-          >
-            <Select options={notarizationType} />
-          </Form.Item>
-          <Form.Item
-            label="Document Type"
-            name={["documents", 0, "documentTypeId"]}
-            rules={[
-              {
-                required: true,
-                message: "Please Input Document Type",
-              },
-            ]}
-          >
-            <Select options={documentType} />
-          </Form.Item>
-        </Form>
-      </Modal> */}
+          open={isOpen}
+          title="Add New Order"
+          onCancel={() => {
+            setIsOpen(false);
+          }}
+          onOk={() => formVariable.submit()}
+        >
+          <Form form={formVariable} onFinish={handleSubmit}>
+            <Form.Item
+              label="Full Name"
+              name={"fullName"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input Full Name",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Phone Number"
+              name={"phoneNumber"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input Phone Number",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Address"
+              name={"address"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input Address",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="First Language"
+              name={["documents", 0, "firstLanguageId"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input First Language",
+                },
+              ]}
+            >
+              <Select options={language} />
+            </Form.Item>
+            <Form.Item
+              label="Second Language"
+              name={["documents", 0, "secondLanguageId"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input First Language",
+                },
+              ]}
+            >
+              <Select options={language} />
+            </Form.Item>
+            <Form.Item
+              label="File"
+              name={["documents", 0, "urlPath"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input File",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="fileType"
+              name={["documents", 0, "fileType"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input First Language",
+                },
+              ]}
+            >
+              <Select placeholder="Select File Type">
+                <Select.Option value="Hard">Hard</Select.Option>
+                <Select.Option value="Soft">Soft</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="PageNumber"
+              name={["documents", 0, "pageNumber"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input PageNumber",
+                },
+              ]}
+            >
+              <InputNumber min={1} />
+            </Form.Item>
+            <Form.Item
+              label="NumberOfCopies"
+              name={["documents", 0, "NumberOfCopies"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input NumberOfCopies",
+                },
+              ]}
+            >
+              <InputNumber min={1} />
+            </Form.Item>
+            <Form.Item
+              label="notarizationRequest"
+              name={["documents", "notarizationRequest"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input notarizationRequest",
+                },
+              ]}
+            >
+              <Select placeholder="Select notarizationRequest">
+                <Select.Option value="True">Yes</Select.Option>
+                <Select.Option value="false">No</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="NumberOfNotarizatedCopies"
+              name={["documents", 0, "NumberOfNotarizatedCopies"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input NumberOfNotarizatedCopies",
+                },
+              ]}
+            >
+              <InputNumber min={1} />
+            </Form.Item>
+            <Form.Item
+              label="Notarization Type"
+              name={["documents", 0, "notarizationId"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input Notarization Type",
+                },
+              ]}
+            >
+              <Select options={notarizationType} />
+            </Form.Item>
+            <Form.Item
+              label="Document Type"
+              name={["documents", 0, "documentTypeId"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Input Document Type",
+                },
+              ]}
+            >
+              <Select options={documentType} />
+            </Form.Item>
+          </Form>
+        </Modal> */}
     </div>
   );
 }
 
-export default Order;
+export default OrderNoShip;
