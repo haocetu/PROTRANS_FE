@@ -43,6 +43,7 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import OrderNoShip from "./pages/orderNoShip";
 import OrderNoPick from "./pages/orderNoPick";
+import ReportManager from "./pages/dasboard-report";
 
 function App() {
   const [connection, setConnection] = useState(null);
@@ -215,6 +216,10 @@ function App() {
         {
           path: "assignNotarization",
           element: <AssignNotarization />,
+        },
+        {
+          path: "reportmanager",
+          element: <ReportManager />,
         },
       ],
     },
