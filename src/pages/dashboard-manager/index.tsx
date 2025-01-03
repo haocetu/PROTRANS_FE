@@ -6,6 +6,7 @@ import {
   BookOutlined,
   ContainerOutlined,
   DeliveredProcedureOutlined,
+  FileDoneOutlined,
   FontColorsOutlined,
   FormOutlined,
   InboxOutlined,
@@ -67,6 +68,7 @@ const items: MenuItem[] = [
     "assignhardcopy",
     <DeliveredProcedureOutlined />
   ),
+  getItem("Báo cáo thông kê", "reportmanager", <FileDoneOutlined /> ),
 ];
 
 const DashboardManager: React.FC = () => {
