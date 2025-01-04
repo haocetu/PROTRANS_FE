@@ -31,6 +31,7 @@ function History() {
   const [dataSource, setDataSource] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
+  const [iframeUrl, setIframeUrl] = useState(null);
   const UserAccount = useSelector((store: RootState) => store.accountmanage);
   const UserAccount2 = useSelector(
     (store: RootState) => store.accountmanage.Id
@@ -89,6 +90,34 @@ function History() {
     }));
 
     setNotarizationType(list);
+  };
+
+  const openInNewTab = (url) => {
+    // Tạo nội dung HTML cho tab mới
+    const newWindow = window.open();
+    if (newWindow) {
+      newWindow.document.write(`
+      <html>
+        <head>
+          <title>Tài liệu</title>
+          <style>
+            body { margin: 0; padding: 0; overflow: hidden; }
+            iframe {
+              width: 100%;
+              height: 100vh;
+              border: none;
+            }
+          </style>
+        </head>
+        <body>
+          <iframe src="${url}" title="Document Viewer"></iframe>
+        </body>
+      </html>
+    `);
+      newWindow.document.close();
+    } else {
+      console.error("Popup bị chặn! Hãy kiểm tra cài đặt trình duyệt.");
+    }
   };
 
   useEffect(() => {
@@ -294,15 +323,37 @@ function History() {
               <span>Tải về</span>
               <span>
                 :{" "}
-                <a
+                {/* <a
                   href={selectedDocument.urlPath}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Xem tài liệu
+                </a> */}
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openInNewTab(selectedDocument.urlPath);
+                  }}
+                >
+                  Xem tài liệu
                 </a>
               </span>
+            </div>
+            <div className="iframe-container">
+              {iframeUrl && (
+                <iframe
+                  src={iframeUrl}
+                  style={{
+                    width: "100%",
+                    height: "600px",
+                    border: "none",
+                  }}
+                  title="Document Viewer"
+                ></iframe>
+              )}
             </div>
           </div>
         ) : (

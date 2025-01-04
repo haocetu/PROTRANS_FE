@@ -241,9 +241,10 @@ function Order() {
             <button
               style={{
                 color: "white",
+                background: "#479eed",
                 padding: 5,
                 borderRadius: 8,
-                borderWidth: 0.5,
+                borderWidth: 0,
                 fontSize: 12,
                 textAlign: "center",
                 cursor: "pointer",
@@ -252,7 +253,7 @@ function Order() {
               onClick={() => showFeedbackMessage(data.feedbackMessage)}
             >
               <MailOutlined
-                style={{ fontSize: "18px", fontWeight: "bold", color: "black" }}
+                style={{ fontSize: "18px", fontWeight: "bold", color: "white" }}
               />
             </button>
           )}
