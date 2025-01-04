@@ -1,4 +1,4 @@
-import { Popconfirm, Table } from "antd";
+import { Popconfirm, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ function StaffAccount() {
   const [dataSource, setDataSource] = useState([]);
   const [role, setRole] = useState([]);
   const [agency, setAgency] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchAgency = async () => {
     const response = await api.get("Agency");
@@ -174,11 +175,14 @@ function StaffAccount() {
   ];
 
   async function fetchStaffAccount() {
+    setLoading(true);
     try {
       const response = await api.get("Account/GetAllStaff");
       setDataSource(response.data.data);
+      setLoading(false);
     } catch (error) {
       toast.error("Danh sách trống.");
+      setLoading(false);
     }
   }
   useEffect(() => {
@@ -186,7 +190,16 @@ function StaffAccount() {
     fetchAgency();
     fetchRole();
   }, []);
-  return <Table columns={columns} dataSource={dataSource}></Table>;
+  return (
+    <Table
+      columns={columns}
+      dataSource={dataSource}
+      loading={{
+        spinning: loading,
+        indicator: <Spin />,
+      }}
+    ></Table>
+  );
 }
 
 export default StaffAccount;
