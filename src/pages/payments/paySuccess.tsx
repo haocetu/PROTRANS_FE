@@ -5,7 +5,7 @@ import useGetParams from "../../hooks/useGetParams";
 
 //{ transactionId, amount, date }
 const PaymentSuccess = () => {
-//   const [dataSource, setDataSource] = useState([]);
+  //   const [dataSource, setDataSource] = useState([]);
   const params = useGetParams();
   const orderId = params("vnp_OrderInfo");
   console.log(orderId);
@@ -13,7 +13,6 @@ const PaymentSuccess = () => {
     // // const response = await axios.get(
     // //   `https://localhost:7173/api/Orders/ViewOrderByID/${orderId}`
     // // );
-
     // console.log(response.data.data);
     // setDataSource(response.data.data);
   };
@@ -35,20 +34,15 @@ const PaymentSuccess = () => {
           <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm-1.73 18l-4.99-5 1.41-1.41 3.58 3.58 7.59-7.59 1.41 1.41-9 9z" />
         </svg>
       </div>
-      <h1>Payment Successful</h1>
-      <p>Your payment has been processed successfully.</p>
+      <h1>Thanh Toán Thành Công</h1>
+      <p>Đơn hàng của bạn đã được thanh toán thành công.</p>
       <div className="payment-success__details">
         <p>
-          <strong>ShippedDate:</strong>
+          <strong>Ngày Giao hàng:</strong>
           {/* {dataSource?.shippedDate} */}
         </p>
-
         <p>
-          <strong>OrderDate:</strong>
-          {/* {dataSource?.orderDate} */}
-        </p>
-        <p>
-          <strong>Amount:</strong>
+          <strong>Tổng số tiền thanh toán:</strong>
           {/* {dataSource?.totalPrice} */}
         </p>
       </div>
@@ -56,7 +50,7 @@ const PaymentSuccess = () => {
         onClick={() => (window.location.href = "/")}
         className="payment-success__button"
       >
-        Go to Homepage
+        Về Trang Chủ
       </button>
     </div>
   );
