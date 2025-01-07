@@ -22,18 +22,37 @@ const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
+// function getItem(
+//   label: React.ReactNode,
+//   key: React.Key,
+//   icon?: React.ReactNode,
+//   children?: MenuItem[]
+// ): MenuItem {
+//   return {
+//     key,
+//     icon,
+//     children,
+//     label: <Link to={`/dashboardstaff/${key}`}>{label}</Link>,
+//   } as MenuItem;
+// }
+
 function getItem(
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
-  children?: MenuItem[]
-): MenuItem {
+  children?: MenuProps["items"]
+): MenuProps["items"][number] {
   return {
     key,
     icon,
     children,
-    label: <Link to={`/dashboardstaff/${key}`}>{label}</Link>,
-  } as MenuItem;
+    label:
+      typeof label === "string" ? (
+        <Link to={`/dashboardstaff/${key}`}>{label}</Link>
+      ) : (
+        label
+      ),
+  };
 }
 
 const items: MenuItem[] = [

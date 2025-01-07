@@ -64,6 +64,9 @@ function QuotePageDesign() {
       title: "Giá (VNĐ)",
       dataIndex: "pricePerPage",
       key: "pricePerPage",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
   ];
 
@@ -102,16 +105,14 @@ function QuotePageDesign() {
         <strong>Giá dịch thuật công chứng</strong> thay đổi tùy thuộc vào từng
         trường hợp cụ thể. Chi phí được xác định dựa trên nhiều yếu tố khác
         nhau, bao gồm{" "}
-        <em>
-          ngôn ngữ, tính chuyên môn của văn bản, số lượng từ và thời gian hoàn
-          thành
-        </em>
-        . Ngoài ra phí dịch thuật và phí công chứng sẽ được tính riêng.
+        <em>ngôn ngữ, tính chuyên môn của văn bản và số lượng từ</em>. Ngoài ra
+        phí dịch thuật và phí công chứng sẽ được tính riêng.
       </p>
       <Table
         columns={columns}
         dataSource={dataSource}
         pagination={false}
+        className="custom-table"
       ></Table>
       <h2>
         Tại sao ProTrans là lựa chọn hàng đầu cho dịch thuật công chứng ở TP. Hồ

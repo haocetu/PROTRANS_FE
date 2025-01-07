@@ -18,8 +18,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 import { useForm } from "antd/es/form/Form";
 import {
+  CarryOutOutlined,
   CheckCircleOutlined,
   CheckOutlined,
+  CheckSquareOutlined,
   EyeOutlined,
   EyeTwoTone,
   FileOutlined,
@@ -183,15 +185,22 @@ function Translator() {
           cancelText="Hủy"
         >
           <Tooltip title="Hoàn thành dịch">
-            <Button
-              type="primary"
+            <button
               style={{
-                background: "green",
-                borderRadius: "12px",
+                color: "white",
+                backgroundColor: "green",
+                padding: 5,
+                borderRadius: 8,
+                borderWidth: 0,
+                fontSize: 12,
+                textAlign: "center",
+                cursor: "pointer",
               }}
             >
-              <CheckOutlined style={{ fontWeight: "bold" }} />
-            </Button>
+              <CarryOutOutlined
+                style={{ fontSize: "18px", fontWeight: "bold" }}
+              />
+            </button>
           </Tooltip>
         </Popconfirm>
       ),

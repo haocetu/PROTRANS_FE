@@ -33,6 +33,7 @@ import QuotePageDesign from "./pages/design/quotePaged";
 import OrderOnlineManage from "./pages/admin/orderOnline-manage";
 import AssignHardCopy from "./pages/assignmentHardCopy";
 import DocumentType from "./pages/documentTypeManagement";
+import Profile from "./pages/profile";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { logout } from "./redux/features/userSlice";
@@ -120,6 +121,14 @@ function App() {
           element: (
             <AdminRoute role="Customer">
               <SendRequest />
+            </AdminRoute>
+          ),
+        },
+        {
+          path: "/profile",
+          element: (
+            <AdminRoute role="Customer">
+              <Profile />
             </AdminRoute>
           ),
         },

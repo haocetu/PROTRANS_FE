@@ -3,7 +3,7 @@ import Authenlayout from "../../components/auth-layout";
 import "./index.css";
 import { toast } from "react-toastify";
 import api from "../../config/api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MAX_VERTICAL_CONTENT_RADIUS } from "antd/es/style/placementArrow";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useState } from "react";
@@ -13,7 +13,6 @@ function Register() {
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async (values) => {
-    console.log("hello");
     try {
       setLoading(true);
       await api.post("Authentication/Register", values);
@@ -30,7 +29,14 @@ function Register() {
   };
   return (
     <Authenlayout>
-      <h3 className="register__h3">ĐĂNG KÝ TÀI KHOẢN</h3>
+      <div className="register__header">
+        <img
+          src="/bank-images/ProTranslogo.png"
+          alt="Logo"
+          className="register__logo"
+        />
+        <h3 className="register__h3">Đăng ký tài khoản</h3>
+      </div>
       <Form
         name="userForm"
         onFinish={handleRegister}
@@ -192,6 +198,9 @@ function Register() {
           </Col>
         </Row>
       </Form>
+      <div style={{ textAlign: "center" }}>
+        Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+      </div>
     </Authenlayout>
   );
 }

@@ -7,6 +7,7 @@ import {
   Select,
   Spin,
   Table,
+  Tooltip,
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
@@ -218,22 +219,43 @@ function Order() {
       key: "id",
       render: (id, data) => (
         <div>
-          <Button
-            type="primary"
-            style={{ background: "orange", borderRadius: "8px" }}
-            onClick={() => navigate(`details/${id}`)}
-          >
-            <FormOutlined style={{ fontSize: "14px", fontWeight: "bold" }} />
-          </Button>
+          <Tooltip title="Chi tiết">
+            <button
+              style={{
+                color: "white",
+                backgroundColor: "orange",
+                padding: 5,
+                borderRadius: 8,
+                borderWidth: 0,
+                fontSize: 12,
+                textAlign: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate(`details/${id}`)}
+            >
+              <EyeOutlined style={{ fontSize: "18px", fontWeight: "bold" }} />
+            </button>
+          </Tooltip>
 
           {data.status === "Delivered" && data.feedbackMessage && (
-            <Button
-              type="default"
-              style={{ marginLeft: "10px", borderRadius: "8px" }}
+            <button
+              style={{
+                color: "white",
+                background: "#479eed",
+                padding: 5,
+                borderRadius: 8,
+                borderWidth: 0,
+                fontSize: 12,
+                textAlign: "center",
+                cursor: "pointer",
+                marginLeft: 10,
+              }}
               onClick={() => showFeedbackMessage(data.feedbackMessage)}
             >
-              <MailOutlined />
-            </Button>
+              <MailOutlined
+                style={{ fontSize: "18px", fontWeight: "bold", color: "white" }}
+              />
+            </button>
           )}
         </div>
       ),
