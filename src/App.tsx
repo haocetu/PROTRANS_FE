@@ -44,6 +44,8 @@ import { useEffect, useState } from "react";
 import OrderNoShip from "./pages/orderNoShip";
 import OrderNoPick from "./pages/orderNoPick";
 import ReportManager from "./pages/dasboard-report";
+import PaymentSuccess from "./pages/payments/paySuccess";
+import PaymentFailure from "./pages/payments/paymentFail";
 
 function App() {
   const [connection, setConnection] = useState(null);
@@ -162,6 +164,14 @@ function App() {
         {
           path: "/register",
           element: <Register />,
+        },
+        {
+          path: "/paymentSuccess",
+          element: <PaymentSuccess />,
+        },
+        {
+          path: "/paymentfail",
+          element: <PaymentFailure />,
         },
       ],
     },
