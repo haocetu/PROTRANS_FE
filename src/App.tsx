@@ -33,6 +33,7 @@ import QuotePageDesign from "./pages/design/quotePaged";
 import OrderOnlineManage from "./pages/admin/orderOnline-manage";
 import AssignHardCopy from "./pages/assignmentHardCopy";
 import DocumentType from "./pages/documentTypeManagement";
+import Profile from "./pages/profile";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { logout } from "./redux/features/userSlice";
@@ -42,6 +43,9 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import OrderNoShip from "./pages/orderNoShip";
 import OrderNoPick from "./pages/orderNoPick";
+import ReportManager from "./pages/dasboard-report";
+import PaymentSuccess from "./pages/payments/paySuccess";
+import PaymentFailure from "./pages/payments/paymentFail";
 
 function App() {
   const [connection, setConnection] = useState(null);
@@ -121,6 +125,14 @@ function App() {
           ),
         },
         {
+          path: "/profile",
+          element: (
+            <AdminRoute role="Customer">
+              <Profile />
+            </AdminRoute>
+          ),
+        },
+        {
           path: "/myrequest",
           element: (
             <AdminRoute role="Customer">
@@ -152,6 +164,14 @@ function App() {
         {
           path: "/register",
           element: <Register />,
+        },
+        {
+          path: "/paymentSuccess",
+          element: <PaymentSuccess />,
+        },
+        {
+          path: "/paymentfail",
+          element: <PaymentFailure />,
         },
       ],
     },
@@ -206,6 +226,10 @@ function App() {
         {
           path: "assignNotarization",
           element: <AssignNotarization />,
+        },
+        {
+          path: "reportmanager",
+          element: <ReportManager />,
         },
       ],
     },

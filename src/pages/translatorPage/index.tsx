@@ -5,9 +5,12 @@ import {
   Modal,
   Popconfirm,
   Select,
+  Space,
   Spin,
   Table,
   Tooltip,
+  Upload,
+  UploadProps,
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
@@ -15,19 +18,33 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 import { useForm } from "antd/es/form/Form";
 import {
+  CarryOutOutlined,
   CheckCircleOutlined,
   CheckOutlined,
+  CheckSquareOutlined,
   EyeOutlined,
   EyeTwoTone,
   FileOutlined,
   FileSyncOutlined,
   FolderOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import "./index.scss";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import uploadFileFire from "../../utils/upload";
+import { Value } from "sass";
 
 function Translator() {
+  const props: UploadProps = {
+    name: "file",
+    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    headers: {
+      authorization: "authorization-text",
+    },
+  };
+  const [formVariable] = useForm();
+  const [isOpen, setIsOpen] = useState(false);
   const [dataSource, setDataSource] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
@@ -160,20 +177,30 @@ function Translator() {
       render: (id, data) => (
         <Popconfirm
           title="Bạn có chắc chắn đã hoàn thành việc dịch thuật?"
-          onConfirm={() => handleCompleteDocument(id)}
+          onConfirm={() => {
+            // handleCompleteDocument(id);
+            setIsOpen(true);
+          }}
           okText="Có"
           cancelText="Hủy"
         >
           <Tooltip title="Hoàn thành dịch">
-            <Button
-              type="primary"
+            <button
               style={{
-                background: "green",
-                borderRadius: "12px",
+                color: "white",
+                backgroundColor: "green",
+                padding: 5,
+                borderRadius: 8,
+                borderWidth: 0,
+                fontSize: 12,
+                textAlign: "center",
+                cursor: "pointer",
               }}
             >
-              <CheckOutlined style={{ fontWeight: "bold" }} />
-            </Button>
+              <CarryOutOutlined
+                style={{ fontSize: "18px", fontWeight: "bold" }}
+              />
+            </button>
           </Tooltip>
         </Popconfirm>
       ),
@@ -189,17 +216,22 @@ function Translator() {
     setPagination(newPagination);
   };
 
-  async function handleCompleteDocument(id) {
-    console.log(id);
-    try {
-      const response = await api.put(`AssignmentTranslation/Complete?id=${id}`);
-
-      console.log(response.data.data);
-      toast.success("Đã cập nhật thành công.");
-      fetchAssignment();
-    } catch (error) {
-      toast.error("Cập nhật thất bại.");
-    }
+  async function handleCompleteDocument() {
+    // try {
+    //   let uploadedUrl = "";
+    //   if (urlPath) {
+    //     uploadedUrl = await uploadFileFire(urlPath);
+    //   }
+    //   console.log(uploadedUrl);
+    //   const response = await api.put(
+    //     `AssignmentTranslation/Complete?id=${id}&urlPath=${uploadedUrl}`
+    //   );
+    //   console.log(response.data.data);
+    //   toast.success("Đã cập nhật thành công.");
+    //   fetchAssignment();
+    // } catch (error) {
+    //   toast.error("Cập nhật thất bại.");
+    // }
   }
 
   const fetchAssignment = async () => {
@@ -346,6 +378,75 @@ function Translator() {
         pagination={pagination}
         onChange={handleTableChange}
       ></Table>
+
+      <Modal
+        open={isOpen}
+        onCancel={() => {
+          setIsOpen(false);
+        }}
+        onOk={() => {
+          formVariable.resetFields();
+          setIsOpen(false);
+        }}
+        title="Gửi tệp đã dịch"
+        // footer={[
+        //   <Space>
+        //     <Button
+        //       key="cancel"
+        //       onClick={() => {
+        //         formVariable.resetFields();
+        //         setIsOpen(false);
+        //       }}
+        //       style={{
+        //         padding: "5px 15px",
+        //         backgroundColor: "red",
+        //         border: "1px solid #d9d9d9",
+        //         borderRadius: "5px",
+        //         cursor: "pointer",
+        //         color: "white",
+        //       }}
+        //     >
+        //       Hủy
+        //     </Button>
+        //     ,
+        //     <Button
+        //       key="cancel"
+        //       onClick={() => {
+        //         formVariable.submit();
+        //         setIsOpen(false);
+        //       }}
+        //       style={{
+        //         padding: "5px 25px",
+        //         backgroundColor: "Green",
+        //         border: "1px solid #d9d9d9",
+        //         borderRadius: "5px",
+        //         cursor: "pointer",
+        //         color: "white",
+        //       }}
+        //     >
+        //       Gửi
+        //     </Button>
+        //     ,
+        //   </Space>,
+        // ]}
+      >
+        <Form form={formVariable} onFinish={() => handleCompleteDocument()}>
+          <Form.Item
+            label="Tệp"
+            name={"urlPath"}
+            rules={[
+              {
+                required: true,
+                message: "* vui lòng chọn",
+              },
+            ]}
+          >
+            <Upload {...props}>
+              <Button icon={<UploadOutlined />}>Tải lên</Button>
+            </Upload>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }

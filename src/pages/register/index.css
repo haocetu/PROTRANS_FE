@@ -1,3 +1,11 @@
+.register__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .register__h3 {
   font-size: xx-large;
   font-family: "Roboto", sans-serif;
@@ -5,4 +13,12 @@
   font-style: normal;
   margin-bottom: 20px;
   text-align: center;
+}
+
+.register__logo {
+  width: 80px;
+  height: auto;
+  max-height: 150px;
+  object-fit: contain;
+  margin-bottom: 10px;
 }

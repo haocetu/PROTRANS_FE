@@ -44,14 +44,15 @@ function TranslatorAccount() {
       authorization: "authorization-text",
     },
   };
-
   const [formVariable] = useForm();
   const [dataSource, setDataSource] = useState([]);
   const [agency, setAgency] = useState([]);
   const [language, setLanguage] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenskill, setIsOpenSkill] = useState(false);
   const [role, setRole] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentTranslatorSkills, setCurrentTranslatorSkills] = useState([]);
 
   const fetchAgency = async () => {
     const response = await api.get("Agency");
@@ -165,20 +166,11 @@ function TranslatorAccount() {
       dataIndex: "id",
       key: "id",
       render: (id, data) => (
-        <Popconfirm
-          title={`Bạn có chắc chắn muốn ${
-            !data.isDeleted
-              ? "khóa tài khoản này?"
-              : "kích hoạt lại tài khoản này?"
-          }`}
-          onConfirm={() => handleToggleStatus(id, data.isDeleted)}
-          okText="Đồng ý"
-          cancelText="Hủy"
-        >
-          <button
+        <Space>
+          <Button
             style={{
               color: "white",
-              backgroundColor: data.isDeleted ? "#23d783" : "#e03955",
+              backgroundColor: "orange",
               padding: 5,
               width: 80,
               borderRadius: 8,
@@ -187,20 +179,50 @@ function TranslatorAccount() {
               textAlign: "center",
               cursor: "pointer",
             }}
+            onClick={() => {
+              setCurrentTranslatorSkills(data.translatorSkills || []);
+              setIsOpenSkill(true);
+            }}
           >
-            {data.isDeleted ? (
-              <div>
-                <UnlockOutlined />
-                &nbsp; Mở
-              </div>
-            ) : (
-              <div>
-                <LockOutlined />
-                &nbsp; Khóa
-              </div>
-            )}
-          </button>
-        </Popconfirm>
+            chi tiết
+          </Button>
+          <Popconfirm
+            title={`Bạn có chắc chắn muốn ${
+              !data.isDeleted
+                ? "khóa tài khoản này?"
+                : "kích hoạt lại tài khoản này?"
+            }`}
+            onConfirm={() => handleToggleStatus(id, data.isDeleted)}
+            okText="Đồng ý"
+            cancelText="Hủy"
+          >
+            <button
+              style={{
+                color: "white",
+                backgroundColor: data.isDeleted ? "#23d783" : "#e03955",
+                padding: 5,
+                width: 80,
+                borderRadius: 8,
+                borderWidth: 0,
+                fontSize: 12,
+                textAlign: "center",
+                cursor: "pointer",
+              }}
+            >
+              {data.isDeleted ? (
+                <div>
+                  <UnlockOutlined />
+                  &nbsp; Mở
+                </div>
+              ) : (
+                <div>
+                  <LockOutlined />
+                  &nbsp; Khóa
+                </div>
+              )}
+            </button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
@@ -491,6 +513,107 @@ function TranslatorAccount() {
           </Form.List>
         </Form>
       </Modal>
+
+      <Modal
+        open={isOpenskill}
+        onCancel={() => {
+          setIsOpenSkill(false);
+        }}
+        title="Ngoại ngữ của dịch thuật viên"
+        footer={[
+          <button
+            key="cancel"
+            onClick={() => setIsOpenSkill(false)}
+            style={{
+              padding: "5px 15px",
+              backgroundColor: "#f5f5f5",
+              border: "1px solid #d9d9d9",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Đóng
+          </button>,
+        ]}
+      >
+        {currentTranslatorSkills.length > 0 ? (
+          currentTranslatorSkills.map((skill, index) => (
+            <div key={index} style={{ marginBottom: "16px" }}>
+              <p>
+                <b>Ngôn ngữ:</b> {skill.languageName}
+              </p>
+              <p>
+                <b>Chứng chỉ:</b>{" "}
+                <div style={{ marginTop: "8px" }}>
+                  <img
+                    src={skill.certificateUrl}
+                    alt={`Certificate of ${skill.languageName}`}
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      border: "1px solid #d9d9d9",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </div>
+              </p>
+              <Divider />
+            </div>
+          ))
+        ) : (
+          <p>Không có kỹ năng được lưu.</p>
+        )}
+      </Modal>
+
+      {/* <Modal
+        open={isOpenskill}
+        onCancel={() => {
+          setIsOpenSkill(false);
+        }}
+        title="Ngoại ngữ của dịch thuật viên"
+        footer={[
+          <button
+            key="cancel"
+            onClick={() => setIsOpenSkill(false)}
+            style={{
+              padding: "5px 15px",
+              backgroundColor: "#f5f5f5",
+              border: "1px solid #d9d9d9",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Cancel
+          </button>,
+        ]}
+      >
+        <Form form={formVariableskill} onFinish={handleSubmit}>
+          <Form.Item
+            label="Ngoại ngữ"
+            name={"shipperId"}
+            rules={[
+              {
+                required: true,
+                message: "* vui lòng chọn",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Bằng cấp"
+            name={"deadline"}
+            rules={[
+              {
+                required: true,
+                message: "* vui lòng chọn",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal> */}
     </div>
   );
 }

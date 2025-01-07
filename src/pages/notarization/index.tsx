@@ -11,7 +11,13 @@ import {
 import { useForm } from "antd/es/form/Form";
 import { useEffect, useState } from "react";
 import api from "../../config/api";
-import { EditOutlined, PlusOutlined, StopOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from "@ant-design/icons";
 
 function Notarization() {
   const [formVariable] = useForm();
@@ -36,15 +42,23 @@ function Notarization() {
       key: "name",
     },
     {
-      title: "Giá",
+      title: "Giá (VNĐ)",
       dataIndex: "price",
       key: "price",
+      render: (text) => {
+        return text !== null ? text.toLocaleString("vi-VN") : text;
+      },
     },
     {
       title: "Trạng thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Stop" : "Active"),
+      render: (isDeleted) =>
+        isDeleted ? (
+          <div className="status-inactive">Đã ẩn</div>
+        ) : (
+          <div className="status-active">Hiển thị</div>
+        ),
     },
     {
       title: "Tác vụ",
@@ -60,23 +74,49 @@ function Notarization() {
             cancelText="No"
           >
             <Tooltip title="Vô hiệu hóa">
-              <Button type="primary" danger>
-                <StopOutlined />
-              </Button>
+              <button
+                style={{
+                  color: "white",
+                  backgroundColor: data.isDeleted ? "#23d783" : "#e03955",
+                  padding: 5,
+                  borderRadius: 8,
+                  borderWidth: 0,
+                  fontSize: 12,
+                  textAlign: "center",
+                  cursor: "pointer",
+                }}
+              >
+                {data.isDeleted ? (
+                  <div>
+                    <EyeOutlined style={{ fontSize: "18px" }} />
+                  </div>
+                ) : (
+                  <div>
+                    <EyeInvisibleOutlined style={{ fontSize: "18px" }} />
+                  </div>
+                )}
+              </button>
             </Tooltip>
           </Popconfirm>
           <Tooltip title="Cập nhật">
-            <Button
-              type="primary"
-              style={{ background: "orange" }}
+            <button
+              style={{
+                color: "white",
+                backgroundColor: "orange",
+                padding: 5,
+                borderRadius: 8,
+                borderWidth: 0,
+                fontSize: 12,
+                textAlign: "center",
+                cursor: "pointer",
+              }}
               onClick={() => {
                 setVisibleEditModal(true);
-                // SetidCategory(id);
                 formVariable.setFieldsValue(data);
               }}
             >
-              <EditOutlined />
-            </Button>
+              <EditOutlined style={{ fontSize: "18px" }} />
+            </button>
           </Tooltip>
         </Space>
       ),

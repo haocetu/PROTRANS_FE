@@ -32,13 +32,28 @@
 }
 
 .why-choose ul {
-  list-style-type: disc; /* Định dạng kiểu dấu đầu dòng */
-  margin-left: 20px; /* Khoảng cách lề trái cho danh sách */
+  list-style-type: disc;
+  margin-left: 20px;
 }
 
 .why-choose li {
   text-align: left;
-  margin-bottom: 10px; /* Khoảng cách giữa các mục */
-  font-size: 16px; /* Kích thước chữ cho các mục */
-  line-height: 1.6; /* Tăng giãn dòng để mục dễ đọc hơn */
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  background-color: #c7e2ef;
+  text-align: center;
+}
+
+.custom-table .ant-table-tbody > tr > td {
+  background-color: #f9f9f9;
+  color: #333;
+  text-align: center;
+}
+
+.custom-table .ant-table-tbody > tr:hover > td {
+  background-color: #e0f7fa;
 }

@@ -1,12 +1,14 @@
-import { Table } from "antd";
+import { Popconfirm, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
 import { toast } from "react-toastify";
+import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
 
 function StaffAccount() {
   const [dataSource, setDataSource] = useState([]);
   const [role, setRole] = useState([]);
   const [agency, setAgency] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchAgency = async () => {
     const response = await api.get("Agency");
@@ -34,16 +36,36 @@ function StaffAccount() {
     setRole(list);
   };
 
+  const handleToggleStatus = async (id, currentStatus) => {
+    try {
+      const response = await api.put(`Account/Toggle?id=${id}`);
+      toast.success(
+        `Tài khoản đã được ${!currentStatus ? "khóa" : "kích hoạt"} thành công.`
+      );
+
+      // Cập nhật lại danh sách sau khi trạng thái được thay đổi
+      fetchStaffAccount();
+    } catch (error) {
+      // Hiển thị thông báo lỗi
+      toast.error("Cập nhật trạng thái thất bại. Vui lòng thử lại.");
+    }
+  };
+
   const columns = [
-    {
-      title: "Tên người dùng",
-      dataIndex: "userName", // Use firstLanguageId from QuotePrice data
-      key: "userName",
-    },
+    // {
+    //   title: "Tên người dùng",
+    //   dataIndex: "userName", // Use firstLanguageId from QuotePrice data
+    //   key: "userName",
+    // },
     {
       title: "Họ và tên",
       dataIndex: "fullName", // Use secondLanguageId from QuotePrice data
       key: "fullName",
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
     },
     {
       title: "Mã",
@@ -54,39 +76,6 @@ function StaffAccount() {
       title: "Email",
       dataIndex: "email",
       key: "email",
-    },
-    {
-      title: "Số điện thoại",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-    },
-    {
-      title: "Địa chỉ",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "Ngày Sinh",
-      dataIndex: "dob",
-      key: "dob",
-    },
-    {
-      title: "Giới tính",
-      dataIndex: "gender",
-      key: "gender",
-    },
-    {
-      title: "Vai trò",
-      dataIndex: "roleId",
-      key: "roleId",
-      render: (roleId) => {
-        // Check if category is available and initialized
-        if (!role || role.length === 0) return null;
-
-        // Find the category by ID and return its name
-        const foundrole = role.find((rol) => rol.value === roleId);
-        return foundrole ? foundrole.label : null;
-      },
     },
     {
       title: "Chi nhánh",
@@ -101,20 +90,99 @@ function StaffAccount() {
         return foundagency ? foundagency.label : null;
       },
     },
+    // {
+    //   title: "Địa chỉ",
+    //   dataIndex: "address",
+    //   key: "address",
+    // },
+    // {
+    //   title: "Ngày sinh",
+    //   dataIndex: "dob",
+    //   key: "dob",
+    // },
+    // {
+    //   title: "Giới tính",
+    //   dataIndex: "gender",
+    //   key: "gender",
+    // },
+    // {
+    //   title: "Vai trò",
+    //   dataIndex: "roleId",
+    //   key: "roleId",
+    //   render: (roleId) => {
+    //     // Check if category is available and initialized
+    //     if (!role || role.length === 0) return null;
+
+    //     // Find the category by ID and return its name
+    //     const foundrole = role.find((rol) => rol.value === roleId);
+    //     return foundrole ? foundrole.label : null;
+    //   },
+    // },
     {
-      title: "Trạng Thái",
+      title: "Trạng thái",
       dataIndex: "isDeleted",
       key: "isDeleted",
-      render: (isDeleted) => (isDeleted ? "Yes" : "No"),
+      render: (isDeleted) =>
+        isDeleted ? (
+          <div className="status-inactive">Ngưng hoạt động</div>
+        ) : (
+          <div className="status-active">Đang hoạt động</div>
+        ),
+    },
+    {
+      title: "Tác vụ",
+      dataIndex: "id",
+      key: "id",
+      render: (id, data) => (
+        <Popconfirm
+          title={`Bạn có chắc chắn muốn ${
+            !data.isDeleted
+              ? "khóa tài khoản này?"
+              : "kích hoạt lại tài khoản này?"
+          }`}
+          onConfirm={() => handleToggleStatus(id, data.isDeleted)}
+          okText="Đồng ý"
+          cancelText="Hủy"
+        >
+          <button
+            style={{
+              color: "white",
+              backgroundColor: data.isDeleted ? "#23d783" : "#e03955",
+              padding: 5,
+              width: 80,
+              borderRadius: 8,
+              borderWidth: 0,
+              fontSize: 12,
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+          >
+            {data.isDeleted ? (
+              <div>
+                <UnlockOutlined />
+                &nbsp; Mở
+              </div>
+            ) : (
+              <div>
+                <LockOutlined />
+                &nbsp; Khóa
+              </div>
+            )}
+          </button>
+        </Popconfirm>
+      ),
     },
   ];
 
   async function fetchStaffAccount() {
+    setLoading(true);
     try {
       const response = await api.get("Account/GetAllStaff");
       setDataSource(response.data.data);
+      setLoading(false);
     } catch (error) {
       toast.error("Danh sách trống.");
+      setLoading(false);
     }
   }
   useEffect(() => {
@@ -122,7 +190,16 @@ function StaffAccount() {
     fetchAgency();
     fetchRole();
   }, []);
-  return <Table columns={columns} dataSource={dataSource}></Table>;
+  return (
+    <Table
+      columns={columns}
+      dataSource={dataSource}
+      loading={{
+        spinning: loading,
+        indicator: <Spin />,
+      }}
+    ></Table>
+  );
 }
 
 export default StaffAccount;
