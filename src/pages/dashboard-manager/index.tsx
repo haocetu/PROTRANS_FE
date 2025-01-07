@@ -68,7 +68,7 @@ const items: MenuItem[] = [
     "assignhardcopy",
     <DeliveredProcedureOutlined />
   ),
-  getItem("Báo cáo thông kê", "reportmanager", <FileDoneOutlined /> ),
+  getItem("Báo cáo thông kê", "reportmanager", <FileDoneOutlined />),
 ];
 
 const DashboardManager: React.FC = () => {
@@ -166,10 +166,23 @@ const DashboardManager: React.FC = () => {
     onClick: handleMenuClick,
   };
 
+  // const handleMenuSelect = (e) => {
+  //   const selectedItem = items.find((item) => item.key === e.key);
+  //   if (selectedItem) {
+  //     setBreadcrumb(selectedItem.label as string);
+  //   }
+  // };
+
   const handleMenuSelect = (e) => {
-    const selectedItem = items.find((item) => item.key === e.key);
-    if (selectedItem) {
-      setBreadcrumb(selectedItem.label as string);
+    const selectedItem = items.find((item) => item?.key === e.key);
+
+    if (selectedItem && "label" in selectedItem) {
+      const labelContent =
+        typeof selectedItem.label === "string"
+          ? selectedItem.label
+          : (selectedItem.label as React.ReactElement).props.children;
+
+      setBreadcrumb(labelContent);
     }
   };
 

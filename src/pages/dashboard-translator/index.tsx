@@ -67,13 +67,26 @@ const DashboardTranslator: React.FC = () => {
     },
   ];
 
+  // const handleMenuSelect = (e) => {
+  //   const selectedItem = items.find((item) => item.key === e.key);
+  //   if (selectedItem) {
+  //     setBreadcrumb(selectedItem.label as string);
+  //   }
+  // };
+
   const handleMenuSelect = (e) => {
-    const selectedItem = items.find((item) => item.key === e.key);
-    if (selectedItem) {
-      setBreadcrumb(selectedItem.label as string);
+    const selectedItem = items.find((item) => item?.key === e.key);
+
+    if (selectedItem && "label" in selectedItem) {
+      const labelContent =
+        typeof selectedItem.label === "string"
+          ? selectedItem.label
+          : (selectedItem.label as React.ReactElement).props.children;
+
+      setBreadcrumb(labelContent);
     }
   };
-  //----------------------
+
   useEffect(() => {
     if (account) {
       const getListNoti = async () => {
