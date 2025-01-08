@@ -22,11 +22,14 @@ import {
   CheckCircleOutlined,
   CheckOutlined,
   CheckSquareOutlined,
+  EditOutlined,
   EyeOutlined,
   EyeTwoTone,
   FileOutlined,
   FileSyncOutlined,
   FolderOutlined,
+  FormOutlined,
+  SendOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import "./index.scss";
@@ -204,9 +207,7 @@ function Translator() {
                 cursor: "pointer",
               }}
             >
-              <CarryOutOutlined
-                style={{ fontSize: "18px", fontWeight: "bold" }}
-              />
+              <EditOutlined style={{ fontSize: "18px", fontWeight: "bold" }} />
             </button>
           </Tooltip>
         </Popconfirm>

@@ -10,6 +10,7 @@ import {
   Space,
   Spin,
   Table,
+  Tooltip,
 } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../../config/api";
@@ -266,35 +267,48 @@ function RequestManager() {
         if (data.status === "Waitting") {
           return (
             <Space>
-              <FormOutlined
-                style={{ fontSize: "14px", color: "orange" }}
-                onClick={() => {
-                  setselectcustomerid(data.customerId);
-                  setIsOpen(true);
-                  setIdRequest(id);
-                  const newData = { ...data };
-                  console.log(newData);
-
-                  // Lấy dữ liệu request dựa trên id
-                  const selectedRequest = datasource.find(
-                    (request) => request.id === id
-                  );
-                  if (selectedRequest) {
-                    // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
-                    const newData = {
-                      ...selectedRequest,
-                      deadline: dayjs(selectedRequest.deadline),
-                      documents: selectedRequest.documents || [],
-                      status: "Quoted",
-                    };
-
-                    console.log("Dữ liệu được thiết lập:", newData);
-
-                    // Thiết lập giá trị cho form
-                    formUpdate.setFieldsValue(newData);
-                  }
+              <button
+                style={{
+                  color: "white",
+                  backgroundColor: "orange",
+                  padding: 5,
+                  borderRadius: 8,
+                  borderWidth: 0,
+                  fontSize: 12,
+                  textAlign: "center",
+                  cursor: "pointer",
                 }}
-              />
+              >
+                <FormOutlined
+                  style={{ fontSize: "18px", fontWeight: "bold" }}
+                  onClick={() => {
+                    setselectcustomerid(data.customerId);
+                    setIsOpen(true);
+                    setIdRequest(id);
+                    const newData = { ...data };
+                    console.log(newData);
+
+                    // Lấy dữ liệu request dựa trên id
+                    const selectedRequest = datasource.find(
+                      (request) => request.id === id
+                    );
+                    if (selectedRequest) {
+                      // Chuyển đổi dữ liệu cho phù hợp với cấu trúc form yêu cầu
+                      const newData = {
+                        ...selectedRequest,
+                        deadline: dayjs(selectedRequest.deadline),
+                        documents: selectedRequest.documents || [],
+                        status: "Quoted",
+                      };
+
+                      console.log("Dữ liệu được thiết lập:", newData);
+
+                      // Thiết lập giá trị cho form
+                      formUpdate.setFieldsValue(newData);
+                    }
+                  }}
+                />
+              </button>
             </Space>
           );
         } else return null;
