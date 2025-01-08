@@ -15,92 +15,70 @@ import {
 } from "recharts";
 import { FaSackDollar } from "react-icons/fa6";
 import "./index.css";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { TruckOutlined } from "@ant-design/icons";
+import { DatePicker, Form } from "antd";
+import api from "../../config/api";
+import { useState } from "react";
+
+const { RangePicker } = DatePicker;
 
 // Định nghĩa RADIAN
 const RADIAN = Math.PI / 180;
 
 function Report() {
-  // // Food
-  // const [dataFood, setDateFood] = useState(0);
-  // const fetchFood = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://localhost:7173/api/AdminDashboard/dashboard/total-food-menu"
-  //     );
-  //     setDateFood(response.data);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
+  const [data, setData] = useState({
+    numberOfOrders: 0,
+    numberOfAccounts: 0,
+    revenue: 0,
+  });
+  const token = localStorage.getItem("token");
 
-  // useEffect(() => {
-  //   fetchFood();
-  // }, []);
-
-  // useEffect(() => {
-  //   fetchCategories();
-  // }, []);
-
-  // Chart
-  const [data, setData] = useState([]);
-  // const fetchChart = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://localhost:7173/api/AdminDashboard/GetTopFiveCustomer"
-  //     );
-  //     setData(response.data);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
-
-  useEffect(() => {
-    // fetchChart();
-  }, []);
-
-  // Order
-  const [dataOrder, setDateOrder] = useState(0);
-  const fetchOrder = async () => {
-    try {
-      const response = await axios.get(
-        "https://localhost:7173/api/AdminDashboard/dashboard/total-orders"
+  const handleDateChange = async (value, dateString) => {
+    if (value && dateString.length === 2) {
+      const [fromTime, toTime] = value.map(
+        (date) => date.toISOString() // Format ngày trước khi truyền vào API
       );
-      setDateOrder(response.data);
-    } catch (e) {
-      console.error(e);
+
+      try {
+        const response = await api.get(`Dashboard`, {
+          params: {
+            fromTime,
+            toTime,
+          },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Ensure token is valid
+          },
+        });
+
+        console.log("API Response:", response.data.data);
+        setData(response.data.data);
+      } catch (error) {
+        // Log detailed error for debugging
+        if (error.response) {
+          console.error("API Error Response:", error.response.data);
+          console.error("API Status Code:", error.response.status);
+        } else {
+          console.error("Unexpected Error:", error.message);
+        }
+      }
     }
   };
-
-  useEffect(() => {
-    fetchOrder();
-  }, []);
-
-  // User
-  // const [dataUser, setDataUser] = useState(0);
-  // const fetchUser = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://localhost:7173/api/AdminDashboard/dashboard/active-user"
-  //     );
-  //     setDataUser(response.data);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUser();
-  // }, []);
 
   return (
     <main className="main-container-report">
       <div className="main-title-report">
         <h3>STATISTICS</h3>
       </div>
-
+      <Form>
+        <Form.Item>
+          <RangePicker
+            showTime={{ format: "HH:mm" }}
+            format="YYYY-MM-DD HH:mm"
+            onChange={handleDateChange}
+          />
+        </Form.Item>
+      </Form>
       <div className="main-cards-report">
         <div className="card-report">
           <div className="card-inner-report">
@@ -113,21 +91,21 @@ function Report() {
           <div className="card-inner-report">
             <BsFillGrid3X3GapFill className="card_icon-report" />
             <h3>Số lượng đơn hàng</h3>
-            <h1>12</h1>
+            <h1>{data.numberOfOrders ?? 0}</h1>
           </div>
         </div>
         <div className="card-report">
           <div className="card-inner-report">
             <BsPeopleFill className="card_icon-report" />
             <h3>Số lượng người dùng</h3>
-            <h1>12</h1>
+            <h1>{data.numberOfAccounts ?? 0}</h1>
           </div>
         </div>
         <div className="card-report">
           <div className="card-inner-report">
             <TruckOutlined className="card_icon-report" />
             <h3>Tổng doanh thu</h3>
-            <h1>12</h1>
+            <h1>{data.revenue ?? 0}</h1>
           </div>
         </div>
       </div>
@@ -135,7 +113,7 @@ function Report() {
       <div className="charts-report w-full">
         <ResponsiveContainer width="100%" height={400} className="mx-auto">
           <BarChart
-            data={data}
+            //data={data}
             margin={{
               top: 5,
               right: 30,
