@@ -160,10 +160,23 @@ const DashboardStaff: React.FC = () => {
     onClick: handleMenuClick,
   };
 
+  // const handleMenuSelect = (e) => {
+  //   const selectedItem = items.find((item) => item.key === e.key);
+  //   if (selectedItem) {
+  //     setBreadcrumb(selectedItem.label as string);
+  //   }
+  // };
+
   const handleMenuSelect = (e) => {
-    const selectedItem = items.find((item) => item.key === e.key);
-    if (selectedItem) {
-      setBreadcrumb(selectedItem.label as string);
+    const selectedItem = items.find((item) => item?.key === e.key);
+
+    if (selectedItem && "label" in selectedItem) {
+      const labelContent =
+        typeof selectedItem.label === "string"
+          ? selectedItem.label
+          : (selectedItem.label as React.ReactElement).props.children;
+
+      setBreadcrumb(labelContent);
     }
   };
 
@@ -185,7 +198,7 @@ const DashboardStaff: React.FC = () => {
         <div className="demo-logo-vertical" />
         <div className="logo-container">
           <img
-            src="/bank-images/ProTranslogo_standard.png"
+            src="/bank-images/ProTranslogo_standard_white.png"
             alt="ProTrans Logo"
             className="sidebar-logo"
             width={150}

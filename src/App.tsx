@@ -46,6 +46,7 @@ import OrderNoPick from "./pages/orderNoPick";
 import ReportManager from "./pages/dasboard-report";
 import PaymentSuccess from "./pages/payments/paySuccess";
 import PaymentFailure from "./pages/payments/paymentFail";
+import Payment from "./pages/payment";
 
 function App() {
   const [connection, setConnection] = useState(null);
@@ -172,6 +173,10 @@ function App() {
         {
           path: "/paymentfail",
           element: <PaymentFailure />,
+        },
+        {
+          path: "/payment",
+          element: <Payment />,
         },
       ],
     },
