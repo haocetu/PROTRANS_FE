@@ -12,6 +12,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  LineChart,
+  Line,
 } from "recharts";
 import { FaSackDollar } from "react-icons/fa6";
 import "./index.css";
@@ -92,32 +94,32 @@ function Report() {
     }
   };
 
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-    index,
-  }) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  // const renderCustomizedLabel = ({
+  //   cx,
+  //   cy,
+  //   midAngle,
+  //   innerRadius,
+  //   outerRadius,
+  //   percent,
+  //   index,
+  // }) => {
+  //   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  //   const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  //   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  //   return (
+  //     <text
+  //       x={x}
+  //       y={y}
+  //       fill="white"
+  //       textAnchor={x > cx ? "start" : "end"}
+  //       dominantBaseline="central"
+  //     >
+  //       {`${(percent * 100).toFixed(0)}%`}
+  //     </text>
+  //   );
+  // };
+  // const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   return (
     <main className="main-container-report">
@@ -176,7 +178,7 @@ function Report() {
         </div>
       </div>
 
-      <div>
+      <div className="charts">
         <div className="chart-title-report">
           <h3>Biểu Đồ Doanh Thu Theo Tháng</h3>
         </div>
@@ -198,13 +200,55 @@ function Report() {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
+              <YAxis
+                tickFormatter={(value) =>
+                  new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(value)
+                }
+              />
+              <Tooltip
+                formatter={(value) =>
+                  new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(value)
+                }
+              />
               <Legend />
               <Bar dataKey="revenue" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
         </div>
+
+        {/* <div className="chart-report-number">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              width={500}
+              height={300}
+              data={chartData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="numberOfOrders"
+                stroke="#8884d8"
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div> */}
       </div>
     </main>
   );
