@@ -12,34 +12,29 @@
   color: white;
 }
 
-.breadcrumb-highlight{
-  font-size: 18px;
+.breadcrumb-highlight {
   font-weight: bold;
   color: #000000 !important;
 }
 
-.breadcrumb-bold{
-  font-size: 18px;
+.breadcrumb-bold {
+  font-weight: bold;
   color: #000000 !important;
-  
 }
-
 
 .logo-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60px; 
+  height: 60px;
   width: 80%;
-  background: #ebedef;
-  margin-bottom: 20px;
+  background: transparent;
   border-radius: 2%;
-  margin-left: 16px;
-  margin-top: 3px;
+  margin-left: 10px;
 }
 
 .sidebar-logo {
-  width: 100%; 
-  max-height: 40px; 
-  object-fit: contain; 
+  width: 100%;
+  max-height: 40px;
+  object-fit: contain;
 }

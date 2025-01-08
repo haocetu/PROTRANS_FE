@@ -170,7 +170,7 @@ const DashboardTranslator: React.FC = () => {
         <div className="demo-logo-vertical" />
         <div className="logo-container">
           <img
-            src="/bank-images/ProTranslogo_standard.png"
+            src="/bank-images/ProTranslogo_standard_white.png"
             alt="ProTrans Logo"
             className="sidebar-logo"
             width={150}
