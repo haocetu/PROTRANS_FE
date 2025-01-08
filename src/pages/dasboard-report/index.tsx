@@ -33,6 +33,7 @@ function Report() {
     numberOfAccounts: 0,
     revenue: 0,
   });
+  const [chartData, setChartData] = useState([]);
   const token = localStorage.getItem("token");
 
   const handleDateChange = async (value, dateString) => {
@@ -66,6 +67,57 @@ function Report() {
       }
     }
   };
+
+  const handleYearChange = async (date, dateString) => {
+    if (dateString) {
+      try {
+        const response = await api.get(`/Dashboard/MonthlyRevenueByYear`, {
+          params: {
+            year: dateString,
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const formattedData = response.data.data.map((item) => ({
+          month: `Tháng ${item.month}`,
+          revenue: item.revenue || 0, // Đảm bảo giá trị là số
+        }));
+        console.log("chart", response.data.data);
+        setChartData(formattedData);
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+      }
+    }
+  };
+
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    index,
+  }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   return (
     <main className="main-container-report">
@@ -125,10 +177,18 @@ function Report() {
       </div>
 
       <div>
+        <div className="chart-title-report">
+          <h3>Biểu Đồ Doanh Thu Theo Tháng</h3>
+        </div>
+        <Form>
+          <Form.Item>
+            <DatePicker picker="year" onChange={handleYearChange} />
+          </Form.Item>
+        </Form>
         <div className="charts-report w-full">
           <ResponsiveContainer width="100%" height={400} className="mx-auto">
             <BarChart
-              //data={data}
+              data={chartData}
               margin={{
                 top: 5,
                 right: 30,
@@ -137,11 +197,11 @@ function Report() {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="customerName" />
+              <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="totalOrders" fill="#8884d8" />
+              <Bar dataKey="revenue" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
         </div>
