@@ -19,6 +19,7 @@ import { TruckOutlined } from "@ant-design/icons";
 import { DatePicker, Form } from "antd";
 import api from "../../config/api";
 import { useState } from "react";
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 
@@ -27,6 +28,7 @@ const RADIAN = Math.PI / 180;
 
 function Report() {
   const [data, setData] = useState({
+    numberOfRequests: 0,
     numberOfOrders: 0,
     numberOfAccounts: 0,
     revenue: 0,
@@ -68,13 +70,20 @@ function Report() {
   return (
     <main className="main-container-report">
       <div className="main-title-report">
-        <h3>STATISTICS</h3>
+        <h3>THỐNG KÊ</h3>
       </div>
       <Form>
         <Form.Item>
           <RangePicker
-            showTime={{ format: "HH:mm" }}
+            // showTime={{ format: "HH:mm" }}
             format="YYYY-MM-DD HH:mm"
+            disabledDate={(current) => {
+              const today = moment().endOf("day");
+              return (
+                // Không cho phép chọn ngày tương lai
+                current && current > today
+              );
+            }}
             onChange={handleDateChange}
           />
         </Form.Item>
@@ -84,7 +93,7 @@ function Report() {
           <div className="card-inner-report">
             <BsFillArchiveFill className="card_icon-report" />
             <h3>Số lượng yêu cầu</h3>
-            <h1>12</h1>
+            <h1>{data.numberOfRequests ?? 0}</h1>
           </div>
         </div>
         <div className="card-report">
@@ -105,30 +114,37 @@ function Report() {
           <div className="card-inner-report">
             <TruckOutlined className="card_icon-report" />
             <h3>Tổng doanh thu</h3>
-            <h1>{data.revenue ?? 0}</h1>
+            <h1>
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(data.revenue ?? 0)}
+            </h1>
           </div>
         </div>
       </div>
 
-      <div className="charts-report w-full">
-        <ResponsiveContainer width="100%" height={400} className="mx-auto">
-          <BarChart
-            //data={data}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="customerName" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="totalOrders" fill="#8884d8" />
-          </BarChart>
-        </ResponsiveContainer>
+      <div>
+        <div className="charts-report w-full">
+          <ResponsiveContainer width="100%" height={400} className="mx-auto">
+            <BarChart
+              //data={data}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="customerName" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="totalOrders" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </main>
   );
