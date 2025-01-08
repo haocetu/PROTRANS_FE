@@ -41,8 +41,15 @@ function History() {
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
 
   console.log(UserAccount);
 
@@ -92,33 +99,33 @@ function History() {
     setNotarizationType(list);
   };
 
-  const openInNewTab = (url) => {
-    // Tạo nội dung HTML cho tab mới
-    const newWindow = window.open();
-    if (newWindow) {
-      newWindow.document.write(`
-      <html>
-        <head>
-          <title>Tài liệu</title>
-          <style>
-            body { margin: 0; padding: 0; overflow: hidden; }
-            iframe {
-              width: 100%;
-              height: 100vh;
-              border: none;
-            }
-          </style>
-        </head>
-        <body>
-          <iframe src="${url}" title="Document Viewer"></iframe>
-        </body>
-      </html>
-    `);
-      newWindow.document.close();
-    } else {
-      console.error("Popup bị chặn! Hãy kiểm tra cài đặt trình duyệt.");
-    }
-  };
+  // const openInNewTab = (url) => {
+  //   // Tạo nội dung HTML cho tab mới
+  //   const newWindow = window.open();
+  //   if (newWindow) {
+  //     newWindow.document.write(`
+  //     <html>
+  //       <head>
+  //         <title>Tài liệu</title>
+  //         <style>
+  //           body { margin: 0; padding: 0; overflow: hidden; }
+  //           iframe {
+  //             width: 100%;
+  //             height: 100vh;
+  //             border: none;
+  //           }
+  //         </style>
+  //       </head>
+  //       <body>
+  //         <iframe src="${url}" title="Document Viewer"></iframe>
+  //       </body>
+  //     </html>
+  //   `);
+  //     newWindow.document.close();
+  //   } else {
+  //     console.error("Popup bị chặn! Hãy kiểm tra cài đặt trình duyệt.");
+  //   }
+  // };
 
   useEffect(() => {
     fetchNotarizationType();
@@ -320,29 +327,38 @@ function History() {
               <span>: {selectedDocument.numberOfNotarizedCopies}</span>
             </div>
             <div className="details-row">
-              <span>Tải về</span>
+              <span>Tài liệu</span>
               <span>
                 :{" "}
-                {/* <a
-                  href={selectedDocument.urlPath}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Xem tài liệu
-                </a> */}
                 <a
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    openInNewTab(selectedDocument.urlPath);
+                    openModal();
                   }}
                 >
-                  Xem tài liệu
+                  Xem
                 </a>
+                <Modal
+                  closable={false}
+                  visible={isModalVisible}
+                  onCancel={closeModal}
+                  footer={null}
+                  width="80%"
+                >
+                  <iframe
+                    src={selectedDocument.urlPath}
+                    style={{
+                      width: "100%",
+                      height: "80vh",
+                      border: "none",
+                    }}
+                    title="Xem tài liệu"
+                  ></iframe>
+                </Modal>
               </span>
             </div>
-            <div className="iframe-container">
+            {/* <div className="iframe-container">
               {iframeUrl && (
                 <iframe
                   src={iframeUrl}
@@ -351,10 +367,10 @@ function History() {
                     height: "600px",
                     border: "none",
                   }}
-                  title="Document Viewer"
+                  title="Xem tài liệu"
                 ></iframe>
               )}
-            </div>
+            </div> */}
           </div>
         ) : (
           <p>Chọn một tài liệu để xem chi tiết</p>
