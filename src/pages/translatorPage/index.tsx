@@ -57,8 +57,15 @@ function Translator() {
   const [documentType, setDocumentType] = useState([]);
   const [notarizationType, setNotarizationType] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
 
   console.log(UserAccount);
 
@@ -349,22 +356,42 @@ function Translator() {
               <span>: {selectedDocument.numberOfNotarizedCopies}</span>
             </div>
             <div className="details-row">
-              <span>Tải về</span>
+              <span>Tệp đính kèm</span>
               <span>
                 :{" "}
                 <a
-                  href={selectedDocument.urlPath}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openModal();
+                  }}
                 >
-                  Xem tài liệu
+                  Xem
                 </a>
+                <Modal
+                  closable={false}
+                  visible={isModalVisible}
+                  onCancel={closeModal}
+                  footer={null}
+                  width="80%"
+                >
+                  <iframe
+                    src={selectedDocument.urlPath}
+                    style={{
+                      width: "100%",
+                      height: "80vh",
+                      border: "none",
+                    }}
+                    title="Xem tài liệu"
+                  ></iframe>
+                </Modal>
               </span>
             </div>
           </div>
         ) : (
-          <p>Chọn một tài liệu để xem chi tiết</p>
+          <p style={{ textAlign: "center" }}>
+            Chọn một tài liệu để xem chi tiết
+          </p>
         )}
       </div>
       <Table

@@ -48,6 +48,15 @@ function RequestManager() {
   const [activeButton, setActiveButton] = useState<string>("Waitting");
   const [loading, setLoading] = useState(false);
   const [selectcustomerid, setselectcustomerid] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
 
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
@@ -590,22 +599,36 @@ function RequestManager() {
                         label="Tệp đính kèm"
                       >
                         <span>
-                          {(() => {
-                            const urlPath = formUpdate.getFieldValue([
-                              "documents",
-                              name,
-                              "urlPath",
-                            ]);
-                            return urlPath ? (
-                              <a
-                                href={urlPath}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <CopyOutlined />
-                              </a>
-                            ) : null;
-                          })()}
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              openModal();
+                            }}
+                          >
+                            <CopyOutlined />
+                          </a>
+                          <Modal
+                            closable={false}
+                            visible={isModalVisible}
+                            onCancel={closeModal}
+                            footer={null}
+                            width="80%"
+                          >
+                            <iframe
+                              src={formUpdate.getFieldValue([
+                                "documents",
+                                name,
+                                "urlPath",
+                              ])}
+                              style={{
+                                width: "100%",
+                                height: "80vh",
+                                border: "none",
+                              }}
+                              title="Xem tài liệu"
+                            ></iframe>
+                          </Modal>
                         </span>
                       </Form.Item>
                     </div>
